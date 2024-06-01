@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Questionnaire</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Survey</h1>
+        <form id="surveyForm" method="POST" action="save_questionnaire.php" enctype="multipart/form-data">
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" required>
+            <label for="description">Description:</label>
+            <textarea name="description" id="description" required></textarea>
+            <div id="questionContainer">
+            </div>
+            <button type="button" id="addQuestionBtn">Add Question</button>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script src="sampleScript.js"></script>
+</body>
+</html>
