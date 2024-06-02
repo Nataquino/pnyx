@@ -111,7 +111,7 @@ const LoginPage = () => {
               style={{ color: "#05B1BF" }}
             >
               Click here
-            </span>{" "}
+            </span>
           </Typography>
         </Box>
 
