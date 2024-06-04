@@ -1,4 +1,12 @@
 <?php
+header("Access-Control-Allow-Origin:http://localhost/3000");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit(0);
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -9,22 +17,22 @@ $password = "";
 $dbname = "samplePnyx";
 
 try {
-    // Create connection
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (!$data) {
+        throw new Exception("No data received or invalid JSON.");
+    }
+
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Begin transaction
     $conn->beginTransaction();
 
-    // Insert survey data
     $stmt = $conn->prepare("INSERT INTO surveys (title, description) VALUES (:title, :description)");
-    $stmt->bindParam(':title', $_POST['title']);
-    $stmt->bindParam(':description', $_POST['description']);
+    $stmt->bindParam(':title', $data['title']);
+    $stmt->bindParam(':description', $data['description']);
     $stmt->execute();
     $survey_id = $conn->lastInsertId();
 
-    // Insert questions
-    foreach ($_POST['questions'] as $question) {
+    foreach ($data['questions'] as $question) {
         $stmt = $conn->prepare("INSERT INTO questions (survey_id, question_text, question_type) VALUES (:survey_id, :question_text, :question_type)");
         $stmt->bindParam(':survey_id', $survey_id);
         $stmt->bindParam(':question_text', $question['text']);
@@ -32,24 +40,22 @@ try {
         $stmt->execute();
         $question_id = $conn->lastInsertId();
 
-        // Insert options if applicable
         if (isset($question['options']) && in_array($question['type'], ['multiple_choice', 'checkbox'])) {
             foreach ($question['options'] as $option) {
                 $stmt = $conn->prepare("INSERT INTO options (question_id, option_text) VALUES (:question_id, :option_text)");
                 $stmt->bindParam(':question_id', $question_id);
-                $stmt->bindParam(':option_text', $option['text']);
+                $stmt->bindParam(':option_text', $option);
                 $stmt->execute();
             }
         }
     }
 
-    // Commit transaction
     $conn->commit();
     echo "Survey saved successfully!";
 } catch (Exception $e) {
-    // Rollback transaction in case of error
     $conn->rollBack();
     echo "Failed to save survey: " . $e->getMessage();
+    file_put_contents('php://stderr', "Failed to save survey: " . $e->getMessage());
 }
 
 $conn = null;
