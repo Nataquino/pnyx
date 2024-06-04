@@ -8,7 +8,8 @@ import {
   Container,
   Button,
 } from "@mui/material";
-import { useState } from "react";
+
+
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -189,7 +190,7 @@ const InterestPage = () => {
             width: 150,
             marginBottom: 8,
           }}
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate("/finish")}
         >
           Next
         </Button>
