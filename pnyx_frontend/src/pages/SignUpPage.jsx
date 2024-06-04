@@ -17,19 +17,16 @@ import { useState } from "react";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-
-
 const SignUpPage = () => {
   const steps = [
     "Create an account",
     "Select your interest",
-    "Finish Creating ",
+    "Finish",
   ];
 
   const handleChange = (event) => {
     setGender(event.target.value);
   };
-
 
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -44,15 +41,14 @@ const SignUpPage = () => {
     <Stack
       sx={{
         backgroundColor: "skyblue",
-        height: "105vh",
+        height: "110vh",
       }}
     >
-      <Box
-        sx={{
-          marginTop: "45px",
-        }}
-      >
-        <Stepper activeStep={0} alternativeLabel>
+      <Box>
+        <Typography>
+          <span onClick={() => navigate("/")}>TTTTT</span>
+        </Typography>
+        <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "70px" }}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -105,7 +101,7 @@ const SignUpPage = () => {
           }}
         >
           <TextField
-          label="Enter Firstname"
+            label="Enter Firstname"
             value={firstname}
             onChange={(e) => {
               setFname(e.target.value);
@@ -113,7 +109,7 @@ const SignUpPage = () => {
             sx={{ width: "50%" }}
           />
           <TextField
-          label="Enter Lastname"
+            label="Enter Lastname"
             value={lastname}
             onChange={(e) => {
               setLname(e.target.value);
@@ -144,14 +140,13 @@ const SignUpPage = () => {
             </Select>
           </FormControl>
           <TextField
-          label="Birthdate"
+            label="Birthdate"
             value={birthdate}
             onChange={(e) => {
               setBirthdate(e.target.value);
             }}
-            InputLabelProps={{ shrink: true}}
+            InputLabelProps={{ shrink: true }}
             type="date"
-     
             sx={{ marginLeft: "30px", width: "50%" }}
           />
         </Container>
@@ -166,7 +161,7 @@ const SignUpPage = () => {
           }}
         >
           <TextField
-          label="Enter Email"
+            label="Enter Email"
             sx={{
               width: "100%",
             }}
@@ -176,7 +171,7 @@ const SignUpPage = () => {
             }}
           />
           <TextField
-          label="Enter Password"
+            label="Enter Password"
             sx={{
               width: "100%",
               marginTop: "18px",
