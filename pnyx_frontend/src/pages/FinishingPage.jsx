@@ -17,6 +17,7 @@ const FinishingPage = () => {
 
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+      {/* <Navbar /> */}
       <Box
         sx={{
           marginTop: "70px",

@@ -9,13 +9,23 @@ import {
   Button,
 } from "@mui/material";
 
-
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const InterestPage = () => {
   const steps = ["Create an account", "Select your interest", "Finish"];
 
+  const [isSportsDisabled, setSportsIsDisabled] = useState(false);
+  const [isFoodDisabled, setFoodIsDisabled] = useState(false);
+  const [isArtDisabled, setArtIsDisabled] = useState(false);
+  const [isAcadDisabled, setAcadIsDisabled] = useState(false);
+  const [isPolDisabled, setPolIsDisabled] = useState(false);
+  const [isBookDisabled, setBookIsDisabled] = useState(false);
+  const [isNewsDisabled, setNewsIsDisabled] = useState(false);
+  const [isBusinessDisabled, setBusinessIsDisabled] = useState(false);
+
+  const [btnvalue, setBtnValue] = useState("");
   const navigate = useNavigate();
   return (
     <Stack
@@ -49,7 +59,10 @@ const InterestPage = () => {
           marginTop: "70px",
         }}
       >
-        <Typography sx={{ marginTop: "40px" , fontSize: "30px"}}>Choose your Interest</Typography>
+        <Typography sx={{ marginTop: "40px", fontSize: "30px" }}>
+          Choose your Interest
+        </Typography>
+        <Typography>{btnvalue}</Typography>
         <Container
           sx={{
             width: "60vw",
@@ -58,10 +71,16 @@ const InterestPage = () => {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            marginLeft: -3
+            marginLeft: -3,
           }}
         >
           <Button
+            disabled={isSportsDisabled}
+            onClick={() => {
+              setSportsIsDisabled(!isSportsDisabled);
+
+              setBtnValue("Sports");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -75,6 +94,12 @@ const InterestPage = () => {
           </Button>
 
           <Button
+            disabled={isFoodDisabled}
+            onClick={() => {
+              setFoodIsDisabled(!isFoodDisabled);
+
+              setBtnValue("Food");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -87,6 +112,12 @@ const InterestPage = () => {
             FOOD
           </Button>
           <Button
+            disabled={isArtDisabled}
+            onClick={() => {
+              setArtIsDisabled(!isArtDisabled);
+
+              setBtnValue("Art");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -99,6 +130,12 @@ const InterestPage = () => {
             ART
           </Button>
           <Button
+            disabled={isAcadDisabled}
+            onClick={() => {
+              setAcadIsDisabled(!isAcadDisabled);
+
+              setBtnValue("Academic");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -120,10 +157,16 @@ const InterestPage = () => {
             justifyContent: "center",
             alignItems: "center",
             marginLeft: -3,
-            marginTop: -10
+            marginTop: -10,
           }}
         >
           <Button
+            disabled={isPolDisabled}
+            onClick={() => {
+              setPolIsDisabled(!isPolDisabled);
+
+              setBtnValue("Politics");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -137,6 +180,12 @@ const InterestPage = () => {
           </Button>
 
           <Button
+            disabled={isBookDisabled}
+            onClick={() => {
+              setBookIsDisabled(!isBookDisabled);
+
+              setBtnValue("Books");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -149,6 +198,12 @@ const InterestPage = () => {
             BOOKS
           </Button>
           <Button
+            disabled={isNewsDisabled}
+            onClick={() => {
+              setNewsIsDisabled(!isNewsDisabled);
+
+              setBtnValue("News");
+            }}
             variant="contained"
             sx={{
               height: "100px",
@@ -161,6 +216,12 @@ const InterestPage = () => {
             NEWS
           </Button>
           <Button
+            disabled={isBusinessDisabled}
+            onClick={() => {
+              setBusinessIsDisabled(!isBusinessDisabled);
+
+              setBtnValue("Business");
+            }}
             variant="contained"
             sx={{
               height: "100px",
