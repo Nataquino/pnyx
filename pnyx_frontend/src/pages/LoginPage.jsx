@@ -48,7 +48,7 @@ const LoginPage = () => {
               margin: 5,
             }}
             alt="Logo"
-            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
+            src="https://cdn.wallpapersafari.com/58/47/Ke67Bz.jpg"
           />
           <Container
             sx={{
