@@ -4,6 +4,8 @@ import {
   AppBar,
   Toolbar,
   Button,
+  TextField,
+  Container,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -17,10 +19,30 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <AppBar>
+    <AppBar sx={{ height: "10vh" }}>
       <Toolbar>
         <Box>
           <Typography>LOGO</Typography>
+        </Box>
+        <Box
+          sx={{
+            marginLeft: 6,
+            width: 500,
+          }}
+        >
+          <TextField
+
+            fullWidth
+            placeholder="search"
+            id="search"
+            
+            sx={{
+              "& fieldset": { border: 'none' },
+              backgroundColor: "#F5F5F5",
+              borderRadius: 50,
+
+            }}
+          />
         </Box>
         <Box
           sx={{

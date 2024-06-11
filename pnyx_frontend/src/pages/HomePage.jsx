@@ -1,5 +1,5 @@
-import { styled, alpha } from "@mui/material/styles";
-import { Stack, Box, Typography, Container } from "@mui/material";
+
+import { Stack} from "@mui/material";
 import NavBar from "../components/NavBar";
 
 const HomePage = () => {

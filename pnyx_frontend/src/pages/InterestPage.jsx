@@ -12,7 +12,7 @@ import {
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import NavBar from "../components/NavBar";
+
 
 const InterestPage = () => {
   const steps = ["Create an account", "Select your interest", "Finish"];
@@ -29,8 +29,7 @@ const InterestPage = () => {
   const [btnvalue, setBtnValue] = useState("");
   const navigate = useNavigate();
   return (
-    <>
-      <NavBar />
+
       <Stack
         sx={{
           backgroundColor: "skyblue",
@@ -260,7 +259,7 @@ const InterestPage = () => {
           </Button>
         </Container>
       </Stack>
-    </>
+
   );
 };
 export default InterestPage;
