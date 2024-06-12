@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage } from "./pages";
+import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate} from "./pages";
 
 function App() {
   return (
@@ -10,6 +10,7 @@ function App() {
         <Route path="/interest" element={<InterestPage />} />
         <Route path="/finish" element={<FinishingPage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/create-survey" element={<SurveyCreate />} />
       </Routes>
     </Router>
   );
