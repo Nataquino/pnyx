@@ -1,7 +1,7 @@
 
 import { Stack, Box} from "@mui/material";
 import NavBar from "../components/NavBar";
-import BasicCard from "../components/Card";
+import BasicCard from "../components/BasicCard";
 
 const HomePage = () => {
   return (

@@ -10,9 +10,10 @@ import { useNavigate } from "react-router-dom";
 
 const pages = [
   { title: "Home", path: "/home" },
-  { title: "Surveys", path: "/surveys" },
+  { title: "Surveys", path: "/ownSurvey" },
   { title: "Profile", path: "/profile" },
 ];
+
 
 const NavBar = () => {
   const navigate = useNavigate();
