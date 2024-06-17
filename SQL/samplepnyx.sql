@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 12, 2024 at 04:27 AM
+-- Generation Time: Jun 17, 2024 at 11:06 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -41,7 +41,12 @@ INSERT INTO `options` (`id`, `question_id`, `option_text`) VALUES
 (1, 7, 'Male'),
 (2, 7, 'Female'),
 (3, 8, 'here'),
-(4, 8, 'there');
+(4, 8, 'there'),
+(5, 12, 'here'),
+(6, 12, 'there'),
+(7, 12, 'anywhere'),
+(8, 13, 'No'),
+(9, 13, 'Yes');
 
 -- --------------------------------------------------------
 
@@ -66,7 +71,12 @@ INSERT INTO `questions` (`id`, `survey_id`, `question_text`, `question_type`) VA
 (5, 7, 'Where', 'multiple_choice'),
 (6, 8, 'Where', 'paragraph'),
 (7, 8, 'Are you', 'multiple_choice'),
-(8, 9, 'Where', 'multiple_choice');
+(8, 9, 'Where', 'multiple_choice'),
+(9, 10, 'gggggg', 'paragraph'),
+(10, 10, 'fgdfgdfgdfgdg', 'multiple_choice'),
+(11, 11, 'What', 'paragraph'),
+(12, 11, 'Where?', 'multiple_choice'),
+(13, 11, 'Are you here?', 'checkbox');
 
 -- --------------------------------------------------------
 
@@ -91,7 +101,9 @@ INSERT INTO `surveys` (`id`, `title`, `description`) VALUES
 (6, 'test 2', 'test 2'),
 (7, 'test 3', 'test 3'),
 (8, 'test 8', 'test 8 '),
-(9, 'test 9', 'test 9');
+(9, 'test 9', 'test 9'),
+(10, 'fgdgdfgdf', 'gdfgdfgdfgdfgdfgdfgdfgdfgdgdfg'),
+(11, 'Sample Title 1', 'here');
 
 -- --------------------------------------------------------
 
@@ -107,7 +119,7 @@ CREATE TABLE `users` (
   `gender` varchar(25) NOT NULL,
   `birthdate` date NOT NULL,
   `email` varchar(25) NOT NULL,
-  `password` varchar(25) NOT NULL
+  `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -115,10 +127,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `password`) VALUES
-(1, 'Nath', 'nathaniel', 'aquino', 'Male', '2000-10-29', 'nataquino29@gmail.com', '123456'),
-(2, 'Steve', 'Steven', 'Absalon', 'Female', '2024-06-07', 'steveAbs@gmail.com', '555555'),
-(3, 'Jerz', 'Jerzeil', 'Lira', 'Male', '2024-06-02', 'jerz@yahoo.com', 'password1'),
-(4, 'Sample User', 'Sample', 'User', 'Female', '2020-06-08', 'sampleemail@yahoo.com', '123');
+(11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', '$2y$10$YCw7ZFH6eq.7w/JKOa'),
+(12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', '$2y$10$Vb9ui0ZV1W/gfwxLHk'),
+(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.');
 
 --
 -- Indexes for dumped tables
@@ -158,25 +169,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `options`
 --
 ALTER TABLE `options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `surveys`
 --
 ALTER TABLE `surveys`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables

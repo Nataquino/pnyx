@@ -29,16 +29,18 @@ const LoginPage = () => {
       fData.append('password', password);
       try {
         const response = await axios.post(url, fData);
+        console.log(response.data); // Log the response data to the console
         if (response.data.status === "success") {
           navigate('/home'); // Redirect to the home page
         } else {
           alert(response.data.message); // Show the error message
         }
       } catch (error) {
+        console.error('An error occurred:', error.message); // Log the error message to the console
         alert('An error occurred: ' + error.message);
       }
     }
-  }
+  };
 
   return (
     <Paper
@@ -51,7 +53,6 @@ const LoginPage = () => {
     >
       <Stack direction="row" spacing={2} sx={{ padding: "20px" }}>
         <Box
-          fullWidth
           sx={{
             backgroundColor: "white",
             padding: "20px",
@@ -78,39 +79,35 @@ const LoginPage = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start", // Align items to the left
-              width: "80%", // Take the full width of the parent container
-              maxWidth: 500, // Set a maximum width for the container
-              padding: 3, // Add padding to the container
+              alignItems: "flex-start",
+              width: "80%",
+              maxWidth: 500,
+              padding: 3,
             }}
           >
             <Typography>Username</Typography>
             <TextField
               value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              sx={{ width: "100%" }} // Make the TextField take the full width of the container
+              onChange={(e) => setUsername(e.target.value)}
+              sx={{ width: "100%" }}
             />
           </Container>
           <Container
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start", // Align items to the left
-              width: "80%", // Take the full width of the parent container
-              maxWidth: 500, // Set a maximum width for the container
-              padding: 3, // Add padding to the container
+              alignItems: "flex-start",
+              width: "80%",
+              maxWidth: 500,
+              padding: 3,
             }}
           >
             <Typography>Password</Typography>
             <TextField
               type="password"
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              sx={{ width: "100%" }} // Make the TextField take the full width of the container
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ width: "100%" }}
             />
           </Container>
           <Button
@@ -126,11 +123,10 @@ const LoginPage = () => {
             LOGIN
           </Button>
           <Typography>
-            {" "}
             Don't have an account?{" "}
             <span
               onClick={() => navigate("/sign-up")}
-              style={{ color: "#05B1BF" }}
+              style={{ color: "#05B1BF", cursor: "pointer" }}
             >
               Click here
             </span>
@@ -138,7 +134,7 @@ const LoginPage = () => {
         </Box>
 
         <Box sx={{ backgroundColor: "grey", width: "50vw", height: "80vh" }}>
-          <Typography>Put something here </Typography>
+          <Typography>Put something here</Typography>
         </Box>
       </Stack>
     </Paper>
