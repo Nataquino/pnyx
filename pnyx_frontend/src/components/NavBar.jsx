@@ -30,7 +30,7 @@ const NavBar = () => {
             width: 500,
           }}
         >
-          <TextField
+          {/* <TextField
 
             fullWidth
             placeholder="search"
@@ -42,7 +42,7 @@ const NavBar = () => {
               borderRadius: 50,
 
             }}
-          />
+          /> */}
         </Box>
         <Box
           sx={{
