@@ -218,10 +218,6 @@ const SurveyPage = () => {
                           Multiple Choice
                         </MenuItem>
                         <MenuItem value="checkbox">Checkbox</MenuItem>
-                        <MenuItem value="dropdown">Dropdown</MenuItem>
-                        <MenuItem value="file_upload">File Upload</MenuItem>
-                        <MenuItem value="date">Date</MenuItem>
-                        <MenuItem value="time">Time</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
