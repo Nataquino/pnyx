@@ -9,10 +9,9 @@ import {
   Grid,
   CardActions,
   Stack,
-  div,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import SurveyNavBar from "../components/SurveyNavBar";
 
 const SurveyList = () => {
   const [surveys, setSurveys] = useState([]);
@@ -39,8 +38,8 @@ const SurveyList = () => {
   }, []);
 
   return (
-    <Stack fullWidth sx={{ backgroundColor: "skyblue",}}>
-      <NavBar />
+    <Stack fullWidth  sx={{ backgroundColor: "skyblue"}}>
+      <SurveyNavBar />
       <Container  sx={{marginTop: 13, marginBottom: 5, flexGrow: 1}}>
         <Grid container spacing={4}>
           {surveys.map((survey) => (
@@ -69,16 +68,6 @@ const SurveyList = () => {
                   >
                     {survey.description}
                   </Typography>
-                  {/* <Box mt={2} display="flex" justifyContent="flex-end">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link}
-                    to={`/take-survey/${survey.id}`}
-                  >
-                    Answer Survey
-                  </Button>
-                </Box> */}
                 </CardContent>
                 <CardActions
                   sx={{
