@@ -9,7 +9,7 @@ const SurveyNavBar = () => {
     <AppBar sx={{ height: "10vh" }}>
       <Toolbar>
         <Box>
-          <Button variant="contain" onClick={() => navigate("/survey-list")}>
+          <Button variant="contain" onClick={() => navigate("/home")}>
             BACK
           </Button>
         </Box>
