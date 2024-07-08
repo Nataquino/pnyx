@@ -2,6 +2,7 @@ import { Stack, Box, Container, Typography } from "@mui/material";
 import NavBar from "../components/NavBar";
 import construction from "../images/construction.png";
 
+
 const HomePage = () => {
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>

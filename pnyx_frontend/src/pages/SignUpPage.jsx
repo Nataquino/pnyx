@@ -18,11 +18,7 @@ import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
-  const steps = [
-    "Create an account",
-    "Select your interest",
-    "Finish",
-  ];
+  const steps = ["Create an account", "Finish"];
 
   const handleChange = (event) => {
     setGender(event.target.value);
@@ -44,11 +40,16 @@ const SignUpPage = () => {
         height: "110vh",
       }}
     >
+
       <Box>
-        <Typography>
-          <span onClick={() => navigate("/")}>TTTTT</span>
-        </Typography>
-        <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "70px" }}>
+        <Button
+          sx={{ marginTop: "30px", marginLeft:"30px" }}
+          variant="contained"
+          onClick={() => navigate("/")}
+        >
+          Back
+        </Button>
+        <Stepper  activeStep={0} alternativeLabel sx={{  maxWidth: '1000px', margin: 'auto', textAlign: 'center' }}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -191,7 +192,7 @@ const SignUpPage = () => {
             width: 150,
             marginBottom: 8,
           }}
-          onClick={() => navigate("/interest")}
+          onClick={() => navigate("/finish")}
         >
           Register
         </Button>

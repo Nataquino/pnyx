@@ -13,17 +13,17 @@ import { useNavigate } from "react-router-dom";
 
 const FinishingPage = () => {
   const navigate = useNavigate();
-  const steps = ["Create an account", "Select your interest", "Finish"];
+  const steps = ["Create an account","Finish"];
 
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
       {/* <Navbar /> */}
       <Box
         sx={{
-          marginTop: "70px",
         }}
       >
-        <Stepper activeStep={2} alternativeLabel>
+        <Button sx={{ marginTop: "30px", marginLeft:"30px" }}variant="contained" onClick={() => navigate("/signUp")}>Back</Button>
+        <Stepper activeStep={2} alternativeLabel sx={{ maxWidth: '1000px', margin: 'auto', textAlign: 'center' }}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>

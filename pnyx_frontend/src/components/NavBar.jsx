@@ -7,13 +7,17 @@ import {
   IconButton,
   Divider,
   Container,
+  Tooltip,
 } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import HomeIcon from "@mui/icons-material/Home";
 import Notification from "./Notification";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PollIcon from "@mui/icons-material/Poll";
 import Badge from "@mui/material/Badge";
 import logo from "../images/logo.jpg";
 
@@ -81,13 +85,13 @@ const NavBar = () => {
           alt="Logo"
           src={logo}
         />
-        <Box
+        {/* <Box
           sx={{
             marginLeft: 6,
             width: 500,
           }}
         >
-          {/* <TextField
+          <TextField
 
             fullWidth
             placeholder="search"
@@ -99,43 +103,47 @@ const NavBar = () => {
               borderRadius: 50,
 
             }}
-          /> */}
-        </Box>
-        <Box
+          />
+        </Box> */}
+        <Container
           sx={{
             flexGrow: 1,
             display: { xs: "none", md: "flex" },
             justifyContent: "right",
+            marginRight: -3,
           }}
         >
-          <IconButton
-            aria-label="show notifications"
-            color="inherit"
-            onClick={handleClick1}
-          >
-            <Badge
-              badgeContent={notifications.length}
-              color="error"
-              invisible={invisible}
+          <Tooltip title="Notification" arrow>
+            {" "}
+            <IconButton
+              aria-label="show notifications"
+              color="inherit"
+              onClick={handleClick1}
+              sx={{ paddingRight: 3 }}
             >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+              <Badge
+                badgeContent={notifications.length}
+                color="error"
+                invisible={invisible}
+              >
+                <NotificationsIcon sx={{ fontSize: "35px" }} />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+
           <Menu
             anchorEl={anchorEl1}
             open={Boolean(anchorEl1)}
             onClose={handleClose1}
-            sx={{ height: "70vh"}}
+            sx={{ height: "70vh" }}
           >
             <Container sx={{ paddingTop: 2 }}>
-              <Box sx={{ paddingBottom: 2 }} >
-                <Typography variant="h5" >
-                  Notifications
-                </Typography>
+              <Box sx={{ paddingBottom: 2 }}>
+                <Typography variant="h5">Notifications</Typography>
               </Box>
 
               <Divider variant="fullWidth" color="#1976D2" />
-              <Box sx={{ py:3, overflowY:"auto" }}>
+              <Box sx={{ py: 3, overflowY: "auto" }}>
                 {notifications.map((notification, index) => (
                   <MenuItem
                     key={index}
@@ -148,23 +156,34 @@ const NavBar = () => {
               </Box>
             </Container>
           </Menu>
-          {pages.map((page) => (
-            <Button
-              key={page}
-              onClick={() => navigate(page.path)}
-              sx={{ my: 2, color: "white", display: "block" }}
+          <Tooltip title="Home" arrow>
+            <IconButton
+              color="inherit"
+              onClick={() => navigate("/home")}
+              sx={{ paddingRight: 3 }}
             >
-              {page.title}
-            </Button>
-          ))}
-          <Button
-            aria-label="show notifications"
-            color="inherit"
-            onClick={handleClick}
-            sx={{ my: 2, color: "white", display: "block" }}
-          >
-            PROFILE
-          </Button>
+              <HomeIcon sx={{ fontSize: "35px" }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Surveys" arrow>
+
+            <IconButton
+              color="inherit"
+              onClick={() => navigate("/ownSurvey")}
+              sx={{ paddingRight: 3 }}
+            >
+              <PollIcon sx={{ fontSize: "35px" }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Account" arrow>
+
+            <IconButton color="inherit" onClick={handleClick}>
+              <AccountCircleIcon sx={{ fontSize: "35px" }} />
+            </IconButton>
+          </Tooltip>
+
           <Menu
             anchorEl={anchorEl}
             open={open}
@@ -177,7 +196,7 @@ const NavBar = () => {
             <MenuItem onClick={handleClose}>My account</MenuItem>
             <MenuItem onClick={() => navigate("/")}>Logout</MenuItem>
           </Menu>
-        </Box>
+        </Container>
       </Toolbar>
     </AppBar>
   );
