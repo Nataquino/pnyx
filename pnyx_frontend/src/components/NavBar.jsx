@@ -23,10 +23,6 @@ import logo from "../images/logo.jpg";
 
 import { useState } from "react";
 
-const pages = [
-  { title: "Home", path: "/home" },
-  { title: "Surveys", path: "/ownSurvey" },
-];
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -114,7 +110,6 @@ const NavBar = () => {
           }}
         >
           <Tooltip title="Notification" arrow>
-            {" "}
             <IconButton
               aria-label="show notifications"
               color="inherit"

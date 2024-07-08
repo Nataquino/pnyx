@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage,OwnSurvey,Admin } from "./pages";
+import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, OwnSurvey, Admin, PendingPage, ApprovePage, DeclinePage } from "./pages";
 
 function App() {
   return (
@@ -12,6 +12,9 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/ownSurvey" element={<OwnSurvey />} />
         <Route path="/admin" element={<Admin/>} />
+        <Route path="/pending" element={<PendingPage/>} />
+        <Route path="/approve" element={<ApprovePage/>} />
+        <Route path="/decline" element={<DeclinePage/>} />
       </Routes>
     </Router>
   );
