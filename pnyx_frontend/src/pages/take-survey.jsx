@@ -14,6 +14,8 @@ import {
   Radio,
   Checkbox,
   TextField,
+  Divider,
+  Card,
 } from "@mui/material";
 import TakeSurveyNav from "../components/TakeSurveyNav";
 
@@ -61,82 +63,116 @@ const TakeSurvey = () => {
   if (!survey) return <div>Loading...</div>;
 
   return (
-    <Stack sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ backgroundColor: "skyblue", height: "120vh", overflowY: "auto" }}
+    >
       <TakeSurveyNav />
-      <Container
+      <Card
         maxWidth="md"
         sx={{
           backgroundColor: "#F5F5F5",
-          width: "100vw",
-          height: "90vh",
-          justifyContent: "center",
+          width: "50vw",
+          height: "120vh",
           marginTop: 12,
           marginBottom: 2,
+          overflowY:"auto"
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          {survey.title}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          {survey.description}
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          {survey.questions.map((question) => (
-            <Box key={question.id} mt={4}>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">
-                  {question.question_text}
-                </FormLabel>
-                {question.question_type === "multiple_choice" && (
-                  <RadioGroup
-                    onChange={(e) => handleChange(question.id, e.target.value)}
-                  >
-                    {question.options.map((option) => (
-                      <FormControlLabel
-                        key={option.id}
-                        value={option.option_text}
-                        control={<Radio />}
-                        label={option.option_text}
-                      />
-                    ))}
-                  </RadioGroup>
-                )}
-                {question.question_type === "checkbox" &&
-                  question.options.map((option) => (
-                    <FormControlLabel
-                      key={option.id}
-                      control={
-                        <Checkbox
-                          onChange={(e) =>
-                            handleChange(
-                              question.id,
-                              e.target.checked ? option.option_text : ""
-                            )
-                          }
-                        />
-                      }
-                      label={option.option_text}
-                    />
-                  ))}
-                {question.question_type === "paragraph" && (
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    onChange={(e) => handleChange(question.id, e.target.value)}
-                  />
-                )}
-                {/* Add other question types as needed */}
-              </FormControl>
-            </Box>
-          ))}
-          <Box mt={4}>
-            <Button variant="contained" color="primary" type="submit">
-              Submit
-            </Button>
+        <Container sx={{ backgroundColor: "#05B1BF" }}>
+          <Box sx={{ py: 4, paddingLeft: 5 }}>
+            <Typography variant="h4" gutterBottom>
+              {survey.title}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {survey.description}
+            </Typography>
           </Box>
-        </form>
-      </Container>
+        </Container>
+        <Card sx={{ height: "90vh", overflowY: "auto" }}>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                width: "105%",
+                paddingLeft: 200,
+                paddingTop: 10,
+                paddingBottom: 10,
+              }}
+            >
+              {survey.questions.map((question) => (
+                <Box key={question.id} mt={4}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">
+                      {question.question_text}
+                    </FormLabel>
+                    {question.question_type === "multiple_choice" && (
+                      <RadioGroup
+                        onChange={(e) =>
+                          handleChange(question.id, e.target.value)
+                        }
+                      >
+                        {question.options.map((option) => (
+                          <FormControlLabel
+                            key={option.id}
+                            value={option.option_text}
+                            control={<Radio />}
+                            label={option.option_text}
+                          />
+                        ))}
+                      </RadioGroup>
+                    )}
+                    {question.question_type === "checkbox" &&
+                      question.options.map((option) => (
+                        <FormControlLabel
+                          key={option.id}
+                          control={
+                            <Checkbox
+                              onChange={(e) =>
+                                handleChange(
+                                  question.id,
+                                  e.target.checked ? option.option_text : ""
+                                )
+                              }
+                            />
+                          }
+                          label={option.option_text}
+                        />
+                      ))}
+                    {question.question_type === "paragraph" && (
+                      <TextField
+                        fullWidth
+                        multiline
+                        required
+                        rows={4}
+                        onChange={(e) =>
+                          handleChange(question.id, e.target.value)
+                        }
+                        style={{ width: "35vw" }}
+                      />
+                    )}
+                    {/* Add other question types as needed */}
+                  </FormControl>
+                </Box>
+              ))}
+              <Box mt={4}>
+                <Button variant="contained" color="primary" type="submit">
+                  Submit
+                </Button>
+              </Box>
+            </form>
+          </Container>
+        </Card>
+      </Card>
     </Stack>
   );
 };
