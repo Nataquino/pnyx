@@ -143,12 +143,12 @@ const NavBar = () => {
               </Box>
 
               <Divider variant="fullWidth" color="#1976D2" />
-              <Box sx={{ py: 3, overflowY: "auto" }}>
+              <Box sx={{ py:3, overflowY: "auto" }}>
                 {notifications.map((notification, index) => (
                   <MenuItem
                     key={index}
                     onClick={handleClose1}
-                    sx={{ width: "20vw" }}
+                    sx={{ width: "20vw", paddingTop:3, paddingBottom:3 }}
                   >
                     {notification}
                   </MenuItem>
