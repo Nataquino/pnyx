@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Box, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, TextField } from '@mui/material';
+import { Container, Typography, Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, TextField } from '@mui/material';
 
 const TakeSurvey = () => {
     const { id } = useParams(); // Get the survey ID from the URL
@@ -11,7 +11,7 @@ const TakeSurvey = () => {
     useEffect(() => {
         const fetchSurvey = async () => {
             try {
-                const response = await axios.get(`http://localhost/survey-app/take-survey.php?id=${id}`);
+                const response = await axios.get(`http://localhost/survey-app/survey-view.php?id=${id}`);
                 console.log(response.data);
                 setSurvey(response.data);
             } catch (error) {
@@ -29,23 +29,13 @@ const TakeSurvey = () => {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post('http://localhost/survey-app/submit-survey.php', { surveyId: id, answers });
-            console.log('Survey submitted successfully:', response.data);
-        } catch (error) {
-            console.error('Error submitting survey:', error);
-        }
-    };
-
     if (!survey) return <div>Loading...</div>;
 
     return (
         <Container maxWidth="md">
             <Typography variant="h4" gutterBottom>{survey.title}</Typography>
             <Typography variant="body1" gutterBottom>{survey.description}</Typography>
-            <form onSubmit={handleSubmit}>
+            <form>
                 {survey.questions.map((question) => (
                     <Box key={question.id} mt={4}>
                         <FormControl component="fieldset">
@@ -77,9 +67,6 @@ const TakeSurvey = () => {
                         </FormControl>
                     </Box>
                 ))}
-                <Box mt={4}>
-                    <Button variant="contained" color="primary" type="submit">Submit</Button>
-                </Box>
             </form>
         </Container>
     );

@@ -1,7 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Container, Card, CardContent, Typography, Button, Grid, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+    Container,
+    Card,
+    CardContent,
+    Typography,
+    Button,
+    Grid,
+    CardActions,
+    Stack,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+import SurveyNavBar from "../components/SurveyNavBar";
 
 const SurveyList = () => {
     const [surveys, setSurveys] = useState([]);
@@ -9,7 +19,9 @@ const SurveyList = () => {
     useEffect(() => {
         const fetchSurveys = async () => {
             try {
-                const response = await axios.get('http://localhost/survey-app/get-surveys.php');
+                const response = await axios.get(
+                    "http://localhost/survey-app/get-approved-surveys.php"
+                );
                 console.log(response); // Log the entire response
                 console.log(response.data); // Log the response data
                 console.log(Array.isArray(response.data)); // Check if response.data is an array
@@ -18,7 +30,7 @@ const SurveyList = () => {
                     setSurveys(response.data);
                 }
             } catch (error) {
-                console.error('Error fetching surveys:', error);
+                console.error("Error fetching surveys:", error);
             }
         };
 
@@ -26,34 +38,59 @@ const SurveyList = () => {
     }, []);
 
     return (
-        <Container maxWidth="md">
-            <Grid container spacing={3}>
-                {surveys.map((survey) => (
-                    <Grid item xs={12} sm={6} md={4} key={survey.id}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h5" component="div">
-                                    {survey.title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {survey.description}
-                                </Typography>
-                                <Box mt={2} display="flex" justifyContent="flex-end">
+        <Stack fullwidth sx={{ backgroundColor: "skyblue", height:"100vh"}}>
+            <SurveyNavBar />
+            <Container sx={{ marginTop: 13, marginBottom: 5, flexGrow: 1 }}>
+                <Grid container spacing={4}>
+                    {surveys.map((survey) => (
+                        <Grid item xs={15} sm={6} md={4} key={survey.id} >
+                            <Card
+                                sx={{
+                                    minWidth: 275,
+                                    height: "40vh",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    borderRadius: 5
+                                }}
+                            >
+                                <CardContent>
+                                    <Typography
+                                        variant="h5"
+                                        component="div"
+                                        sx={{ marginTop: 2, fontSize: "30px" }}
+                                    >
+                                        {survey.title}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ marginTop: 2 }}
+                                    >
+                                        {survey.description}
+                                    </Typography>
+                                </CardContent>
+                                <CardActions
+                                    sx={{
+                                        marginTop: "auto",
+                                        display: "flex",
+                                        justifyContent: "flex-end",
+                                    }}
+                                >
                                     <Button
-                                        variant="contained"
+                                        size="small"
                                         color="primary"
                                         component={Link}
                                         to={`/take-survey/${survey.id}`}
                                     >
-                                        Answer Survey
+                                        Answer survey
                                     </Button>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-        </Container>
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
+        </Stack>
     );
 };
 

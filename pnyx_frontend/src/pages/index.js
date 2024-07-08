@@ -8,3 +8,5 @@ export {default as SurveyList} from './survey-list';
 export {default as TakeSurvey} from './take-survey';
 export {default as PersonalSurveys} from './personal-surveys';
 export {default as Admin} from './admin-page';
+export {default as SurveyPending} from './surveys-pending';
+export {default as ViewSurvey} from './view-survey';

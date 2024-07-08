@@ -6,17 +6,27 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 const pages = [
   { title: "Home", path: "/home" },
-  { title: "Surveys", path: "/personal-surveys" },
-  { title: "Profile", path: "/profile" },
+  { title: "Surveys", path: "/survey-list" },
 ];
-
 
 const NavBar = () => {
   const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <AppBar sx={{ height: "10vh" }}>
@@ -30,7 +40,7 @@ const NavBar = () => {
             width: 500,
           }}
         >
-          <TextField
+          {/* <TextField
 
             fullWidth
             placeholder="search"
@@ -42,7 +52,7 @@ const NavBar = () => {
               borderRadius: 50,
 
             }}
-          />
+          /> */}
         </Box>
         <Box
           sx={{
@@ -60,6 +70,29 @@ const NavBar = () => {
               {page.title}
             </Button>
           ))}
+          <Button
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+            sx={{ my: 2, color: "white", display: "block" }}
+          >
+            PROFILE
+          </Button>
+          <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={() => navigate("/")}>Logout</MenuItem>
+      </Menu>
         </Box>
       </Toolbar>
     </AppBar>

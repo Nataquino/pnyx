@@ -1,82 +1,64 @@
 <?php
-    header('Access-Control-Allow-Origin:*');
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        if($conn -> connect_error){
-            die('Connection Failed: '. $conn -> connect_error);
-        } else {
-            ini_set('display_errors', 1);
-            ini_set('display_startup_errors', 1);
-            error_reporting(E_ALL);
-            
-            try {
+// save-survey.php
 
-                // Debug: Log the incoming data
-                $rawData = file_get_contents('php://input');
-                error_log("Raw input data: " . $rawData);
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-                $data = json_decode($rawData, true);
-                if (!$data) {
-                    throw new Exception("No data received or invalid JSON.");
-                }
+include 'connection.php';
+session_start();
 
-                // Debug: Log the decoded data
-                error_log("Decoded data: " . print_r($data, true));
+// Retrieve POST data from frontend
+$rawData = file_get_contents('php://input');
+$data = json_decode($rawData, true);
 
+try {
+    // Initialize PDO connection
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                $data = json_decode(file_get_contents('php://input'), true);
-                if (!$data) {
-                    throw new Exception("No data received or invalid JSON.");
-                }
+    // Start a transaction
+    $conn->beginTransaction();
 
-                $servername = "localhost"; // Change to your database server name
-                $username = "root"; // Change to your database username
-                $password = ""; // Change to your database password
-                $dbname = "samplePnyx"; // Change to your database name
+    // Insert survey information
+    $stmt = $conn->prepare("INSERT INTO surveys (title, description, user_id) VALUES (:title, :description, :user_id)");
+    $stmt->bindParam(':user_id', $_SESSION['user_id']);
+    $stmt->bindParam(':title', $data['title']);
+    $stmt->bindParam(':description', $data['description']);
+    $stmt->execute();
+    $survey_id = $conn->lastInsertId();
 
-                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $conn->beginTransaction();
-                $inTransaction = true;
-            
-                $stmt = $conn->prepare("INSERT INTO surveys (title, description) VALUES (:title, :description)");
-                $stmt->bindParam(':title', $data['title']);
-                $stmt->bindParam(':description', $data['description']);
+    // Insert questions and options
+    foreach ($data['questions'] as $question) {
+        $stmt = $conn->prepare("INSERT INTO questions (survey_id, question_text, question_type) VALUES (:survey_id, :question_text, :question_type)");
+        $stmt->bindParam(':survey_id', $survey_id);
+        $stmt->bindParam(':question_text', $question['text']);
+        $stmt->bindParam(':question_type', $question['type']);
+        $stmt->execute();
+        $question_id = $conn->lastInsertId();
+
+        // Insert options if applicable (for multiple_choice and checkbox types)
+        if (in_array($question['type'], ['multiple_choice', 'checkbox']) && isset($question['options'])) {
+            foreach ($question['options'] as $option) {
+                $stmt = $conn->prepare("INSERT INTO options (question_id, option_text) VALUES (:question_id, :option_text)");
+                $stmt->bindParam(':question_id', $question_id);
+                $stmt->bindParam(':option_text', $option);
                 $stmt->execute();
-                $survey_id = $conn->lastInsertId();
-            
-                error_log("Survey ID: " . $survey_id);
-
-                foreach ($data['questions'] as $question) {
-                    $stmt = $conn->prepare("INSERT INTO questions (survey_id, question_text, question_type) VALUES (:survey_id, :question_text, :question_type)");
-                    $stmt->bindParam(':survey_id', $survey_id);
-                    $stmt->bindParam(':question_text', $question['text']);
-                    $stmt->bindParam(':question_type', $question['type']);
-                    $stmt->execute();
-                    $question_id = $conn->lastInsertId();
-
-                    error_log("Question ID: " . $question_id);
-            
-                    if (isset($question['options']) && in_array($question['type'], ['multiple_choice', 'checkbox'])) {
-                        foreach ($question['options'] as $option) {
-                            $stmt = $conn->prepare("INSERT INTO options (question_id, option_text) VALUES (:question_id, :option_text)");
-                            $stmt->bindParam(':question_id', $question_id);
-                            $stmt->bindParam(':option_text', $option);
-                            $stmt->execute();
-                        }
-                    }
-                }
-                $conn->commit();
-                $inTransaction = false;
-                echo "Survey saved successfully!";
-            } catch (Exception $e) {
-                if (isset($inTransaction) && $inTransaction) {
-                    $conn->rollBack();
-                }
-                http_response_code(500);
-                echo "Failed to save survey: " . $e->getMessage();
-                error_log("Failed to save survey: " . $e->getMessage());
             }
         }
     }
+
+    // Commit transaction
+    $conn->commit();
+
+    // Return success message
+    echo json_encode(array('message' => 'Survey saved successfully!'));
+
+} catch (PDOException $e) {
+    // Rollback transaction on error
+    $conn->rollBack();
+    http_response_code(500);
+    echo 'Hello';
+    echo json_encode(array('message' => 'Failed to save survey: ' . $e->getMessage()));
+    
+}
 ?>

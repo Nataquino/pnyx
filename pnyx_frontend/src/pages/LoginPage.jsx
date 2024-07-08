@@ -6,10 +6,14 @@ import {
   TextField,
   Button,
   Container,
+  Card,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import logo from "../images/logo.jpg";
+import loginphoto from "../images/loginphoto.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -30,11 +34,16 @@ const LoginPage = () => {
       try {
         const response = await axios.post(url, fData);
         console.log(response.data); // Log the response data to the console
-        if (response.data.status === "success") {
-          navigate('/home'); // Redirect to the home page
-        } else {
-          alert(response.data.message); // Show the error message
+        if(username === 'admin' && password === 'admin'){
+          navigate('/admin');
+        }else{
+          if (response.data.status === "success") {
+            navigate('/home'); // Redirect to the home page
+          } else {
+            alert(response.data.message); // Show the error message
+          }
         }
+        
       } catch (error) {
         console.error('An error occurred:', error.message); // Log the error message to the console
         alert('An error occurred: ' + error.message);
@@ -51,91 +60,132 @@ const LoginPage = () => {
         alignContent: "center",
       }}
     >
-      <Stack direction="row" spacing={2} sx={{ padding: "20px" }}>
-        <Box
+      <Stack
+        direction="row"
+        sx={{
+          width: "80vw",
+          display: "flex",
+          justifyContent: "center",
+          marginLeft: 19,
+        }}
+      >
+        <Card
           sx={{
-            backgroundColor: "white",
-            padding: "20px",
-            width: "50vw",
-            height: "90vh",
+            width: "80vw",
             display: "flex",
-            flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center",
+            borderRadius: 15,
+            backgroundColor: "black",
           }}
         >
           <Box
-            component="img"
+            fullWidth
             sx={{
-              height: 150,
-              width: 150,
-              borderRadius: 50,
-              margin: 5,
-            }}
-            alt="Logo"
-            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
-          />
-          <Container
-            sx={{
+              backgroundColor: "white",
+              padding: "20px",
+              width: "30vw",
+              height: "80vh",
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
-              width: "80%",
-              maxWidth: 500,
-              padding: 3,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Typography>Username</Typography>
-            <TextField
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              sx={{ width: "100%" }}
+            <Box
+              component="img"
+              sx={{
+                height: 150,
+                width: 150,
+                borderRadius: 50,
+                margin: 1,
+              }}
+              alt="Logo"
+              src={logo}
             />
-          </Container>
-          <Container
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              width: "80%",
-              maxWidth: 500,
-              padding: 3,
-            }}
-          >
-            <Typography>Password</Typography>
-            <TextField
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{ width: "100%" }}
-            />
-          </Container>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            sx={{
-              marginTop: 2,
-              backgroundColor: "#05B1BF",
-              width: 150,
-              marginBottom: 8,
-            }}
-          >
-            LOGIN
-          </Button>
-          <Typography>
-            Don't have an account?{" "}
-            <span
-              onClick={() => navigate("/sign-up")}
-              style={{ color: "#05B1BF", cursor: "pointer" }}
+            <Container
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start", // Align items to the left
+                width: "80%", // Take the full width of the parent container
+                maxWidth: 500, // Set a maximum width for the container
+                padding: 3, // Add padding to the container
+              }}
             >
-              Click here
-            </span>
-          </Typography>
-        </Box>
+              <Typography>Username</Typography>
+              <TextField
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                sx={{ width: "100%" }} // Make the TextField take the full width of the container
+              />
+            </Container>
+            <Container
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start", // Align items to the left
+                width: "80%", // Take the full width of the parent container
+                maxWidth: 500, // Set a maximum width for the container
+              }}
+            >
+              <Typography>Password</Typography>
+              <TextField
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                sx={{ width: "100%" }} // Make the TextField take the full width of the container
+              />
+            </Container>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{
+                marginTop: 2,
+                backgroundColor: "#05B1BF",
+                width: 150,
+                marginBottom: 7,
+              }}
+            >
+              LOGIN
+            </Button>
+            <Typography>
+              Don't have an account?{" "}
+              <span
+                onClick={() => navigate("/signUp")}
+                style={{ color: "#05B1BF" }}
+              >
+                Click here
+              </span>
+            </Typography>
+          </Box>
 
-        <Box sx={{ backgroundColor: "grey", width: "50vw", height: "80vh" }}>
-          <Typography>Put something here</Typography>
-        </Box>
+          <Box
+            sx={{
+              width: "50vw",
+              height: "85.35vh",
+              backgroundColor: "#12A1E6",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              component="img"
+              sx={{
+                marginTop: 9,
+                height: 300,
+                width: 800,
+              }}
+              alt="loginphoto"
+              src={loginphoto}
+            />
+            <Box sx={{display:"flex", justifyContent: "center", marginTop: 2 }}>
+              <Typography sx={{fontFamily: "fantasy", fontSize: 70}}>SURVEY PLATFORM</Typography>
+            </Box>
+          </Box>
+        </Card>
       </Stack>
     </Paper>
   );

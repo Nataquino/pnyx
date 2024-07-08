@@ -3,6 +3,7 @@
 header("Access-Control-Allow-Origin:*");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     // Handle preflight request

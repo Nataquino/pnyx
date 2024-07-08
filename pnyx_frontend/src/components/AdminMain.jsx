@@ -1,5 +1,4 @@
-import { styled, useTheme } from "@mui/material/styles";
-import * as React from "react";
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Drawer,
@@ -13,14 +12,11 @@ import {
     ListItemIcon,
     ListItemButton,
     ListItemText,
-    Button,
-    Card,
-    CardContent,
-    CardActions,
 } from "@mui/material";
 
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import { Link } from "react-router-dom"; 
 
 const drawerWidth = 240;
 
@@ -52,13 +48,17 @@ const AdminMain = () => {
                 <Toolbar />
                 <Box sx={{ overflow: "auto" }}>
                     <List>
-                        {["DASHBOARD", "ACCOUNTS", "SURVEYS"].map((text, index) => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
+                        {[
+                            { text: "DASHBOARD", to: "/dashboard" },
+                            { text: "ACCOUNTS", to: "/accounts" },
+                            { text: "SURVEYS", to: "/surveys-pending" }
+                        ].map((item, index) => (
+                            <ListItem key={item.text} disablePadding>
+                                <ListItemButton component={Link} to={item.to}>
                                     <ListItemIcon>
                                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                                     </ListItemIcon>
-                                    <ListItemText primary={text} />
+                                    <ListItemText primary={item.text} />
                                 </ListItemButton>
                             </ListItem>
                         ))}
@@ -66,60 +66,6 @@ const AdminMain = () => {
                     <Divider />
                 </Box>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Toolbar />
-                <Card
-                    sx={{
-                        width: "30vw",
-                        height: "50vh",
-                        display: "flex",
-                        flexDirection: "column",
-                    }}
-                >
-                    <CardContent>
-                        <Typography
-                            variant="h5"
-                            component="div"
-                            sx={{ marginTop: 2, fontSize: "40px" }}
-                        >
-                            Genshin or Wuwa?
-                        </Typography>
-                        <Typography variant="body2" sx={{ marginTop: 2 }}>
-                            "Genshin" - Adventurous, fantastical journey through diverse
-                            landscapes, filled with mystical creatures and elemental powers.
-                            "Wuthering Waves" - A turbulent tale of love and loss set against
-                            the haunting backdrop of the moody Yorkshire moors.
-                            <br />
-                            {'"a benevolent smile"'}
-                        </Typography>
-                    </CardContent>
-
-                    <Box
-                        sx={{
-                            marginTop: "auto",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <Button variant="contained">View</Button>
-                    </Box>
-
-                    <CardActions
-                        sx={{
-                            marginTop: "auto",
-                            display: "flex",
-                            justifyContent: "flex-end",
-                        }}
-                    >
-                        <Button sx={{ color: "green" }} size="small">
-                            Approve
-                        </Button>
-                        <Button sx={{ color: "red" }} size="small">
-                            Decline
-                        </Button>
-                    </CardActions>
-                </Card>
-            </Box>
         </Box>
     );
 };

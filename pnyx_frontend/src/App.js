@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate, SurveyList, TakeSurvey, PersonalSurveys, Admin} from "./pages";
+import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate, SurveyList, TakeSurvey, PersonalSurveys, Admin, SurveyPending,ViewSurvey} from "./pages";
 
 function App() {
   return (
@@ -15,6 +15,8 @@ function App() {
         <Route path="/take-survey/:id" element={<TakeSurvey />} />
         <Route path="/personal-surveys" element={<PersonalSurveys />} />
         <Route path="/admin" element={<Admin/>} />
+        <Route path="/surveys-pending" element={<SurveyPending/>} />
+        <Route path="/view-survey/:id" element={<ViewSurvey />} />
       </Routes>
     </Router>
   );
