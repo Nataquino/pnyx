@@ -67,22 +67,27 @@ const TakeSurvey = () => {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      sx={{ backgroundColor: "skyblue", height: "120vh", overflowY: "auto" }}
+      sx={{
+        backgroundColor: "skyblue",
+        height: "120vh",
+        overflowY: "auto",
+        py: 2,
+      }}
     >
-      <TakeSurveyNav />
+      <Box sx={{ paddingBottom: 12 }}>
+        <TakeSurveyNav />
+      </Box>
+
       <Card
         maxWidth="md"
         sx={{
           backgroundColor: "#F5F5F5",
           width: "50vw",
           height: "120vh",
-          marginTop: 12,
-          marginBottom: 2,
-          overflowY:"auto"
         }}
       >
         <Container sx={{ backgroundColor: "#05B1BF" }}>
-          <Box sx={{ py: 4, paddingLeft: 5 }}>
+          <Box sx={{py:2, paddingLeft: 5 }}>
             <Typography variant="h4" gutterBottom>
               {survey.title}
             </Typography>
@@ -91,7 +96,7 @@ const TakeSurvey = () => {
             </Typography>
           </Box>
         </Container>
-        <Card sx={{ height: "90vh", overflowY: "auto" }}>
+        <Card sx={{ height: "96vh", overflowY: "auto" }}>
           <Container
             sx={{
               display: "flex",
