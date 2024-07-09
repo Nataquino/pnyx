@@ -3,7 +3,7 @@ import AdminMain from "../components/AdminMain";
 
 const Admin = () => {
   return (
-    <Stack>
+    <Stack sx={{backgroundColor: "skyblue", height:"100vh"}}>
       <Box>
         <AdminMain />
       </Box>

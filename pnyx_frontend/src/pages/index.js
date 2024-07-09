@@ -10,3 +10,6 @@ export {default as PersonalSurveys} from './personal-surveys';
 export {default as Admin} from './admin-page';
 export {default as SurveyPending} from './surveys-pending';
 export {default as ViewSurvey} from './view-survey';
+export {default as PendingPage} from './surveys-pending';
+export {default as ApprovePage} from './survey-approved';
+export {default as DeclinePage} from './survey-declined';

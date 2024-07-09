@@ -21,8 +21,7 @@ import axios from "axios";
 const SignUpPage = () => {
   const steps = [
     "Create an account",
-    "Select your interest",
-    "Finish",
+    "Finish"
   ];
 
   const handleChange = (event) => {
@@ -37,16 +36,6 @@ const SignUpPage = () => {
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [formData, setFormData]=useState({
-    username: username,
-    firstname: firstname,
-    lastname: lastname,
-    gender: gender,
-    birthdate:birthdate,
-    email:email,
-    password:password
-  });
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
@@ -71,9 +60,8 @@ const SignUpPage = () => {
       fData.append('email',email)
       fData.append('password',password)
       axios.post(url,fData).then(response=>alert(response.data)).catch(error=>alert(error))
-      navigate("/interest")
+      navigate("/finish")
     }
-    
   }
   
   return (
@@ -85,9 +73,6 @@ const SignUpPage = () => {
     >
       <form action='/PHP/register.php' method="POST">
       <Box>
-        <Typography>
-          <span onClick={() => navigate("/")}>TTTTT</span>
-        </Typography>
         <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "70px" }}>
           {steps.map((label) => (
             <Step key={label}>

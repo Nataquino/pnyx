@@ -1,6 +1,6 @@
 import { Stack, Box, Container, Typography } from "@mui/material";
 import NavBar from "../components/NavBar";
-import construction from "../images/construction.png";
+import construction from "../image/construction.png";
 
 const HomePage = () => {
   return (

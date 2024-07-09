@@ -12,8 +12,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import logo from "../images/logo.jpg";
-import loginphoto from "../images/loginphoto.png";
+import logo from "../image/logo.jpg";
+import loginphoto from "../image/loginphoto.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -155,7 +155,7 @@ const LoginPage = () => {
             <Typography>
               Don't have an account?{" "}
               <span
-                onClick={() => navigate("/signUp")}
+                onClick={() => navigate("/sign-up")}
                 style={{ color: "#05B1BF" }}
               >
                 Click here
