@@ -26,6 +26,10 @@ import { useState } from "react";
 const pages = [
   { title: "Home", path: "/home" },
   { title: "Surveys", path: "/survey-list" },
+<<<<<<< HEAD
+=======
+  { title: "Profile", path: "/profile" },
+>>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996
 ];
 
 const NavBar = () => {

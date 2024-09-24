@@ -26,4 +26,8 @@ const TakeSurveyNav = () => {
   );
 };
 
+<<<<<<< HEAD
 export default TakeSurveyNav;
+=======
+export default TakeSurveyNav;
+>>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996
