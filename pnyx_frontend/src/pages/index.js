@@ -13,3 +13,4 @@ export {default as ViewSurvey} from './view-survey';
 export {default as PendingPage} from './surveys-pending';
 export {default as ApprovePage} from './survey-approved';
 export {default as DeclinePage} from './survey-declined';
+export {default as Result} from './graphresult';

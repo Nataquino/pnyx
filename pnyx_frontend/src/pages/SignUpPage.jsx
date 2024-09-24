@@ -73,6 +73,7 @@ const SignUpPage = () => {
     >
       <form action='/PHP/register.php' method="POST">
       <Box>
+      <Button sx={{ marginTop: "30px", marginLeft:"30px" }}variant="contained" onClick={() => navigate("/")}>Back</Button>
         <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "70px" }}>
           {steps.map((label) => (
             <Step key={label}>

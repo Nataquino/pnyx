@@ -84,7 +84,7 @@ const LoginPage = () => {
               backgroundColor: "white",
               padding: "20px",
               width: "30vw",
-              height: "80vh",
+              height: "81.3vh",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",

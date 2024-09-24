@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate, SurveyList, TakeSurvey, PersonalSurveys, Admin, SurveyPending,ViewSurvey, PendingPage, ApprovePage,DeclinePage} from "./pages";
+import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate, SurveyList, TakeSurvey, PersonalSurveys, Admin, SurveyPending,ViewSurvey, PendingPage, ApprovePage,DeclinePage,Result} from "./pages";
 
 function App() {
   return (
@@ -20,6 +20,7 @@ function App() {
         <Route path="/pending" element={<PendingPage/>} />
         <Route path="/approve" element={<ApprovePage/>} />
         <Route path="/decline" element={<DeclinePage/>} />
+        <Route path="/results" element={<Result/>} />
       </Routes>
     </Router>
   );

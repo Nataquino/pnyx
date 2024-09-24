@@ -63,6 +63,17 @@ const AdminMain = () => {
                     <Typography variant="h6" noWrap component="div">
                         ADMIN
                     </Typography>
+                    <Container sx={{
+                        flexGrow: 1,
+                        display: { xs: "none", md: "flex" },
+                        justifyContent: "right",
+                        marginRight: -3,
+                    }}>
+                        <Button color="inherit" onClick={()=> {navigate("/")}}>
+                            Logout
+                        </Button>
+
+                    </Container>
                 </Toolbar>
             </AppBar>
             <Drawer
