@@ -164,9 +164,9 @@ const LoginPage = () => {
           </Box>
 
           <Box
+          maxHeight={"200vh"}
+          fullWidth
             sx={{
-              width: "50vw",
-              height: "85.35vh",
               backgroundColor: "#12A1E6",
               justifyContent: "center",
             }}
