@@ -206,7 +206,8 @@ const NavBar = () => {
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={() => navigate("/redeem")}>Points</MenuItem>
+            <MenuItem onClick={() => navigate("/")}>Logout</MenuItem>
           </Menu>
         </Container>
       </Toolbar>
