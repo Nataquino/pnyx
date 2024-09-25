@@ -27,10 +27,11 @@ const HomePage = () => {
   }, []);
 
   return (
-    <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh"}}>
       <NavBar />
       <Container
-        sx={{
+        sx={{ 
+          overflowY: "auto" ,
           display: "flex",
           flexDirection: "column", // Column layout for stacking
           justifyContent: "start",
@@ -38,7 +39,7 @@ const HomePage = () => {
           marginTop: "50px",
         }}
       >
-        <Stack fullWidth spacing={4} sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+        <Stack fullWidth spacing={4}>
           <Container sx={{ marginTop: 13, marginBottom: 5, flexGrow: 1 }}>
             <Stack spacing={4}> {/* Stack cards vertically with spacing */}
               {surveys.map((survey) => (

@@ -8,6 +8,7 @@ import {
   Divider,
   Container,
   Tooltip,
+  Stack,
 } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
@@ -76,16 +77,16 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       // Make a request to the backend to destroy the session
-      await axios.post('http://localhost/survey-app/logout.php'); // Adjust the API endpoint as per your setup
+      await axios.post("http://localhost/survey-app/logout.php"); // Adjust the API endpoint as per your setup
       // Redirect to the home page after session destruction
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   };
 
   return (
-    <AppBar sx={{ height: "10vh" }}>
+    <AppBar sx={{ height: "10vh", position: "static" }}>
       <Toolbar>
         <Box
           component="img"
@@ -179,7 +180,6 @@ const NavBar = () => {
           </Tooltip>
 
           <Tooltip title="Surveys" arrow>
-
             <IconButton
               color="inherit"
               onClick={() => navigate("/survey-list")}
@@ -190,7 +190,6 @@ const NavBar = () => {
           </Tooltip>
 
           <Tooltip title="Account" arrow>
-
             <IconButton color="inherit" onClick={handleClick}>
               <AccountCircleIcon sx={{ fontSize: "35px" }} />
             </IconButton>
