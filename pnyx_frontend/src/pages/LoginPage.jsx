@@ -32,7 +32,7 @@ const LoginPage = () => {
       fData.append('username', username);
       fData.append('password', password);
       try {
-        const response = await axios.post(url, fData);
+        const response = await axios.post(url, fData, {withCredentials: true});
         console.log(response.data); // Log the response data to the console
         if(username === 'admin' && password === 'admin'){
           navigate('/admin');

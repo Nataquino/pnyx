@@ -29,8 +29,4 @@ const SurveyNavBar = () => {
   );
 };
 
-<<<<<<< HEAD
 export default SurveyNavBar;
-=======
-export default SurveyNavBar;
->>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996

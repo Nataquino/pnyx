@@ -11,10 +11,6 @@ import {
   IconButton,
   Grid,
   Stack,
-<<<<<<< HEAD
-=======
-
->>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
@@ -165,7 +161,6 @@ const SurveyPage = () => {
           marginTop: 12,
           overflowY: "auto",
           padding: "auto",
-<<<<<<< HEAD
           marginBottom: 2,
         }}
       >
@@ -177,14 +172,6 @@ const SurveyPage = () => {
         >
           <TextField
             sx={{ marginTop: 5 }}
-=======
-          marginBottom: 2
-        }}
-      >
-        <form id="surveyForm" onSubmit={handleSubmit} method="POST" noValidate>
-          <TextField
-          sx={{marginTop: 5}}
->>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996
             label="Title"
             name="title"
             id="title"
@@ -284,16 +271,12 @@ const SurveyPage = () => {
               </Box>
             ))}
           </div>
-<<<<<<< HEAD
           <Box
             mt={4}
             display="flex"
             justifyContent="space-between"
             sx={{ paddingBottom: 4 }}
           >
-=======
-          <Box mt={4} display="flex" justifyContent="space-between" sx={{paddingBottom: 4}}>
->>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996
             <Button
               variant="contained"
               color="primary"

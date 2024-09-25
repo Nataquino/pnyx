@@ -1,11 +1,18 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-include 'connection.php';
 session_start();
+header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Content-Type: application/json');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+
+
+include 'connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    // Check for connection errors
     if ($conn->connect_error) {  
         die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
     }
@@ -16,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Use prepared statements to prevent SQL injection
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->bind_param("s", $userName);
-
+    
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -30,18 +37,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!password_verify($password, $retrievedHashedPassword)) {
             echo json_encode(["status" => "error", "message" => "Incorrect password"]);
         } else {
-            // Regenerate session ID to prevent session fixation
-            session_regenerate_id(true);
-            
-            $_SESSION['user_id'] = $row['id']; // Store user ID in session
-            $_SESSION['username'] = $row['username']; // Store username in session
-            
-            // Successful login, send success response
-            echo json_encode(["status" => "success", "message" => "Login successful"]);
+            // Set session variables
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['username'] = $row['username'];
+
+            // Debugging: check if session variables are set correctly
+            if(isset($_SESSION['user_id']) && isset($_SESSION['username'])) {
+                echo json_encode(["status" => "success", "message" => "Login successful", "user" => $_SESSION]);
+            } else {
+                echo json_encode(["status" => "error", "message" => "Failed to set session variables"]);
+            }
         }
     }
-
     $stmt->close();
     $conn->close();
 }
-?>

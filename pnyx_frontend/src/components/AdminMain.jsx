@@ -21,6 +21,7 @@ import {
     MenuItem,
 } from "@mui/material";
 import { useState } from "react";
+import axios from "axios";
 
 import PollIcon from "@mui/icons-material/Poll";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
@@ -44,12 +45,22 @@ const AdminMain = () => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
 
-
     };
 
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleLogout = async () => {
+        try {
+          // Make a request to the backend to destroy the session
+          await axios.post('http://localhost/survey-app/logout.php'); // Adjust the API endpoint as per your setup
+          // Redirect to the home page after session destruction
+          navigate('/');
+        } catch (error) {
+          console.error('Error logging out:', error);
+        }
+      };
 
 
     return (
@@ -69,7 +80,7 @@ const AdminMain = () => {
                         justifyContent: "right",
                         marginRight: -3,
                     }}>
-                        <Button color="inherit" onClick={()=> {navigate("/")}}>
+                        <Button color="inherit" onClick={handleLogout}>
                             Logout
                         </Button>
 

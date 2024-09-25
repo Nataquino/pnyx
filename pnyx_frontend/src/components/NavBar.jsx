@@ -20,16 +20,13 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PollIcon from "@mui/icons-material/Poll";
 import Badge from "@mui/material/Badge";
 import logo from "../image/logo.jpg";
+import axios from "axios";
 
 import { useState } from "react";
 
 const pages = [
   { title: "Home", path: "/home" },
   { title: "Surveys", path: "/survey-list" },
-<<<<<<< HEAD
-=======
-  { title: "Profile", path: "/profile" },
->>>>>>> 2bab7da32c3bba16534233e016a9c3a2b4c08996
 ];
 
 const NavBar = () => {
@@ -73,6 +70,17 @@ const NavBar = () => {
       setInvisible(invisible);
     } else {
       setInvisible(!invisible);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Make a request to the backend to destroy the session
+      await axios.post('http://localhost/survey-app/logout.php'); // Adjust the API endpoint as per your setup
+      // Redirect to the home page after session destruction
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
     }
   };
 
@@ -198,7 +206,7 @@ const NavBar = () => {
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={() => navigate("/")}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Container>
       </Toolbar>

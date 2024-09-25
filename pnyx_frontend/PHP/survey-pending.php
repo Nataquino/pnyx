@@ -11,23 +11,6 @@ if ($conn->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $sql = "SELECT id, title, description FROM surveys WHERE status = 'pending'";
-    $result = $conn->query($sql);
-
-    $surveys = [];
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $surveys[] = $row;
-        }
-        echo json_encode($surveys);
-    } else {
-        echo json_encode(["message" => "No surveys found"]);
-    }
-}
-
-
 // Handle POST request to update survey status
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
