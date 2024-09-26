@@ -29,14 +29,14 @@ const HomePage = () => {
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh"}}>
       <NavBar />
-      <Container
+      <Box
         sx={{ 
           overflowY: "auto" ,
           display: "flex",
           flexDirection: "column", // Column layout for stacking
-          justifyContent: "start",
           alignItems: "center", // Center cards horizontally
-          marginTop: "50px",
+          marginTop: "20px",
+          paddingBottom: 5
         }}
       >
         <Stack fullWidth spacing={4}>
@@ -90,7 +90,7 @@ const HomePage = () => {
             </Stack>
           </Container>
         </Stack>
-      </Container>
+      </Box>
     </Stack>
   );
 };

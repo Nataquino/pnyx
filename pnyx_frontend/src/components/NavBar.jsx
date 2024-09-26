@@ -3,12 +3,12 @@ import {
   Typography,
   AppBar,
   Toolbar,
-  Button,
+
   IconButton,
   Divider,
   Container,
   Tooltip,
-  Stack,
+
 } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
@@ -40,14 +40,14 @@ const NavBar = () => {
 
   const open = Boolean(anchorEl);
 
-  const [notifications, setNotifications] = useState([
-    "Notification 1",
-    "Notification 2",
-    "Notification 3",
-    "Notification 4",
-    "Notification 5",
-    "Notification 6",
-  ]);
+  // const [notifications, setNotifications] = useState([
+  //   "Notification 1",
+  //   "Notification 2",
+  //   "Notification 3",
+  //   "Notification 4",
+  //   "Notification 5",
+  //   "Notification 6",
+  // ]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -126,7 +126,7 @@ const NavBar = () => {
             marginRight: -3,
           }}
         >
-          <Tooltip title="Notification" arrow>
+          {/* <Tooltip title="Notification" arrow>
             {" "}
             <IconButton
               aria-label="show notifications"
@@ -135,15 +135,15 @@ const NavBar = () => {
               sx={{ paddingRight: 3 }}
             >
               <Badge
-                badgeContent={notifications.length}
+                // badgeContent={notifications.length}
                 color="error"
                 invisible={invisible}
               >
                 <NotificationsIcon sx={{ fontSize: "35px" }} />
               </Badge>
             </IconButton>
-          </Tooltip>
-
+          </Tooltip> */}
+{/* 
           <Menu
             anchorEl={anchorEl1}
             open={Boolean(anchorEl1)}
@@ -168,7 +168,7 @@ const NavBar = () => {
                 ))}
               </Box>
             </Container>
-          </Menu>
+          </Menu> */}
           <Tooltip title="Home" arrow>
             <IconButton
               color="inherit"
