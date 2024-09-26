@@ -61,9 +61,9 @@ const SurveyList = () => {
   };
 
   return (
-    <Stack fullwidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack maxHeight={"100vh"} sx={{ backgroundColor: "skyblue", height: "110vh" }}>
       <SurveyNavBar />
-      <Container sx={{ marginTop: 13, marginBottom: 5, flexGrow: 1 }}>
+      <Container sx={{ marginTop: 13, marginBottom: 5, flexGrow: 1, overflowY: "auto" }}>
         <Grid container spacing={4}>
           {surveys.map((survey) => (
             <Grid item xs={15} sm={6} md={4} key={survey.id}>

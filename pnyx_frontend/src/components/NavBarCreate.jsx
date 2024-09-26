@@ -5,7 +5,7 @@ const NavBarCreate = () => {
   const navigate = useNavigate();
 
   return (
-    <AppBar sx={{ height: "10vh" }}>
+    <AppBar sx={{ height: "10vh", position: "static" }}>
       <Toolbar>
         <Box>
           <Button variant="contain" onClick={() => navigate("/survey-list")}>
@@ -19,7 +19,7 @@ const NavBarCreate = () => {
             justifyContent: "center",
           }}
         >
-          <Typography sx={{fontSize: 25}}>CREATE A SURVEY</Typography>
+          <Typography sx={{ fontSize: 25 }}>CREATE A SURVEY</Typography>
         </Box>
       </Toolbar>
     </AppBar>
