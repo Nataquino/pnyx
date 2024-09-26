@@ -42,13 +42,12 @@ const SurveyResults = () => {
                 <Box mb={4}>
                     <Typography variant="h6">Paragraph Answers:</Typography>
                     {paragraph_answers.length > 0 ? (
-                        <Box>
-                            {paragraph_answers.map((answer, index) => (
-                                <Typography key={index} variant="body1">
-                                    {answer}
-                                </Typography>
-                            ))}
-                        </Box>
+                        paragraph_answers.map((item, index) => (
+                            <Box key={index} mb={2}>
+                                <Typography variant="body1">{item.question_text}</Typography>
+                                <Typography variant="body2">{item.answer}</Typography>
+                            </Box>
+                        ))
                     ) : (
                         <Typography variant="body1">No paragraph answers.</Typography>
                     )}
@@ -58,8 +57,8 @@ const SurveyResults = () => {
                 <Box mb={4}>
                     <Typography variant="h6">Multiple Choice Results:</Typography>
                     {Object.keys(multiple_choice_stats).length > 0 ? (
-                        Object.entries(multiple_choice_stats).map(([questionId, choices], index) => {
-                            const choiceCounts = Object.entries(choices).map(([choice, count]) => ({
+                        Object.entries(multiple_choice_stats).map(([questionId, { question_text, options }], index) => {
+                            const choiceCounts = Object.entries(options).map(([choice, count]) => ({
                                 name: choice,
                                 value: count
                             }));
@@ -67,7 +66,7 @@ const SurveyResults = () => {
                             return (
                                 <Box key={index} mb={4}>
                                     <Typography variant="h6" gutterBottom>
-                                        Question {questionId}:
+                                        {question_text}
                                     </Typography>
                                     <PieChart width={500} height={400}>
                                         <Pie
@@ -97,19 +96,17 @@ const SurveyResults = () => {
                 <Box mb={4}>
                     <Typography variant="h6">Feedback Sentiments:</Typography>
                     {Object.keys(feedback_sentiments).length > 0 ? (
-                        <Box>
-                            {Object.keys(feedback_sentiments).map((questionId) => {
-                                const sentimentData = feedback_sentiments[questionId];
-                                return (
-                                    <Box key={questionId} mb={2}>
-                                        <Typography variant="body1">
-                                            Question ID {questionId}: {sentimentData.descriptive_sentiment} (Avg:{" "}
-                                            {sentimentData.average_sentiment.toFixed(2)})
-                                        </Typography>
-                                    </Box>
-                                );
-                            })}
-                        </Box>
+                        Object.keys(feedback_sentiments).map((questionId) => {
+                            const sentimentData = feedback_sentiments[questionId];
+                            return (
+                                <Box key={questionId} mb={2}>
+                                    <Typography variant="body1">
+                                        {sentimentData.question_text}: {sentimentData.descriptive_sentiment} (Avg:{" "}
+                                        {sentimentData.average_sentiment.toFixed(2)})
+                                    </Typography>
+                                </Box>
+                            );
+                        })
                     ) : (
                         <Typography variant="body1">No feedback sentiments.</Typography>
                     )}

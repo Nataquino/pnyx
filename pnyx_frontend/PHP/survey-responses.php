@@ -17,8 +17,13 @@ if (!$surveyId) {
     exit();
 }
 
-// Query to get all responses for the given survey ID
-$sql = "SELECT question_id, question_type, answer, sentiment_score FROM survey_responses WHERE survey_id = ?";
+// Query to get all responses along with the question text for the given survey ID
+$sql = "
+    SELECT sr.question_id, q.question_text, q.question_type, sr.answer, sr.sentiment_score
+    FROM survey_responses sr
+    JOIN questions q ON sr.question_id = q.id
+    WHERE sr.survey_id = ?
+";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
@@ -46,28 +51,36 @@ $responses = [
 // Process each row and classify by question type
 while ($row = $result->fetch_assoc()) {
     $questionId = $row['question_id'];
+    $questionText = $row['question_text'];
     $questionType = $row['question_type'];
     $answer = $row['answer'];
     $sentimentScore = $row['sentiment_score'];
 
     switch ($questionType) {
         case 'paragraph':
-            $responses['paragraph_answers'][] = $answer;
+            $responses['paragraph_answers'][] = [
+                'question_text' => $questionText,
+                'answer' => $answer
+            ];
             break;
         case 'multiple_choice':
             // Initialize or update the count for each option
             if (!isset($responses['multiple_choice_stats'][$questionId])) {
-                $responses['multiple_choice_stats'][$questionId] = [];
+                $responses['multiple_choice_stats'][$questionId] = [
+                    'question_text' => $questionText,
+                    'options' => []
+                ];
             }
-            if (!isset($responses['multiple_choice_stats'][$questionId][$answer])) {
-                $responses['multiple_choice_stats'][$questionId][$answer] = 0;
+            if (!isset($responses['multiple_choice_stats'][$questionId]['options'][$answer])) {
+                $responses['multiple_choice_stats'][$questionId]['options'][$answer] = 0;
             }
-            $responses['multiple_choice_stats'][$questionId][$answer]++;
+            $responses['multiple_choice_stats'][$questionId]['options'][$answer]++;
             break;
         case 'feedback':
             // Collect sentiment scores
             if (!isset($responses['feedback_sentiments'][$questionId])) {
                 $responses['feedback_sentiments'][$questionId] = [
+                    'question_text' => $questionText,
                     'total_score' => 0,
                     'count' => 0
                 ];
