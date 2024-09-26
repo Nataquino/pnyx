@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import Sentiment from "sentiment"; // Import Sentiment for sentiment analysis
+import { useNavigate } from "react-router-dom";
 import {
     Stack,
     Container,
@@ -19,9 +21,11 @@ import {
 import TakeSurveyNav from "../components/TakeSurveyNav";
 
 const TakeSurvey = () => {
+    const navigate = useNavigate();
     const { id } = useParams(); // Get the survey ID from the URL
     const [survey, setSurvey] = useState(null);
     const [answers, setAnswers] = useState({});
+    const sentiment = new Sentiment(); // Initialize Sentiment
 
     useEffect(() => {
         const fetchSurvey = async () => {
@@ -39,30 +43,54 @@ const TakeSurvey = () => {
         fetchSurvey();
     }, [id]);
 
-    const handleChange = (questionId, value, isCheckbox = false) => {
+    const handleChange = (questionId, value, optionId = null, isCheckbox = false) => {
+        const question = survey.questions.find((q) => q.id === questionId);
+        
         if (isCheckbox) {
             setAnswers((prevAnswers) => {
-                const currentAnswers = prevAnswers[questionId] || [];
-                if (currentAnswers.includes(value)) {
+                const currentAnswers = prevAnswers[questionId]?.answers || [];
+                if (currentAnswers.includes(optionId)) {
                     return {
                         ...prevAnswers,
-                        [questionId]: currentAnswers.filter((answer) => answer !== value),
+                        [questionId]: {
+                            question_type: question.question_type,
+                            answers: currentAnswers.filter((answer) => answer !== optionId),
+                        },
                     };
                 } else {
                     return {
                         ...prevAnswers,
-                        [questionId]: [...currentAnswers, value],
+                        [questionId]: {
+                            question_type: question.question_type,
+                            answers: [...currentAnswers, optionId],
+                        },
                     };
                 }
             });
         } else {
-            setAnswers({
-                ...answers,
-                [questionId]: value,
-            });
+            if (question.question_type === "feedback") {
+                // Perform sentiment analysis for feedback questions
+                const sentimentResult = sentiment.analyze(value);
+                setAnswers({
+                    ...answers,
+                    [questionId]: {
+                        question_type: question.question_type,
+                        text: value,
+                        sentimentScore: sentimentResult.score, // Store sentiment score
+                    },
+                });
+            } else {
+                // Ensure that value is correctly assigned
+                setAnswers({
+                    ...answers,
+                    [questionId]: {
+                        question_type: question.question_type,
+                        answer: value,
+                    },
+                });
+            }
         }
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -74,7 +102,7 @@ const TakeSurvey = () => {
                 payload
             );
             console.log("Survey submitted successfully:", response.data);
-            
+            navigate("/home");
         } catch (error) {
             console.error("Error submitting survey:", error);
         }
@@ -143,7 +171,7 @@ const TakeSurvey = () => {
                                         {question.question_type === "multiple_choice" && (
                                             <RadioGroup
                                                 onChange={(e) =>
-                                                    handleChange(question.id, e.target.value)
+                                                    handleChange(question.id, e.target.value, e.target.dataset.optionId)
                                                 }
                                             >
                                                 {question.options.map((option) => (
@@ -152,6 +180,7 @@ const TakeSurvey = () => {
                                                         value={option.option_text}
                                                         control={<Radio />}
                                                         label={option.option_text}
+                                                        data-option-id={option.id}
                                                     />
                                                 ))}
                                             </RadioGroup>
@@ -166,6 +195,7 @@ const TakeSurvey = () => {
                                                                 handleChange(
                                                                     question.id,
                                                                     option.option_text,
+                                                                    option.id,
                                                                     true
                                                                 )
                                                             }
@@ -186,7 +216,19 @@ const TakeSurvey = () => {
                                                 style={{ width: "35vw" }}
                                             />
                                         )}
-                                        {/* Add other question types as needed */}
+                                        {question.question_type === "feedback" && (
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                required
+                                                rows={4}
+                                                placeholder="Provide your feedback"
+                                                onChange={(e) =>
+                                                    handleChange(question.id, e.target.value)
+                                                }
+                                                style={{ width: "35vw" }}
+                                            />
+                                        )}
                                     </FormControl>
                                 </Box>
                             ))}

@@ -227,6 +227,7 @@ const SurveyPage = () => {
                           Multiple Choice
                         </MenuItem>
                         <MenuItem value="checkbox">Checkbox</MenuItem>
+                        <MenuItem value="feedback">Feedback</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>

@@ -21,7 +21,7 @@ function App() {
         <Route path="/approve" element={<ApprovePage/>} />
         <Route path="/decline" element={<DeclinePage/>} />
         <Route path="/redeem" element={<RedeemPage/>} />
-        <Route path="/result" element={<ResultPage/>} />
+        <Route path="/result/:id" element={<ResultPage/>} />
 
 
       </Routes>
