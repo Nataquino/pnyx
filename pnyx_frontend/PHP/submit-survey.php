@@ -1,16 +1,15 @@
 <?php
+
 session_start();
 
-header('Access-Control-Allow-Origin: http://localhost:3000'); // Allow requests from your frontend
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS'); // Include OPTIONS method
-header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization');
-header('Access-Control-Allow-Credentials: true'); // Allow credentials
 
-// Handle preflight requests for CORS
+// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200); // OK
-    exit();
+    exit(0);
 }
 
 include 'connection.php';
@@ -20,9 +19,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(["message" => "Connection failed: " . $conn->connect_error]);
-    exit();
+    die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
 
 // Decode JSON data from request body
@@ -39,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $stmt = $conn->prepare("INSERT INTO survey_responses (survey_id, question_id, answer) VALUES (?, ?, ?)");
+    // Prepare the SQL statement for inserting survey responses
+    $stmt = $conn->prepare("INSERT INTO survey_responses (survey_id, question_id, question_type, answer, sentiment_score, option_score) VALUES (?, ?, ?, ?, ?, ?)");
 
     if (!$stmt) {
         http_response_code(500); // Internal Server Error
@@ -47,19 +45,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    foreach ($answers as $questionId => $answer) {
-        if (is_array($answer)) {
-            foreach ($answer as $singleAnswer) {
-                $stmt->bind_param("iis", $surveyId, $questionId, $singleAnswer);
+    // Prepare the SQL statement for updating the option_score
+    $stmt_update_score = $conn->prepare("UPDATE survey_responses SET option_score = option_score + 1 WHERE id = ?");
+
+    if (!$stmt_update_score) {
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["message" => "Prepare failed: " . $conn->error]);
+        exit();
+    }
+
+    foreach ($answers as $questionId => $answerData) {
+        $questionType = $answerData['question_type'] ?? null;
+        if (isset($answerData['answers']) && is_array($answerData['answers'])) {
+            foreach ($answerData['answers'] as $singleAnswer) {
+                // Insert survey response
+                $sentimentScore = ($questionType === "feedback") ? ($answerData['sentimentScore'] ?? 0) : 0;
+                $optionScore = ($questionType === 'multiple_choice') ? 1 : 0; // Set option_score to 1 for multiple_choice
+                $stmt->bind_param("iissdd", $surveyId, $questionId, $questionType, $singleAnswer, $sentimentScore, $optionScore);
                 $stmt->execute();
+                
+                // Update option_score for multiple choice options
+                if ($questionType === 'multiple_choice') {
+                    $stmt_update_score->bind_param("i", $singleAnswer);
+                    $stmt_update_score->execute();
+                }
             }
         } else {
-            $stmt->bind_param("iis", $surveyId, $questionId, $answer);
+            $answer = $answerData['answer'] ?? '';
+            $sentimentScore = ($questionType === "feedback") ? ($answerData['sentimentScore'] ?? 0) : 0;
+            $optionScore = ($questionType === 'multiple_choice') ? 1 : 0; // Set option_score to 1 for multiple_choice
+            $stmt->bind_param("iissdd", $surveyId, $questionId, $questionType, $answer, $sentimentScore, $optionScore);
             $stmt->execute();
+            
+            // Update option_score for multiple choice options
+            if ($questionType === 'multiple_choice') {
+                $stmt_update_score->bind_param("i", $answer);
+                $stmt_update_score->execute();
+            }
         }
     }
 
     $stmt->close();
+    $stmt_update_score->close();
     echo json_encode(["message" => "Survey submitted successfully."]);
 } else {
     http_response_code(405); // Method Not Allowed
