@@ -1,10 +1,10 @@
 import { Stack, Box, Typography, Card, Grid, Button } from "@mui/material";
-import NavBar from "../components/NavBar";
+import NavBarr from "../components/NavBarr";
 
 const RedeemPage = () => {
   return (
     <Stack direction="row" sx={{ backgroundColor: "skyblue", height: "100vh" }}>
-      <NavBar />
+      <NavBarr />
       <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 7 }}>
         <Box
           sx={{

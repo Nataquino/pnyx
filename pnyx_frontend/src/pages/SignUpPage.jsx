@@ -19,10 +19,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignUpPage = () => {
-  const steps = [
-    "Create an account",
-    "Finish"
-  ];
+  const steps = ["Create an account", "Interest","Finish"];
 
   const handleChange = (event) => {
     setGender(event.target.value);
@@ -59,8 +56,8 @@ const SignUpPage = () => {
       fData.append('birthdate',birthdate)
       fData.append('email',email)
       fData.append('password',password)
-      axios.post(url,fData).then(response=>alert(response.data)).catch(error=>alert(error))
-      navigate("/finish")
+      axios.post(url,fData, {withCredentials: true}).then(response=>console.log(response.data)).catch(error=>alert(error))
+      navigate("/interest")
     }
   }
   

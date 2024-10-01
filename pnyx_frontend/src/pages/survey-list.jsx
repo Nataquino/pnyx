@@ -20,23 +20,16 @@ const SurveyList = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/survey-app/get-owned-surveys.php"
-        );
-        console.log(response); // Log the entire response
-        console.log(response.data); // Log the response data
-        console.log(Array.isArray(response.data)); // Check if response.data is an array
-
-        if (Array.isArray(response.data)) {
-          setSurveys(response.data);
-        }
+        const response = await axios.get('http://localhost/survey-app/get-owned-surveys.php', { withCredentials: true });
+        console.log(response.data); // Log the fetched data
+        setSurveys(response.data); // Set the fetched surveys to state
       } catch (error) {
-        console.error("Error fetching surveys:", error);
+        console.error("Error fetching surveys:", error); // Handle errors
       }
     };
 
-    fetchSurveys();
-  }, []);
+    fetchSurveys(); // Call the fetch function
+  }, []); 
 
   // Function to return the status label color
   const getStatusLabelColor = (status) => {
