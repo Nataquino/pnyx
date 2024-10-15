@@ -166,20 +166,12 @@ const Admin = () => {
                     justifyContent: "flex-end",
                   }}
                 >
-                  <Button
-                    sx={{ color: "green" }}
-                    size="small"
-                    onClick={() => handleApprove(survey)}
-                  >
-                    Approve
-                  </Button>
-                  <Button
+                  <Typography
                     sx={{ color: "red" }}
                     size="small"
-                    onClick={() => handleDecline(survey)}
                   >
-                    Decline
-                  </Button>
+                    DECLINED
+                  </Typography>
                 </CardActions>
               </Card>
             </Grid>

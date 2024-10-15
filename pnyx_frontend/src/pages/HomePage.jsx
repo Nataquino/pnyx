@@ -3,6 +3,7 @@ import NavBar from "../components/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { red } from "@mui/material/colors";
 
 const HomePage = () => {
   const [surveys, setSurveys] = useState([]);
@@ -45,13 +46,6 @@ const HomePage = () => {
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
       <NavBar />
-      <Button
-        variant="contained"
-        onClick={handleLogout} // Add the logout handler
-        sx={{ margin: 2 }}
-      >
-        Logout
-      </Button>
       <Box
         sx={{
           overflowY: "auto",
@@ -62,8 +56,10 @@ const HomePage = () => {
           paddingBottom: 5,
         }}
       >
-        <Stack fullWidth spacing={4}>
-          <Container sx={{ marginTop: 13, marginBottom: 5, flexGrow: 1 }}>
+        <Box>
+          
+        </Box>
+          <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1, backgroundColor: "red" }}>
             {surveys.length === 0 && (
               <Typography variant="h6" color="error">
                 No surveys found.
@@ -118,7 +114,7 @@ const HomePage = () => {
               ))}
             </Stack>
           </Container>
-        </Stack>
+
       </Box>
     </Stack>
   );
