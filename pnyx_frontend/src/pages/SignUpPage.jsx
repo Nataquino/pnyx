@@ -19,11 +19,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignUpPage = () => {
-  const steps = [
-    "Create an account",
-    "Select your interest",
-    "Finish",
-  ];
+  const steps = ["Create an account", "Interest","Finish"];
 
   const handleChange = (event) => {
     setGender(event.target.value);
@@ -37,16 +33,6 @@ const SignUpPage = () => {
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [formData, setFormData]=useState({
-    username: username,
-    firstname: firstname,
-    lastname: lastname,
-    gender: gender,
-    birthdate:birthdate,
-    email:email,
-    password:password
-  });
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
@@ -70,10 +56,9 @@ const SignUpPage = () => {
       fData.append('birthdate',birthdate)
       fData.append('email',email)
       fData.append('password',password)
-      axios.post(url,fData).then(response=>alert(response.data)).catch(error=>alert(error))
+      axios.post(url,fData, {withCredentials: true}).then(response=>console.log(response.data)).catch(error=>alert(error))
       navigate("/interest")
     }
-    
   }
   
   return (
@@ -85,9 +70,7 @@ const SignUpPage = () => {
     >
       <form action='/PHP/register.php' method="POST">
       <Box>
-        <Typography>
-          <span onClick={() => navigate("/")}>TTTTT</span>
-        </Typography>
+      <Button sx={{ marginTop: "30px", marginLeft:"30px" }}variant="contained" onClick={() => navigate("/")}>Back</Button>
         <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "70px" }}>
           {steps.map((label) => (
             <Step key={label}>

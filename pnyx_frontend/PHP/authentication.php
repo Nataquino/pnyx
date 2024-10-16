@@ -1,43 +1,54 @@
 <?php
-    header('Access-Control-Allow-Origin: *');
-// Check if the form was submitted
+session_start();
+header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Content-Type: application/json');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+
+
+include 'connection.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Include your database connection code here
-    
-    include 'connection.php';
-    session_start();
 
-    if ($conn->connect_error) {  // we are calling the variable name 
-        die("Connection failed: " . $conn->connect_error);
+    // Check for connection errors
+    if ($conn->connect_error) {  
+        die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
     }
-
 
     $userName = $_POST["username"];
-    $password = $_POST["password"];
+    $password = trim($_POST["password"]);
 
-    // Insert data into the database
-    $sqlverifyuser = "SELECT * FROM users WHERE username = '$userName' AND password = '$password'";
-    $result = mysqli_query($conn, $sqlverifyuser);
-    $anything_found = mysqli_num_rows($result);
-
-    $sqlUserID = " SELECT * FROM users Where username = '$userName'";
-    $resultID = mysqli_query($conn,$sqlUserID);
-    $row = $resultID->fetch_assoc();
-    $_SESSION['UserID'] = $row['UserID'];
-    $_SESSION['Username'] = $row['Username'];
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $userName);
     
-    if(strtolower($userName) === 'admin' && strtolower($password) === 'admin') {
-        header('Location: /HighTech/adminDashboard/index.php');
-    }elseif ($anything_found < 1) {
-        $conn->close();
-        echo "You don't have an account!";
-    }else {
-        if ($conn->query($sqlverifyuser) == TRUE) {
-            header('Location: /home');
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows < 1) {
+        echo json_encode(["status" => "error", "message" => "You don't have an account!"]);
+    } else {
+        $row = $result->fetch_assoc();
+        $retrievedHashedPassword = $row['password'];
+        
+        // Verify the hashed password
+        if (!password_verify($password, $retrievedHashedPassword)) {
+            echo json_encode(["status" => "error", "message" => "Incorrect password"]);
         } else {
-            echo "Error: " . $sqlverifyuser . "<br>" . $conn->error;
+            // Set session variables
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['username'] = $row['username'];
+
+            // Debugging: check if session variables are set correctly
+            if(isset($_SESSION['user_id']) && isset($_SESSION['username'])) {
+                echo json_encode(["status" => "success", "message" => "Login successful", "user" => $_SESSION]);
+            } else {
+                echo json_encode(["status" => "error", "message" => "Failed to set session variables"]);
+            }
         }
-        $conn->close();
     }
+    $stmt->close();
+    $conn->close();
 }
-?>
