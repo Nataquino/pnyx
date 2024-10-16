@@ -3,6 +3,7 @@ import NavBar from "../components/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { red } from "@mui/material/colors";
 
 const HomePage = () => {
   const [surveys, setSurveys] = useState([]);
@@ -31,7 +32,10 @@ const HomePage = () => {
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
       <NavBar />
+<<<<<<< HEAD:pnyx/src/pages/HomePage.jsx
 
+=======
+>>>>>>> b9a0f8757058a22c91fabcd21afd174999e6798a:pnyx_frontend/src/pages/HomePage.jsx
       <Box
         sx={{
           overflowY: "auto",
@@ -43,8 +47,10 @@ const HomePage = () => {
           width: "100vh"
         }}
       >
-        <Stack fullWidth spacing={4}>
-          <Container sx={{ marginTop: 13, marginBottom: 5, flexGrow: 1 }}>
+        <Box>
+          
+        </Box>
+          <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1, backgroundColor: "red" }}>
             {surveys.length === 0 && (
               <Typography variant="h6" color="error">
                 No surveys found.
@@ -99,7 +105,7 @@ const HomePage = () => {
               ))}
             </Stack>
           </Container>
-        </Stack>
+
       </Box>
     </Stack>
   );

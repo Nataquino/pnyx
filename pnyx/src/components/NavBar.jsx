@@ -3,12 +3,10 @@ import {
   Typography,
   AppBar,
   Toolbar,
-
   IconButton,
   Divider,
   Container,
   Tooltip,
-
 } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
@@ -91,16 +89,10 @@ const NavBar = () => {
   return (
     <AppBar sx={{ height: "10vh", position: "static" }}>
       <Toolbar>
-        <Box
-          component="img"
-          sx={{
-            height: 50,
-            width: 50,
-            borderRadius: 50,
-          }}
-          alt="Logo"
-          src={logo}
-        />
+
+        <Box>
+          <Typography sx={{fontSize: "20px"}}>Jerz</Typography>
+        </Box>
         {/* <Box
           sx={{
             marginLeft: 6,
@@ -146,7 +138,7 @@ const NavBar = () => {
               </Badge>
             </IconButton>
           </Tooltip> */}
-{/* 
+          {/* 
           <Menu
             anchorEl={anchorEl1}
             open={Boolean(anchorEl1)}
