@@ -8,17 +8,15 @@ import {
   Container,
   Button,
 } from "@mui/material";
-
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios"; // For making API requests
+import axios from "axios";
 
 const InterestPage = () => {
-  const steps = ["Create an account", "Interest","Finish"];
+  const steps = ["Create an account", "Interest", "Finish"];
   const navigate = useNavigate();
 
-  // State for selected interests
   const [selectedInterests, setSelectedInterests] = useState([]);
 
   const getCookieValue = (name) => {
@@ -26,7 +24,7 @@ const InterestPage = () => {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
   };
-  // Function to toggle interest selection
+
   const toggleInterest = (interest) => {
     setSelectedInterests((prevSelectedInterests) =>
       prevSelectedInterests.includes(interest)
@@ -35,20 +33,19 @@ const InterestPage = () => {
     );
   };
 
-  // Function to handle the final submission
   const handleSubmit = async () => {
     try {
-      const url = "http://localhost/survey-app/save-preferences.php"; // Backend URL to save preferences
-      const userId = getCookieValue("user_id"); // Replace with the actual user ID from your app
+      const url = "http://localhost/survey-app/save-preferences.php";
+      const userId = getCookieValue("user_id");
 
       if (!userId) {
-        alert('User ID not found. Please log in or register.');
-        navigate('/interest')
+        alert("User ID not found. Please log in or register.");
         return;
-    }
-      await axios.post(url, { interests: selectedInterests, userId }, {withCredentials:true});
+      }
+
+      await axios.post(url, { interests: selectedInterests, userId }, { withCredentials: true });
       alert("Preferences saved successfully!");
-      navigate("/finish"); // Navigate to the final page after saving preferences
+      navigate("/finish");
     } catch (error) {
       console.error("Error saving preferences:", error);
       alert("Failed to save preferences.");
@@ -56,8 +53,15 @@ const InterestPage = () => {
   };
 
   return (
-    <Stack sx={{ backgroundColor: "skyblue", height: "110vh" }}>
-      <Box sx={{ marginTop: "70px" }}>
+    <Stack
+      sx={{
+        backgroundColor: "skyblue",
+        height: "100vh",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Box sx={{ width: "100%", position: "absolute", top: "20px" }}>
         <Stepper activeStep={1} alternativeLabel>
           {steps.map((label) => (
             <Step key={label}>
@@ -69,195 +73,76 @@ const InterestPage = () => {
 
       <Container
         sx={{
-          backgroundColor: "#F5F5F5",
-          width: "60vw",
-          height: "65vh",
+          backgroundColor: "#FFF",
+          width: "70vw", // Increased width
+          maxWidth: "800px",
+          padding: "3rem",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
           flexDirection: "column",
-          marginTop: "70px",
+          alignItems: "center",
+          boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.15)", // Slightly stronger shadow
+          borderRadius: "15px", // Increased border radius
+          marginTop: "60px",
         }}
       >
-        <Typography sx={{ marginTop: "40px", fontSize: "30px" }}>
-          Choose your Interests
+        <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 600 }}>
+          Choose Your Interests
         </Typography>
-        <Typography>{selectedInterests.join(", ")}</Typography>
+        <Typography variant="body1" sx={{ marginBottom: 3, color: "text.secondary", textAlign: "center" }}>
+          {selectedInterests.length > 0 ? selectedInterests.join(", ") : "No interests selected"}
+        </Typography>
 
-        <Container
+        <Box
           sx={{
-            width: "60vw",
-            height: "50vh",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            marginLeft: -3,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", // Slightly bigger buttons
+            gap: "2rem", // Increased gap for a more spacious look
+            width: "100%",
+            marginTop: 4,
           }}
         >
-          {/* Sports */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Sports")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Sports")}
-          >
-            SPORTS
-          </Button>
+          {["Sports", "Food", "Art", "Academic", "Politics", "Books", "News", "Business"].map(
+            (interest) => (
+              <Button
+                key={interest}
+                variant="contained"
+                onClick={() => toggleInterest(interest)}
+                sx={{
+                  height: "120px", // Larger circle size
+                  width: "120px",
+                  borderRadius: "50%",
+                  backgroundColor: selectedInterests.includes(interest) ? "#66BB6A" : "#29B6F6", // Lighter, modern colors
+                  color: "#FFF", // White text
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Soft shadow for depth
+                  transition: "transform 0.3s", // Smooth transition
+                  "&:hover": {
+                    backgroundColor: selectedInterests.includes(interest) ? "#4CAF50" : "#039BE5",
+                    transform: "scale(1.1)", // Hover effect for enlargement
+                  },
+                }}
+              >
+                {interest.toUpperCase()}
+              </Button>
+            )
+          )}
+        </Box>
 
-          {/* Food */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Food")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Food")}
-          >
-            FOOD
-          </Button>
-
-          {/* Art */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Art")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Art")}
-          >
-            ART
-          </Button>
-
-          {/* Academic */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Academic")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Academic")}
-          >
-            ACADEMIC
-          </Button>
-        </Container>
-
-        <Container
-          sx={{
-            width: "60vw",
-            height: "50vh",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            marginLeft: -3,
-            marginTop: -10,
-          }}
-        >
-          {/* Politics */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Politics")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Politics")}
-          >
-            POLITICS
-          </Button>
-
-          {/* Books */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Books")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Books")}
-          >
-            BOOKS
-          </Button>
-
-          {/* News */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("News")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("News")}
-          >
-            NEWS
-          </Button>
-
-          {/* Business */}
-          <Button
-            variant="contained"
-            sx={{
-              height: "100px",
-              width: "100px",
-              borderRadius: "50%",
-              marginLeft: 2,
-              marginRight: 2,
-              backgroundColor: selectedInterests.includes("Business")
-                ? "green"
-                : "primary",
-            }}
-            onClick={() => toggleInterest("Business")}
-          >
-            BUSINESS
-          </Button>
-        </Container>
-      </Container>
-
-      <Container sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Button
           variant="contained"
-          sx={{ marginTop: 4, backgroundColor: "#05B1BF", width: 150, marginBottom: 8 }}
+          fullWidth
+          sx={{
+            backgroundColor: "#0288D1",
+            color: "#FFF",
+            padding: "12px",
+            fontWeight: "bold",
+            fontSize: "18px",
+            marginTop: "2.5rem",
+            ':hover': {
+              backgroundColor: "#0277BD"
+            },
+          }}
           onClick={handleSubmit}
         >
           Next

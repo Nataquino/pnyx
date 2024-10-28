@@ -1,10 +1,27 @@
-import { Stack, Box, Typography, Card, Grid, Button } from "@mui/material";
-import NavBarr from "../components/NavBarr";
+import { Stack, Box, Card, Typography, Button,Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import NavBar from "../components/NavBar";
 
 const RedeemPage = () => {
+  const [points, setPoints] = useState(0);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost/survey-app/reward.php", { withCredentials: true });
+        const data = response.data;
+        setPoints(data.reward_points); 
+      } catch (error) {
+        console.error("Error fetching points:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
   return (
     <Stack direction="row" sx={{ backgroundColor: "skyblue", height: "100vh" }}>
-      <NavBarr />
+      <NavBar/>
       <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 7 }}>
         <Box
           sx={{
@@ -48,7 +65,7 @@ const RedeemPage = () => {
             height: "20vh",
           }}
         >
-            Account Energy: 50
+            Account Points: {points}
         </Box>
       </Box>
       <Box

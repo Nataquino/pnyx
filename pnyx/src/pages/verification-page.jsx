@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Container, TextField, Typography } from '@mui/material';
+import { Button, Container, TextField, Typography, Stack, Box } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,23 +14,20 @@ const OtpVerificationPage = () => {
     };
 
     const handleVerifyOtp = async () => {
-        const userId = getCookieValue('user_id');  // Retrieve user_id from cookie
+        const userId = getCookieValue('user_id');
         if (!userId) {
             alert('User ID not found. Please log in or register.');
             return;
         }
 
-        // Log the userId and otp being sent
-        console.log('Sending data:', { userId, otp });
-
         try {
-            const response = await axios.post('http://localhost/survey-app/verify-email.php', 
-                { userId, otp }, // Use camelCase for consistency
+            const response = await axios.post('http://localhost/survey-app/verify-email.php',
+                { userId, otp },
                 { withCredentials: true }
             );
             alert(response.data.message);
             if (response.data.message === 'Email verified successfully') {
-                navigate('/interest');  // Redirect to interest page after successful verification
+                navigate('/interest');
             }
         } catch (error) {
             alert('OTP verification failed: ' + error.message);
@@ -38,23 +35,68 @@ const OtpVerificationPage = () => {
     };
 
     return (
-        <Container sx={{ marginTop: 8 }}>
-            <Typography variant="h4">Verify Your Email</Typography>
-            <TextField
-                label="Enter OTP"
-                fullWidth
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                sx={{ marginTop: 4 }}
-            />
-            <Button
-                variant="contained"
-                onClick={handleVerifyOtp}
-                sx={{ marginTop: 4 }}
+        <Stack
+            sx={{
+                backgroundColor: "skyblue",
+                height: "100vh",
+                justifyContent: "center",
+                alignItems: "center"
+            }}
+        >
+            <Box sx={{ position: "absolute", top: "20px", left: "20px" }}>
+                <Button variant="outlined" onClick={() => navigate("/sign-up")}>
+                    Back
+                </Button>
+            </Box>
+
+            <Container
+                sx={{
+                    backgroundColor: "#FFF",
+                    width: "40vw",
+                    maxWidth: "400px",
+                    height: "auto",
+                    padding: "2rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "10px"
+                }}
             >
-                Verify OTP
-            </Button>
-        </Container>
+                <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 500 }}>
+                    Email Verification
+                </Typography>
+                <Typography variant="body1" sx={{ color: "text.secondary", marginBottom: 3, textAlign: "center" }}>
+                    A One-Time Password (OTP) has been sent to your email. Please enter it below to verify your email.
+                </Typography>
+                
+                <TextField
+                    label="Enter OTP"
+                    fullWidth
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    sx={{ marginBottom: 3 }}
+                />
+                
+                <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={handleVerifyOtp}
+                    sx={{
+                        backgroundColor: "#0288D1",
+                        color: "#FFF",
+                        padding: "10px",
+                        fontWeight: "bold",
+                        ':hover': {
+                            backgroundColor: "#0277BD"
+                        }
+                    }}
+                >
+                    Verify OTP
+                </Button>
+            </Container>
+        </Stack>
     );
 };
 

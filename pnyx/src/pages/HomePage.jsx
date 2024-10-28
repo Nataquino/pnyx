@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { red } from "@mui/material/colors";
+
 
 const HomePage = () => {
   const [surveys, setSurveys] = useState([]);
@@ -13,7 +13,6 @@ const HomePage = () => {
     const fetchSurveys = async () => {
       try {
         const response = await axios.get("http://localhost/survey-app/get-recommendations.php", { withCredentials: true });
-        console.log(response); // Log the entire response
         console.log(response.data); // Log the response data
         console.log(Array.isArray(response.data)); // Check if response.data is an array
 
@@ -32,25 +31,21 @@ const HomePage = () => {
   return (
     <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
       <NavBar />
-<<<<<<< HEAD:pnyx/src/pages/HomePage.jsx
-
-=======
->>>>>>> b9a0f8757058a22c91fabcd21afd174999e6798a:pnyx_frontend/src/pages/HomePage.jsx
       <Box
         sx={{
           overflowY: "auto",
           display: "flex",
           flexDirection: "column", // Column layout for stacking
-          alignItems: "center", // Center cards horizontally
+           // Center cards horizontally
           marginTop: "20px",
           paddingBottom: 5,
-          width: "100vh"
+          width: "80vw"
         }}
       >
         <Box>
           
         </Box>
-          <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1, backgroundColor: "red" }}>
+          <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1 }}>
             {surveys.length === 0 && (
               <Typography variant="h6" color="error">
                 No surveys found.
@@ -62,7 +57,7 @@ const HomePage = () => {
                   key={survey.id}
                   sx={{
                     width: "100vh",
-                    maxWidth: 700, // Make card responsive with max width
+                    maxWidth: 900, // Make card responsive with max width
                     height: "auto", // Make card height flexible
                     display: "flex",
                     flexDirection: "column",

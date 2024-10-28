@@ -28,6 +28,12 @@ const pages = [
   { title: "Surveys", path: "/survey-list" },
 ];
 
+const getCookieValue = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+};
+
 const NavBar = () => {
   const navigate = useNavigate();
   const [invisible, setInvisible] = React.useState(false);
@@ -91,7 +97,7 @@ const NavBar = () => {
       <Toolbar>
 
         <Box>
-          <Typography sx={{fontSize: "20px"}}>Jerz</Typography>
+          <Typography sx={{fontSize: "20px"}}> {getCookieValue("username")} </Typography>
         </Box>
         {/* <Box
           sx={{

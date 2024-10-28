@@ -80,11 +80,11 @@ const SurveyPage = () => {
     const newQuestions = questions.map((question, i) =>
       i === qIndex
         ? {
-            ...question,
-            options: question.options.map((option, j) =>
-              j === oIndex ? value : option
-            ),
-          }
+          ...question,
+          options: question.options.map((option, j) =>
+            j === oIndex ? value : option
+          ),
+        }
         : question
     );
     setQuestions(newQuestions);
@@ -152,7 +152,7 @@ const SurveyPage = () => {
 
       const response = await axios.post(
         "http://localhost/survey-app/save-survey.php",
-        surveyData,{withCredentials:true},
+        surveyData, { withCredentials: true },
         {
           headers: {
             "Content-Type": "application/json",
@@ -317,26 +317,35 @@ const SurveyPage = () => {
                   </Grid>
                 </Grid>
                 <Box mt={2}>
-                  {["multiple_choice", "checkbox"].includes(question.type) &&
-                    question.options.map((option, oIndex) => (
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        key={oIndex}
-                        mb={1}
-                      >
-                        <TextField
-                          label={`Option ${oIndex + 1}`}
-                          fullWidth
-                          value={option}
-                          onChange={(e) =>
-                            updateOption(qIndex, oIndex, e.target.value)
-                          }
-                          placeholder="Option"
-                          margin="normal"
-                        />
-                      </Box>
-                    ))}
+                  {["multiple_choice", "checkbox"].includes(question.type) && (
+                    <Box display="flex" alignItems="center" flexWrap="wrap" ml={2}>  {/* Add indent with margin-left */}
+                      {question.options.map((option, oIndex) => (
+                        <Box
+                          key={oIndex}
+                          mb={1}
+                          mr={2}
+                          p={1}
+                          width="auto"
+                          sx={{
+                            backgroundColor: "#f0f0f0", // Light background for enclosure
+                            border: "1px solid #ccc",    // Border to define the box
+                            borderRadius: 2,             // Rounded corners for the box
+                          }}
+                        >
+                          <TextField
+                            label={`Option ${oIndex + 1}`}
+                            value={option}
+                            onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
+                            placeholder="Option"
+                            margin="normal"
+                            variant="standard"  // Underline input style
+                            sx={{ width: 150 }} // Adjust width if necessary
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+
                   {["multiple_choice", "checkbox"].includes(question.type) && (
                     <Button
                       variant="outlined"
