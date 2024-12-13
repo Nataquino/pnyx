@@ -29,7 +29,7 @@ const HomePage = () => {
 
 
   return (
-    <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "auto" }}>
       <NavBar />
       <Box
         sx={{
@@ -39,13 +39,11 @@ const HomePage = () => {
            // Center cards horizontally
           marginTop: "20px",
           paddingBottom: 5,
-          width: "80vw"
+          width: "80vw",
+          minHeight: "100vh",
         }}
       >
-        <Box>
-          
-        </Box>
-          <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1 }}>
+          <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1}}>
             {surveys.length === 0 && (
               <Typography variant="h6" color="error">
                 No surveys found.

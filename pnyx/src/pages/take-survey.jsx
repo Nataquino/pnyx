@@ -16,6 +16,11 @@ import {
     Checkbox,
     TextField,
     Card,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Rating,
 } from "@mui/material";
 import TakeSurveyNav from "../components/TakeSurveyNav";
 
@@ -24,6 +29,8 @@ const TakeSurvey = () => {
     const { id } = useParams(); // Get the survey ID from the URL
     const [survey, setSurvey] = useState(null);
     const [answers, setAnswers] = useState({});
+    const [isFeedbackOpen, setFeedbackOpen] = useState(false); // State for feedback popup
+    const [rating, setRating] = useState(0); // State for star rating
     const sentiment = new Sentiment(); // Initialize Sentiment
 
     useEffect(() => {
@@ -42,18 +49,24 @@ const TakeSurvey = () => {
         fetchSurvey();
     }, [id]);
 
+    const getCookieValue = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+
     const handleChange = (questionId, value, optionId = null, isCheckbox = false) => {
         const question = survey.questions.find((q) => q.id === questionId);
 
         if (isCheckbox) {
             setAnswers((prevAnswers) => {
                 const currentAnswers = prevAnswers[questionId]?.answers || [];
-                if (currentAnswers.includes(value)) { // Check if the answer text is already included
+                if (currentAnswers.includes(value)) {
                     return {
                         ...prevAnswers,
                         [questionId]: {
                             question_type: question.question_type,
-                            answers: currentAnswers.filter((answer) => answer !== value), // Remove the answer text
+                            answers: currentAnswers.filter((answer) => answer !== value),
                         },
                     };
                 } else {
@@ -61,25 +74,23 @@ const TakeSurvey = () => {
                         ...prevAnswers,
                         [questionId]: {
                             question_type: question.question_type,
-                            answers: [...currentAnswers, value], // Add the answer text
+                            answers: [...currentAnswers, value],
                         },
                     };
                 }
             });
         } else {
             if (question.question_type === "feedback") {
-                // Perform sentiment analysis for feedback questions
                 const sentimentResult = sentiment.analyze(value);
                 setAnswers({
                     ...answers,
                     [questionId]: {
                         question_type: question.question_type,
-                        answer: value, // Change 'text' to 'answer'
-                        sentimentScore: sentimentResult.score, // Store sentiment score
+                        answer: value,
+                        sentimentScore: sentimentResult.score,
                     },
                 });
             } else {
-                // Ensure that value is correctly assigned
                 setAnswers({
                     ...answers,
                     [questionId]: {
@@ -94,16 +105,43 @@ const TakeSurvey = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const payload = { surveyId: id, answers };
-        console.log("Submitting survey with data:", payload); // Log the data being sent
+        console.log("Submitting survey with data:", payload);
+
         try {
             const response = await axios.post(
                 "http://localhost/survey-app/submit-survey.php",
                 payload
             );
             console.log("Survey submitted successfully:", response.data);
-            navigate("/home");
+            setFeedbackOpen(true); // Open feedback popup after successful submission
         } catch (error) {
             console.error("Error submitting survey:", error);
+        }
+    };
+
+    const handleFeedbackSubmit = async () => {
+        const userId = getCookieValue("user_id");
+        try {
+            console.log("User feedback rating:", rating);
+            // Determine the interaction type based on the rating
+            const interactionType = rating === 0 ? "completed" : "rated";
+            // Prepare the payload for survey interactions
+            const payload = {
+                userId: userId, 
+                surveyId: id, 
+                interactionType: interactionType, 
+                rating: rating,
+            };
+            const response = await axios.post(
+                "http://localhost/survey-app/submit-interaction.php",
+                payload
+            );
+    
+            console.log("Feedback submitted successfully:", response.data);
+            setFeedbackOpen(false);
+            navigate("/home");
+        } catch (error) {
+            console.error("Error submitting feedback:", error);
         }
     };
 
@@ -116,7 +154,7 @@ const TakeSurvey = () => {
             justifyContent="center"
             sx={{
                 backgroundColor: "skyblue",
-                height: "120vh",
+                minheight: "100vh",
                 overflowY: "auto",
                 py: 2,
             }}
@@ -129,9 +167,9 @@ const TakeSurvey = () => {
                 maxWidth="md"
                 sx={{
                     backgroundColor: "#F5F5F5",
-                    width: "80vw", // Adjusted to 80% of the viewport width
-                    height: "auto", // Set to auto for dynamic height
-                    mb: 2, // Optional margin bottom
+                    width: "80vw",
+                    height: "auto",
+                    mb: 2,
                 }}
             >
                 <Container sx={{ backgroundColor: "#05B1BF", padding: 2 }}>
@@ -156,8 +194,8 @@ const TakeSurvey = () => {
                         <form
                             onSubmit={handleSubmit}
                             style={{
-                                width: "100%", // Adjusted to 100%
-                                padding: "10px 0", // Unified padding
+                                width: "100%",
+                                padding: "10px 0",
                             }}
                         >
                             {survey.questions.map((question) => (
@@ -169,7 +207,11 @@ const TakeSurvey = () => {
                                         {question.question_type === "multiple_choice" && (
                                             <RadioGroup
                                                 onChange={(e) =>
-                                                    handleChange(question.id, e.target.value, e.target.dataset.optionId)
+                                                    handleChange(
+                                                        question.id,
+                                                        e.target.value,
+                                                        e.target.dataset.optionId
+                                                    )
                                                 }
                                             >
                                                 {question.options.map((option) => (
@@ -192,7 +234,7 @@ const TakeSurvey = () => {
                                                             onChange={(e) =>
                                                                 handleChange(
                                                                     question.id,
-                                                                    option.option_text, // Use option_text instead of option.id
+                                                                    option.option_text,
                                                                     option.id,
                                                                     true
                                                                 )
@@ -239,6 +281,26 @@ const TakeSurvey = () => {
                     </Container>
                 </Card>
             </Card>
+
+            {/* Feedback Popup */}
+            <Dialog open={isFeedbackOpen} onClose={() => setFeedbackOpen(false)}>
+                <DialogTitle>Thank you for completing the survey!</DialogTitle>
+                <DialogContent>
+                    <Typography gutterBottom>
+                        Please rate your experience with this survey:
+                    </Typography>
+                    <Rating
+                        name="user-feedback-rating"
+                        value={rating}
+                        onChange={(e, newValue) => setRating(newValue)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleFeedbackSubmit} color="primary">
+                        Submit Feedback
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Stack>
     );
 };
