@@ -1,0 +1,6 @@
+services:
+- type: web
+  name: my-web-app
+  env: node
+  buildCommand: cd src && npm install
+  startCommand: cd src && npm start

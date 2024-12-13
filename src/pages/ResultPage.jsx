@@ -37,7 +37,7 @@ const SurveyResults = () => {
     return (
         <Stack>
             <NavBarResult />
-            <Container maxWidth={false} sx={{ py: 4, backgroundColor: "skyblue" }}>
+            <Container maxWidth={false} sx={{ py: 4, backgroundColor: "skyblue" ,minHeight:"100vh", overflowY:"auto"}}>
                 <Card sx={{ padding: 3, marginBottom: 4, display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h4" gutterBottom>
                         Survey Results
