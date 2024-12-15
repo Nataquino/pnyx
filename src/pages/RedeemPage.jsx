@@ -20,9 +20,9 @@ const RedeemPage = () => {
   }, []);
 
   return (
-    <Paper>    
+    <Paper sx={{ backgroundColor: "skyblue", height: "100vh" }}>    
         <NavBar/>
-    <Stack direction="row" sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack direction="row" sx={{marginTop: -10}} >
 
       <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 7 }}>
         <Box
