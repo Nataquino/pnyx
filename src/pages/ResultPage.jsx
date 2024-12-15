@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+
 import {
   BarChart,
   CartesianGrid,
@@ -10,6 +11,8 @@ import {
   Cell,
   Tooltip,
   Legend,
+  Pie,
+  PieChart,
 } from "recharts";
 import {
   Container,
@@ -22,9 +25,8 @@ import {
   TableBody,
   TableHead,
   Table,
-
   Paper,
-
+  CardContent,
 } from "@mui/material";
 import NavBarResult from "../components/NavBarResult";
 
@@ -60,11 +62,26 @@ const SurveyResults = () => {
 
   // Colors for the pie chart
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8A2BE2"];
+  // Calculate positive and negative feedback counts
+  let positiveCount = 0;
+  let negativeCount = 0;
 
+  Object.values(feedback_sentiments).forEach((sentimentData) => {
+    if (sentimentData.average_sentiment >= 3) {
+      positiveCount++;
+    } else {
+      negativeCount++;
+    }
+  });
 
+  // Data for Pie Chart
+  const chartData = [
+    { name: "Positive", value: positiveCount },
+    { name: "Negative", value: negativeCount },
+  ];
 
-
-
+  // Colors for the chart
+  const pieCOLORS = ["#4CAF50", "#F44336"]; // Green for Positive, Red for Negative
   return (
     <Stack>
       <NavBarResult />
@@ -208,15 +225,22 @@ const SurveyResults = () => {
               >
                 <Typography variant="h4">Feedback Sentiments</Typography>
               </Box>
-              <Box mb={4} sx={{  margin: 3}}>
+              <Box mb={4} sx={{ margin: 3 }}>
                 {Object.keys(feedback_sentiments).length > 0 ? (
-                  <Paper sx={{overflow: 'auto'}}>
+                  <Paper sx={{ overflow: "auto" }}>
                     <Table variant="solid">
                       <TableHead>
                         <TableRow sx={{}}>
-                          <TableCell> <Typography variant="h6">ANSWERS</Typography></TableCell>
-                          <TableCell><Typography variant="h6">REMARKS</Typography></TableCell>
-                          <TableCell><Typography variant="h6">POINTS</Typography></TableCell>
+                          <TableCell>
+                            {" "}
+                            <Typography variant="h6">ANSWERS</Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="h6">REMARKS</Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="h6">POINTS</Typography>
+                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -248,13 +272,33 @@ const SurveyResults = () => {
                 )}
               </Box>
             </Paper>
-            <Paper sx={{ marginLeft: 4, width: "30vw" , backgroundColor: "lightgray" }}>
-              <Box>
-                <Typography sx={{ display: "flex", justifyContent: "center" }}>
-                  Overall Sentiment Result
-                </Typography>
+            {/* Pie Chart for Positive/Negative Feedback */}
+            <Paper sx={{ padding: 3, width: "60vw", textAlign: "center" }}>
+              <Typography variant="h5" gutterBottom>
+                Sentiment Analysis (Positive vs Negative)
+              </Typography>
+              <Box display="flex" justifyContent="center">
+                <PieChart width={400} height={300}>
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label={({ name, value }) => `${name}: ${value}`}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
               </Box>
-              <Box>sdbhasb</Box>
             </Paper>
           </Stack>
         </Card>
