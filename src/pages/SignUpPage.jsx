@@ -52,15 +52,15 @@ const SignUpPage = () => {
       return;
     }
 
-    const url = 'http://localhost/survey-app/register.php';
+    const url = "http://localhost/survey-app/register.php";
     const fData = new FormData();
-    fData.append('username', username);
-    fData.append('firstname', firstname);
-    fData.append('lastname', lastname);
-    fData.append('gender', gender);
-    fData.append('birthdate', birthdate);
-    fData.append('email', email);
-    fData.append('password', password);
+    fData.append("username", username);
+    fData.append("firstname", firstname);
+    fData.append("lastname", lastname);
+    fData.append("gender", gender);
+    fData.append("birthdate", birthdate);
+    fData.append("email", email);
+    fData.append("password", password);
 
     try {
       // Show loading spinner, disable submit button
@@ -74,16 +74,22 @@ const SignUpPage = () => {
         navigate("/verification"); // Redirect to verification page
       } else {
         // Handle unexpected responses
-        alert(`Unexpected response: ${response.data.message || 'Please try again.'}`);
+        alert(
+          `Unexpected response: ${response.data.message || "Please try again."}`
+        );
       }
     } catch (error) {
       // Better error handling
       if (error.response) {
         // Server responded with a status other than 2xx
-        alert(`Server error: ${error.response.data.message || 'Failed to register.'}`);
+        alert(
+          `Server error: ${
+            error.response.data.message || "Failed to register."
+          }`
+        );
       } else if (error.request) {
         // No response was received from the server
-        alert('Network error: No response received from server.');
+        alert("Network error: No response received from server.");
       } else {
         // Other errors (setup, configuration, etc.)
         alert(`Error: ${error.message}`);
@@ -96,11 +102,11 @@ const SignUpPage = () => {
 
   // Validation function to check form inputs
   const validateForm = () => {
-    if (!username.trim()) return 'Username cannot be blank';
-    if (!firstname.trim()) return 'First Name cannot be blank';
-    if (!lastname.trim()) return 'Last Name cannot be blank';
-    if (!email.trim()) return 'Email cannot be blank';
-    if (!password.trim()) return 'Password cannot be blank';
+    if (!username.trim()) return "Username cannot be blank";
+    if (!firstname.trim()) return "First Name cannot be blank";
+    if (!lastname.trim()) return "Last Name cannot be blank";
+    if (!email.trim()) return "Email cannot be blank";
+    if (!password.trim()) return "Password cannot be blank";
     return null;
   };
 
@@ -112,8 +118,14 @@ const SignUpPage = () => {
       }}
     >
       <Box>
-        <Button sx={{ marginTop: "30px", marginLeft: "30px" }} variant="contained" onClick={() => navigate("/")}>Back</Button>
-        <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "70px" }}>
+        <Button
+          sx={{ marginTop: "20px", marginLeft: "30px" }}
+          variant="contained"
+          onClick={() => navigate("/")}
+        >
+          Back
+        </Button>
+        <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "30px" }}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -130,10 +142,10 @@ const SignUpPage = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "35px",
+          marginTop: "20px",
         }}
       >
-        <Typography sx={{ fontSize: "45px", marginBottom: 5, marginTop: 8 }}>
+        <Typography sx={{ fontSize: "45px", marginTop: 8 }}>
           Signup
         </Typography>
         <Container
@@ -145,6 +157,7 @@ const SignUpPage = () => {
             padding: 1, // Add padding to the container
           }}
         >
+
           <TextField
             id="username"
             label="Enter username"
@@ -273,12 +286,12 @@ const SignUpPage = () => {
             marginTop: 4,
             backgroundColor: "#05B1BF",
             width: 150,
-            marginBottom: 8,
+            marginBottom: 10,
           }}
           onClick={handleSubmit}
           disabled={loading} // Disable button when loading
         >
-          {loading ? 'Submitting...' : 'Register'}
+          {loading ? "Submitting..." : "Register"}
         </Button>
       </Container>
     </Stack>
