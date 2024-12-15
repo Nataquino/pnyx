@@ -42,6 +42,8 @@ const SurveyList = () => {
         return "red";
       case "approved":
         return "green";
+      case "activated":
+        return "blue"; // Added color for "activated"
       default:
         return "gray";
     }
@@ -53,6 +55,24 @@ const SurveyList = () => {
       ...prevState,
       [id]: !prevState[id],
     }));
+  };
+
+  // Function to activate the survey
+  const activateSurvey = async (surveyId) => {
+    try {
+      const response = await axios.post(
+        'http://localhost/survey-app/activate-survey.php',
+        { survey_id: surveyId },
+        { withCredentials: true }
+      );
+      console.log(response.data);
+      alert(response.data.message || "Survey activated successfully");
+      // Optionally, refetch surveys after activation
+      // fetchSurveys();
+    } catch (error) {
+      console.error("Error activating survey:", error);
+      alert("Failed to activate the survey. Please try again.");
+    }
   };
 
   return (
@@ -81,13 +101,13 @@ const SurveyList = () => {
                 <Card
                   sx={{
                     minWidth: 275,
-                    height: "auto", // Adjust height to accommodate content
+                    height: "auto",
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 5,
-                    backgroundColor: "#f5f5f5", // Light gray for all cards
+                    backgroundColor: "#f5f5f5",
                     paddingBottom: 2,
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for a light effect
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <CardContent>
@@ -122,7 +142,11 @@ const SurveyList = () => {
                         ? "Status: Pending"
                         : survey.status === "declined"
                         ? "Status: Declined"
-                        : "Status: Approved"}
+                        : survey.status === "approved"
+                        ? "Status: Approved"
+                        : survey.status === "activated"
+                        ? "Status: Activated"
+                        : "Status: Unknown"}
                     </Typography>
 
                     {/* Show comment button for declined surveys */}
@@ -154,18 +178,42 @@ const SurveyList = () => {
                     sx={{
                       marginTop: "auto",
                       display: "flex",
-                      justifyContent: "flex-end",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {/* Only show the 'See Results' button if the survey status is not 'declined' or 'pending' */}
+                    {/* See Results Button */}
                     {survey.status !== "declined" && survey.status !== "pending" && (
                       <Button
                         size="small"
                         color="primary"
                         component={Link}
-                        to={`/result/${survey.id}`} // Include the survey ID in the URL
+                        to={`/result/${survey.id}`}
                       >
                         See Results
+                      </Button>
+                    )}
+
+                    {/* Activate Survey Button - Disable if already activated */}
+                    {survey.status === "approved" && (
+                      <Button
+                        size="small"
+                        color="success"
+                        onClick={() => activateSurvey(survey.id)}
+                        disabled={survey.status === "activated"} // Disable if already activated
+                      >
+                        {survey.status === "activated" ? "Activated" : "Activate Survey"}
+                      </Button>
+                    )}
+
+                    {/* Edit Survey Button - Display for "approved" or "activated" surveys */}
+                    {(survey.status === "approved" || survey.status === "activated") && (
+                      <Button
+                        size="small"
+                        color="primary"
+                        component={Link}
+                        to={`/edit-survey/${survey.id}`}
+                      >
+                        Edit Survey
                       </Button>
                     )}
                   </CardActions>
