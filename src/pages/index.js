@@ -18,4 +18,4 @@ export {default as ResultPage} from './ResultPage';
 export {default as Verification} from './verification-page';
 export {default as AdminCategory} from './create-category';
 export {default as EditSurvey} from './edit-survey';
-export {default as Account} from './accounts-page';
+export {default as Account} from './profile-page';

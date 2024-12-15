@@ -14,8 +14,6 @@ const HomePage = () => {
       try {
         const response = await axios.get("http://localhost/survey-app/get-recommendations.php", { withCredentials: true });
         console.log(response.data); // Log the response data
-        console.log(Array.isArray(response.data)); // Check if response.data is an array
-
         if (Array.isArray(response.data)) {
           setSurveys(response.data);
         }
@@ -29,7 +27,7 @@ const HomePage = () => {
 
 
   return (
-    <Stack fullWidth sx={{ backgroundColor: "skyblue", height: "auto" }}>
+    <Stack sx={{ backgroundColor: "skyblue", height: "auto" }}>
       <NavBar />
       <Box
         sx={{
