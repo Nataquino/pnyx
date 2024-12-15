@@ -122,7 +122,7 @@ const SurveyResults = () => {
               mb={4}
               sx={{
                 marginLeft: 5,
-                backgroundColor: "red",
+                backgroundColor: "lightgray",
                 width: "50vw",
                 overflowX: "auto",
               }}
@@ -191,7 +191,6 @@ const SurveyResults = () => {
           <Stack
             sx={{
               display: "flex",
-              backgroundColor: "blue",
               flexDirection: "row",
             }}
           >
@@ -249,7 +248,7 @@ const SurveyResults = () => {
                 )}
               </Box>
             </Paper>
-            <Paper sx={{ marginLeft: 4, width: "30vw" }}>
+            <Paper sx={{ marginLeft: 4, width: "30vw" , backgroundColor: "lightgray" }}>
               <Box>
                 <Typography sx={{ display: "flex", justifyContent: "center" }}>
                   Overall Sentiment Result
