@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate, SurveyList, TakeSurvey, PersonalSurveys,Admin, SurveyPending,ViewSurvey, PendingPage, ApprovePage,DeclinePage,ResultPage, RedeemPage, Verification, EditSurvey} from "./pages";
+import { LoginPage, SignUpPage, InterestPage, FinishingPage, HomePage, SurveyCreate, SurveyList, TakeSurvey, PersonalSurveys,Admin, SurveyPending,ViewSurvey, PendingPage, ApprovePage,DeclinePage,ResultPage, RedeemPage, Verification, EditSurvey,Account} from "./pages";
 import AdminCategories from "./pages/create-category";
 
 function App() {
@@ -26,8 +26,7 @@ function App() {
         <Route path="/verification" element={<Verification/>} />
         <Route path="/admin-categories" element={<AdminCategories/>} />
         <Route path="/edit-survey/:id" element={<EditSurvey/>} />
-
-
+        <Route path="/account" element={<Account/>} />
       </Routes>
     </Router>
   );

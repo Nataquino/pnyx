@@ -1,4 +1,4 @@
-import { Stack, Box, Card, Typography, Button,Grid } from "@mui/material";
+import { Stack, Box, Card, Typography, Button,Grid, Paper } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
@@ -20,8 +20,10 @@ const RedeemPage = () => {
   }, []);
 
   return (
-    <Stack direction="row" sx={{ backgroundColor: "skyblue", height: "100vh" }}>
-      <NavBar/>
+    <Paper sx={{ backgroundColor: "skyblue", height: "100vh" }}>    
+        <NavBar/>
+    <Stack direction="row" sx={{marginTop: -10}} >
+
       <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 7 }}>
         <Box
           sx={{
@@ -81,86 +83,7 @@ const RedeemPage = () => {
         <Box sx={{ marginLeft: 1, marginTop: 2,           padding: "auto",
           marginBottom: 2 }}>
           <Grid container spacing={4} >
-            <Grid item sx={4}>
-              <Card
-                sx={{
-                  backgroundColor: "#EBEBF0",
-                  height: "30vh",
-                  width: "19vw",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography sx={{ fontSize: "30px" }}>
-                  Jollibee Voucher
-                </Typography>
-                <Box sx={{ marginTop: 5 }}>
-                  <Button variant="contained">Redeem</Button>
-                </Box>
-              </Card>
-            </Grid>
-            <Grid item sx={4}>
-              <Card
-                sx={{
-                  backgroundColor: "#EBEBF0",
-                  height: "30vh",
-                  width: "19vw",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography sx={{ fontSize: "30px" }}>
-                  Jollibee Voucher
-                </Typography>
-                <Box sx={{ marginTop: 5 }}>
-                  <Button variant="contained">Redeem</Button>
-                </Box>
-              </Card>
-            </Grid>
-            <Grid item sx={4}>
-              <Card
-                sx={{
-                  backgroundColor: "#EBEBF0",
-                  height: "30vh",
-                  width: "19vw",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography sx={{ fontSize: "30px" }}>
-                  Jollibee Voucher
-                </Typography>
-                <Box sx={{ marginTop: 5 }}>
-                  <Button variant="contained">Redeem</Button>
-                </Box>
-              </Card>
-            </Grid>
-            <Grid item sx={4}>
-              <Card
-                sx={{
-                  backgroundColor: "#EBEBF0",
-                  height: "30vh",
-                  width: "19vw",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography sx={{ fontSize: "30px" }}>
-                  Jollibee Voucher
-                </Typography>
-                <Box sx={{ marginTop: 5 }}>
-                  <Button variant="contained">Redeem</Button>
-                </Box>
-              </Card>
-            </Grid>
+            
             <Grid item sx={4}>
               <Card
                 sx={{
@@ -225,6 +148,8 @@ const RedeemPage = () => {
         </Box>
       </Box>
     </Stack>
+    </Paper>
+
   );
 };
 
