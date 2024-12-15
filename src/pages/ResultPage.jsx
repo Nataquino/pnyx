@@ -22,8 +22,9 @@ import {
   TableBody,
   TableHead,
   Table,
-  TableContainer,
+
   Paper,
+
 } from "@mui/material";
 import NavBarResult from "../components/NavBarResult";
 
@@ -60,17 +61,9 @@ const SurveyResults = () => {
   // Colors for the pie chart
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8A2BE2"];
 
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
 
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-  ];
+
+
 
   return (
     <Stack>
@@ -108,7 +101,7 @@ const SurveyResults = () => {
 
           {/* Paragraph Answers */}
           <Stack sx={{ display: "flex", flexDirection: "row" }}>
-            <Box mb={4} sx={{ backgroundColor: "green", width: "40vw" }}>
+            <Box mb={4} sx={{ backgroundColor: "lightgray", width: "40vw" }}>
               <Typography variant="h6">Paragraph Answers:</Typography>
               {paragraph_answers.length > 0 ? (
                 paragraph_answers.map((item, index) => (
@@ -206,74 +199,61 @@ const SurveyResults = () => {
               sx={{
                 display: "flex",
                 justifyContent: "start",
-                backgroundColor: "yellow",
+                backgroundColor: "lightgray",
                 flexDirection: "column",
                 width: "60vw",
               }}
             >
               <Box
-                sx={{ display: "flex", justifyContent: "center ", margin: 2 }}
+                sx={{ display: "flex", justifyContent: "center ", margin: 1 }}
               >
                 <Typography variant="h4">Feedback Sentiments</Typography>
               </Box>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Answers</TableCell>
-                      <TableCell>Remarks</TableCell>
-                      <TableCell>Points</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row) => (
-                      <TableRow
-                        key={row.name}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {row.name}
-                        </TableCell>
-                        <TableCell align="right">{row.calories}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-              {/* <Box mb={4}>
-              <Typography variant="h6">Feedback Sentiments:</Typography>
-              {Object.keys(feedback_sentiments).length > 0 ? (
-                Object.keys(feedback_sentiments).map((questionId) => {
-                  const sentimentData = feedback_sentiments[questionId];
-                  return (
-                    <Box key={questionId} mb={2}>
-                      <Typography variant="body1">
-                        {sentimentData.question_text}:{" "}
-                        {sentimentData.descriptive_sentiment} (Avg:{" "}
-                        {sentimentData.average_sentiment
-                          ? sentimentData.average_sentiment.toFixed(2)
-                          : "N/A"}
-                        )
-                      </Typography>
-                      <Typography variant="body2">
-                        Feedback:{" "}
-                        {sentimentData.feedback || "No feedback provided."}
-                      </Typography>
-                    </Box>
-                  );
-                })
-              ) : (
-                <Typography variant="body1">No feedback sentiments.</Typography>
-              )}
-            </Box> */}
+              <Box mb={4} sx={{  margin: 3}}>
+                {Object.keys(feedback_sentiments).length > 0 ? (
+                  <Paper sx={{overflow: 'auto'}}>
+                    <Table variant="solid">
+                      <TableHead>
+                        <TableRow sx={{}}>
+                          <TableCell> <Typography variant="h6">ANSWERS</Typography></TableCell>
+                          <TableCell><Typography variant="h6">REMARKS</Typography></TableCell>
+                          <TableCell><Typography variant="h6">POINTS</Typography></TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {Object.keys(feedback_sentiments).map((questionId) => {
+                          const sentimentData = feedback_sentiments[questionId];
+                          return (
+                            <TableRow key={questionId}>
+                              <TableCell>
+                                {sentimentData.question_text}
+                              </TableCell>
+                              <TableCell>
+                                {sentimentData.descriptive_sentiment}
+                              </TableCell>
+                              <TableCell>
+                                {sentimentData.average_sentiment
+                                  ? sentimentData.average_sentiment.toFixed(2)
+                                  : "N/A"}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </Paper>
+                ) : (
+                  <Typography variant="body1">
+                    No feedback sentiments.
+                  </Typography>
+                )}
+              </Box>
             </Paper>
             <Paper sx={{ marginLeft: 4, width: "30vw" }}>
               <Box>
-                <Typography sx={{ display: "flex", justifyContent: "center" }}>Overall Sentiment Result</Typography> 
+                <Typography sx={{ display: "flex", justifyContent: "center" }}>
+                  Overall Sentiment Result
+                </Typography>
               </Box>
               <Box>sdbhasb</Box>
             </Paper>
