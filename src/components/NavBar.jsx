@@ -204,8 +204,7 @@ const NavBar = () => {
               vertical: "top",
             }}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
+            <MenuItem onClick={() => navigate("/account")}>Profile</MenuItem>
             <MenuItem onClick={() => navigate("/redeem")}>Points</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
