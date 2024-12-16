@@ -205,74 +205,114 @@ const SurveyResults = () => {
             sx={{
               display: "flex",
               flexDirection: "row",
-              marginTop: 4,
             }}
           >
             <Paper
               sx={{
+                display: "flex",
+                justifyContent: "start",
                 backgroundColor: "lightgray",
-                padding: 3,
-                width: "50vw",
-                overflowY: "auto",
-                maxHeight: "60vh",
+                flexDirection: "column",
+                width: "60vw",
               }}
             >
-              <Typography variant="h4" gutterBottom>
-                Feedback Sentiments
-              </Typography>
-              {Object.keys(feedback_sentiments).length > 0 ? (
-                Object.keys(feedback_sentiments).map((questionId) => {
-                  const sentimentData = feedback_sentiments[questionId];
-                  const {
-                    feedback = [],
-                    descriptive_sentiment,
-                    average_sentiment,
-                    question_text,
-                  } = sentimentData;
-
-                  return (
-                    <Box key={questionId} mb={4}>
-                      <Typography variant="h6" gutterBottom>
-                        Question: {question_text}
+              <Box
+                sx={{ display: "flex", justifyContent: "center ", margin: 1 }}
+              >
+                <Typography variant="h4">Feedback Sentiments</Typography>
+              </Box>
+              <Box
+                mb={4}
+                sx={{ margin: 3, overflowY: "auto", maxHeight: "55vh" }}
+              >
+                {/* <Box>
+                  {Object.keys(feedback_sentiments).map((questionId) => {
+                    const sentimentData = feedback_sentiments[questionId];
+                    return (
+                      <Typography key={questionId}>
+                        {`Question: ${sentimentData.question_text}`}
                       </Typography>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Feedback</TableCell>
-                            <TableCell>Remarks</TableCell>
-                            <TableCell>Score</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {feedback.length > 0 ? (
-                            feedback.map((answer, index) => (
-                              <TableRow key={index}>
-                                <TableCell>
-                                  {answer || "No feedback provided"}
-                                </TableCell>
-                                <TableCell>{descriptive_sentiment}</TableCell>
-                                <TableCell>
-                                  {average_sentiment
-                                    ? average_sentiment.toFixed(2)
-                                    : "N/A"}
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          ) : (
-                            <TableRow>
-                              <TableCell colSpan={3} align="center">
-                                No feedback provided for this question.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
+                    );
+                  })}
+                </Box> */}
+
+                {Object.keys(feedback_sentiments).length > 0 ? (
+                  <>
+                    <Box sx={{padding: 2}}>
+                      {Object.keys(feedback_sentiments).map((questionId) => {
+                        const sentimentData = feedback_sentiments[questionId];
+                        const {
+                          feedback = [],
+                          descriptive_sentiment,
+                          average_sentiment,
+                          question_text,
+                        } = sentimentData;
+
+                        return (
+                          <>
+                            <Typography key={questionId}>
+                              {`Question: ${sentimentData.question_text}`}
+                            </Typography>
+                            <Paper sx={{ overflow: "auto" }}>
+                              <Table variant="solid">
+                                <TableHead>
+                                  <TableRow sx={{}}>
+                                    <TableCell>
+                                      {" "}
+                                      <Typography variant="h6">
+                                        ANSWERS
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">
+                                        REMARKS
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">
+                                        POINTS
+                                      </Typography>
+                                    </TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {feedback.length > 0 ? (
+                                    feedback.map((answer, index) => (
+                                      <TableRow key={index}>
+                                        <TableCell>
+                                          {answer || "No feedback provided"}
+                                        </TableCell>
+                                        <TableCell>
+                                          {descriptive_sentiment}
+                                        </TableCell>
+                                        <TableCell>
+                                          {average_sentiment
+                                            ? average_sentiment.toFixed(2)
+                                            : "N/A"}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))
+                                  ) : (
+                                    <TableRow>
+                                      <TableCell colSpan={3} align="center">
+                                        No feedback provided for this question.
+                                      </TableCell>
+                                    </TableRow>
+                                  )}
+                                </TableBody>
+                              </Table>
+                            </Paper>
+                          </>
+                        );
+                      })}
                     </Box>
-                  );
-                })
-              ) : (
-                <Typography>No feedback sentiments available.</Typography>
-              )}
+                  </>
+                ) : (
+                  <Typography variant="body1">
+                    No feedback sentiments.
+                  </Typography>
+                )}
+              </Box>
             </Paper>
 
             {/* Pie Chart */}
