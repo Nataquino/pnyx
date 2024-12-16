@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
 import {
   BarChart,
   CartesianGrid,
@@ -53,8 +52,7 @@ const SurveyResults = () => {
     fetchResults();
   }, [id]);
 
-  const { paragraph_answers, multiple_choice_stats, feedback_sentiments } =
-    results;
+  const { paragraph_answers, multiple_choice_stats, feedback_sentiments } = results;
 
   // Colors for bar and pie charts
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8A2BE2"];
@@ -64,10 +62,7 @@ const SurveyResults = () => {
   let positiveCount = 0;
   let negativeCount = 0;
   Object.values(feedback_sentiments).forEach((sentimentData) => {
-    const average_sentiment =
-      sentimentData.count > 0
-        ? sentimentData.total_score / sentimentData.count
-        : 0;
+    const average_sentiment = sentimentData.count > 0 ? sentimentData.total_score / sentimentData.count : 0;
     if (average_sentiment >= 3) {
       positiveCount++;
     } else {
@@ -121,9 +116,7 @@ const SurveyResults = () => {
                 {paragraph_answers.length > 0 ? (
                   paragraph_answers.map((item, index) => (
                     <Box key={index} mb={2}>
-                      <Typography variant="body1">
-                        {item.question_text}
-                      </Typography>
+                      <Typography variant="body1">{item.question_text}</Typography>
                       <Typography variant="body2">{item.answer}</Typography>
                     </Box>
                   ))
@@ -205,20 +198,14 @@ const SurveyResults = () => {
           </Stack>
 
           {/* Feedback Sentiments with Scores */}
-          <Stack
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              marginTop: 4,
-            }}
-          >
+          <Stack sx={{ display: "flex", flexDirection: "row" }}>
             <Paper
               sx={{
+                display: "flex",
+                justifyContent: "start",
                 backgroundColor: "lightgray",
-                padding: 3,
-                width: "50vw",
-                overflowY: "auto",
-                maxHeight: "60vh",
+                flexDirection: "column",
+                width: "60vw",
               }}
             >
               <Typography variant="h4" gutterBottom>
@@ -275,7 +262,7 @@ const SurveyResults = () => {
                   );
                 })
               ) : (
-                <Typography>No feedback sentiments available.</Typography>
+                <Typography variant="body1">No feedback sentiments.</Typography>
               )}
             </Paper>
 
