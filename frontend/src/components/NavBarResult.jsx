@@ -1,4 +1,4 @@
-import { Box, Typography, AppBar, Toolbar, Button } from "@mui/material";
+import { Box,AppBar, Toolbar, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const NavBarResult = () => {

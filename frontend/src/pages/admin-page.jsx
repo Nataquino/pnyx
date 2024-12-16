@@ -29,7 +29,7 @@ const Admin = () => {
         setError("There was an error fetching the admin stats!"); // Set error message for user
         console.error("There was an error fetching the admin stats!", error);
       });
-  }, []);
+  },);
 
   return (
     <Stack sx={{ backgroundColor: "skyblue", height: "100vh" }}>
