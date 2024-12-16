@@ -24,6 +24,7 @@ import PollIcon from "@mui/icons-material/Poll";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import CardGiftcardIcon from "@mui/icons-material/CardGiftcard"; // Icon for Rewards
 import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -47,7 +48,7 @@ const AdminMain = () => {
   };
 
   const handleLogout = async () => {
-      navigate("/");
+    navigate("/");
   };
 
   return (
@@ -83,8 +84,7 @@ const AdminMain = () => {
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
             boxSizing: "border-box",
-            position: "absolute"
-
+            position: "absolute",
           },
         }}
       >
@@ -98,8 +98,8 @@ const AdminMain = () => {
                     text === "DASHBOARD"
                       ? () => navigate("/admin")
                       : text === "SURVEY CATEGORIES"
-                        ? () => navigate("/admin-categories")
-                        : null
+                      ? () => navigate("/admin-categories")
+                      : null
                   }
                 >
                   <ListItemIcon>
@@ -107,7 +107,6 @@ const AdminMain = () => {
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
-
               </ListItem>
             ))}
             <Divider />
@@ -123,6 +122,15 @@ const AdminMain = () => {
                 </ListItemIcon>
                 <ListItemText primary="SURVEYS" />
                 <ArrowDropDownIcon />
+              </ListItemButton>
+            </ListItem>
+            <Divider />
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate("/add-rewards")}>
+                <ListItemIcon>
+                  <CardGiftcardIcon />
+                </ListItemIcon>
+                <ListItemText primary="REWARDS" />
               </ListItemButton>
             </ListItem>
           </List>
