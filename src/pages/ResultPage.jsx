@@ -64,7 +64,11 @@ const SurveyResults = () => {
   let positiveCount = 0;
   let negativeCount = 0;
   Object.values(feedback_sentiments).forEach((sentimentData) => {
-    if (sentimentData.average_sentiment >= 3) {
+    const average_sentiment =
+      sentimentData.count > 0
+        ? sentimentData.total_score / sentimentData.count
+        : 0;
+    if (average_sentiment >= 3) {
       positiveCount++;
     } else {
       negativeCount++;
@@ -200,7 +204,7 @@ const SurveyResults = () => {
             </Box>
           </Stack>
 
-          {/* Feedback Sentiments with Answers */}
+          {/* Feedback Sentiments with Scores */}
           <Stack
             sx={{
               display: "flex",
@@ -225,10 +229,12 @@ const SurveyResults = () => {
                   const sentimentData = feedback_sentiments[questionId];
                   const {
                     feedback = [],
-                    descriptive_sentiment,
-                    average_sentiment,
                     question_text,
+                    total_score,
+                    count,
                   } = sentimentData;
+
+                  const average_sentiment = count > 0 ? total_score / count : 0;
 
                   return (
                     <Box key={questionId} mb={4}>
@@ -239,34 +245,32 @@ const SurveyResults = () => {
                         <TableHead>
                           <TableRow>
                             <TableCell>Feedback</TableCell>
-                            <TableCell>Remarks</TableCell>
-                            <TableCell>Score</TableCell>
+                            <TableCell>Sentiment Score</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {feedback.length > 0 ? (
-                            feedback.map((answer, index) => (
+                            feedback.map(({ answer, sentiment_score }, index) => (
                               <TableRow key={index}>
                                 <TableCell>
                                   {answer || "No feedback provided"}
                                 </TableCell>
-                                <TableCell>{descriptive_sentiment}</TableCell>
-                                <TableCell>
-                                  {average_sentiment
-                                    ? average_sentiment.toFixed(2)
-                                    : "N/A"}
-                                </TableCell>
+                                <TableCell>{sentiment_score}</TableCell>
                               </TableRow>
                             ))
                           ) : (
                             <TableRow>
-                              <TableCell colSpan={3} align="center">
+                              <TableCell colSpan={2} align="center">
                                 No feedback provided for this question.
                               </TableCell>
                             </TableRow>
                           )}
                         </TableBody>
                       </Table>
+                      <Typography variant="body2" sx={{ marginTop: 2 }}>
+                        Average Sentiment Score:{" "}
+                        {average_sentiment.toFixed(2)}
+                      </Typography>
                     </Box>
                   );
                 })
