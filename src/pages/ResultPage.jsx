@@ -118,20 +118,30 @@ const SurveyResults = () => {
 
           {/* Paragraph Answers */}
           <Stack sx={{ display: "flex", flexDirection: "row" }}>
-            <Box mb={4} sx={{ backgroundColor: "lightgray", width: "40vw" }}>
-              <Typography variant="h6">Paragraph Answers:</Typography>
-              {paragraph_answers.length > 0 ? (
-                paragraph_answers.map((item, index) => (
-                  <Box key={index} mb={2}>
-                    <Typography variant="body1">
-                      {item.question_text}
-                    </Typography>
-                    <Typography variant="body2">{item.answer}</Typography>
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body1">No paragraph answers.</Typography>
-              )}
+            <Box
+              mb={4}
+              sx={{
+                backgroundColor: "lightgray",
+                width: "40vw",
+                maxHeight: "50vh",
+                overflowX: "auto",
+              }}
+            >
+              <Box sx={{ padding: 2 }}>
+                <Typography variant="h6">Paragraph Answers:</Typography>
+                {paragraph_answers.length > 0 ? (
+                  paragraph_answers.map((item, index) => (
+                    <Box key={index} mb={2}>
+                      <Typography variant="body1">
+                        {item.question_text}
+                      </Typography>
+                      <Typography variant="body2">{item.answer}</Typography>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography variant="body1">No paragraph answers.</Typography>
+                )}
+              </Box>
             </Box>
 
             {/* Multiple Choice Results - Aligned to the Right */}
@@ -141,11 +151,22 @@ const SurveyResults = () => {
                 marginLeft: 5,
                 backgroundColor: "lightgray",
                 width: "50vw",
+                maxHeight: "50vh",
                 overflowX: "auto",
               }}
             >
-              <Box flexGrow={1} maxWidth={600}>
-                <Typography variant="h6">Multiple Choice Results:</Typography>
+              <Box flexGrow={1} maxWidth={600} sx={{ padding: 2 }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginLeft: 15,
+                    padding: 2,
+                  }}
+                >
+                  Multiple Choice Results:
+                </Typography>
                 {Object.keys(multiple_choice_stats).length > 0 ? (
                   Object.entries(multiple_choice_stats).map(
                     ([questionId, { question_text, options = {} }], index) => {
@@ -158,7 +179,7 @@ const SurveyResults = () => {
                       );
 
                       return (
-                        <Box key={index} mb={4}>
+                        <Box key={index} mb={4} sx={{ padding: 2 }}>
                           <Typography variant="h6" gutterBottom>
                             {question_text}
                           </Typography>
@@ -178,7 +199,6 @@ const SurveyResults = () => {
                               <XAxis dataKey="name" />
                               <YAxis />
                               <Tooltip />
-                              <Legend />
                               <Bar dataKey="value" fill="#8884d8">
                                 {choiceCounts.map((entry, index) => (
                                   <Cell
@@ -217,54 +237,135 @@ const SurveyResults = () => {
                 justifyContent: "start",
                 backgroundColor: "lightgray",
                 flexDirection: "column",
-                width: "60vw",
+                width: "60vw"
               }}
             >
               <Box
-                sx={{ display: "flex", justifyContent: "center ", margin: 1 }}
+                sx={{ display: "flex", justifyContent: "center ", margin: 1}}
               >
                 <Typography variant="h4">Feedback Sentiments</Typography>
               </Box>
-              <Box mb={4} sx={{ margin: 3 }}>
+              <Box mb={4} sx={{ margin: 3 , overflowY: "auto" , maxHeight: "55vh"} }>
+                {/* <Box>
+                  {Object.keys(feedback_sentiments).map((questionId) => {
+                    const sentimentData = feedback_sentiments[questionId];
+                    return (
+                      <Typography key={questionId}>
+                        {`Question: ${sentimentData.question_text}`}
+                      </Typography>
+                    );
+                  })}
+                </Box> */}
+
                 {Object.keys(feedback_sentiments).length > 0 ? (
-                  <Paper sx={{ overflow: "auto" }}>
-                    <Table variant="solid">
-                      <TableHead>
-                        <TableRow sx={{}}>
-                          <TableCell>
-                            {" "}
-                            <Typography variant="h6">ANSWERS</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="h6">REMARKS</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="h6">POINTS</Typography>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {Object.keys(feedback_sentiments).map((questionId) => {
-                          const sentimentData = feedback_sentiments[questionId];
-                          return (
-                            <TableRow key={questionId}>
-                              <TableCell>
-                                {sentimentData.question_text}
-                              </TableCell>
-                              <TableCell>
-                                {sentimentData.descriptive_sentiment}
-                              </TableCell>
-                              <TableCell>
-                                {sentimentData.average_sentiment
-                                  ? sentimentData.average_sentiment.toFixed(2)
-                                  : "N/A"}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </Paper>
+                  <>
+                    <Box>
+                      {Object.keys(feedback_sentiments).map((questionId) => {
+                        const sentimentData = feedback_sentiments[questionId];
+                        return (
+                          <>
+                            <Typography key={questionId}>
+                              {`Question: ${sentimentData.question_text}`}
+                            </Typography>
+                            <Paper sx={{ overflow: "auto" }}>
+                              <Table variant="solid">
+                                <TableHead>
+                                  <TableRow sx={{}}>
+                                    <TableCell>
+                                      {" "}
+                                      <Typography variant="h6">
+                                        ANSWERS
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">
+                                        REMARKS
+                                      </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Typography variant="h6">
+                                        POINTS
+                                      </Typography>
+                                    </TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {Object.keys(feedback_sentiments).map(
+                                    (questionId) => {
+                                      const sentimentData =
+                                        feedback_sentiments[questionId];
+                                      return (
+                                        <TableRow key={questionId}>
+                                          <TableCell>
+                                            {feedback_sentiments.value}
+                                          </TableCell>
+                                          <TableCell>
+                                            {
+                                              sentimentData.descriptive_sentiment
+                                            }
+                                          </TableCell>
+                                          <TableCell>
+                                            {sentimentData.average_sentiment
+                                              ? sentimentData.average_sentiment.toFixed(
+                                                  2
+                                                )
+                                              : "N/A"}
+                                          </TableCell>
+                                        </TableRow>
+                                      );
+                                    }
+                                  )}
+                                </TableBody>
+                              </Table>
+                            </Paper>
+                          </>
+                        );
+                      })}
+                    </Box>
+                    {/* <Paper sx={{ overflow: "auto" }}>
+                      <Table variant="solid">
+                        <TableHead>
+                          <TableRow sx={{}}>
+                            <TableCell>
+                              {" "}
+                              <Typography variant="h6">ANSWERS</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="h6">REMARKS</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="h6">POINTS</Typography>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {Object.keys(feedback_sentiments).map(
+                            (questionId) => {
+                              const sentimentData =
+                                feedback_sentiments[questionId];
+                              return (
+                                <TableRow key={questionId}>
+                                  <TableCell>
+                                    {sentimentData.feedback_sentiments}
+                                  </TableCell>
+                                  <TableCell>
+                                    {sentimentData.descriptive_sentiment}
+                                  </TableCell>
+                                  <TableCell>
+                                    {sentimentData.average_sentiment
+                                      ? sentimentData.average_sentiment.toFixed(
+                                          2
+                                        )
+                                      : "N/A"}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            }
+                          )}
+                        </TableBody>
+                      </Table>
+                    </Paper> */}
+                  </>
                 ) : (
                   <Typography variant="body1">
                     No feedback sentiments.
@@ -272,6 +373,7 @@ const SurveyResults = () => {
                 )}
               </Box>
             </Paper>
+
             {/* Pie Chart for Positive/Negative Feedback */}
             <Paper sx={{ padding: 3, width: "60vw", textAlign: "center" }}>
               <Typography variant="h5" gutterBottom>
