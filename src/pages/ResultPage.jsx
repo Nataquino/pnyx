@@ -291,7 +291,7 @@ const SurveyResults = () => {
                     {chartData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
+                        fill={pieCOLORS[index % pieCOLORS.length]}
                       />
                     ))}
                   </Pie>
