@@ -68,9 +68,9 @@ const SurveyResults = () => {
 
   Object.values(feedback_sentiments).forEach((sentimentData) => {
     if (sentimentData.average_sentiment >= 3) {
-      positiveCount++;
+      negativeCount++;      
     } else {
-      negativeCount++;
+positiveCount++;
     }
   });
 
@@ -82,6 +82,10 @@ const SurveyResults = () => {
 
   // Colors for the chart
   const pieCOLORS = ["#4CAF50", "#F44336"]; // Green for Positive, Red for Negative
+
+
+
+  
   return (
     <Stack>
       <NavBarResult />
