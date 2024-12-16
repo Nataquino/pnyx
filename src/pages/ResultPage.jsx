@@ -247,13 +247,16 @@ const SurveyResults = () => {
                             <TableHead>
                               <TableRow>
                                 <TableCell>
-                                  {" "}
                                   <Typography variant="h6">Feedback</Typography>
                                 </TableCell>
                                 <TableCell>
-                                  {" "}
                                   <Typography variant="h6">
                                     Sentiment Score
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="h6">
+                                    Remarks
                                   </Typography>
                                 </TableCell>
                               </TableRow>
@@ -267,12 +270,19 @@ const SurveyResults = () => {
                                         {answer || "No feedback provided"}
                                       </TableCell>
                                       <TableCell>{sentiment_score}</TableCell>
+                                      <TableCell>
+                                        {sentiment_score > 0
+                                          ? "Positive"
+                                          : sentiment_score < 0
+                                          ? "Negative"
+                                          : "Neutral"}
+                                      </TableCell>
                                     </TableRow>
                                   )
                                 )
                               ) : (
                                 <TableRow>
-                                  <TableCell colSpan={2} align="center">
+                                  <TableCell colSpan={3} align="center">
                                     No feedback provided for this question.
                                   </TableCell>
                                 </TableRow>
@@ -283,7 +293,13 @@ const SurveyResults = () => {
 
                         <Typography variant="body2" sx={{ marginTop: 2 }}>
                           Average Sentiment Score:{" "}
-                          {average_sentiment.toFixed(2)}
+                          {average_sentiment.toFixed(2)} (
+                          {average_sentiment > 0
+                            ? "Positive"
+                            : average_sentiment < 0
+                            ? "Negative"
+                            : "Neutral"}
+                          )
                         </Typography>
                       </Box>
                     );
@@ -297,30 +313,32 @@ const SurveyResults = () => {
             </Paper>
 
             {/* Pie Chart */}
-            <Paper sx={{ padding: 3, width: "50vw", textAlign: "center" }}>
+            <Paper sx={{ padding: 3, width: "60vw", textAlign: "center" }}>
               <Typography variant="h5" gutterBottom>
                 Sentiment Analysis (Positive vs Negative)
               </Typography>
-              <PieChart width={400} height={300}>
-                <Pie
-                  data={chartData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ name, value }) => `${name}: ${value}`}
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={pieCOLORS[index % pieCOLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
+              <Box display="flex" justifyContent="center">
+                <PieChart width={400} height={300}>
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label={({ name, value }) => `${name}: ${value}`}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={pieCOLORS[index % pieCOLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </Box>
             </Paper>
           </Stack>
         </Card>
