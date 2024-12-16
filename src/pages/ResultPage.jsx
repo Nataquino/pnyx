@@ -52,7 +52,8 @@ const SurveyResults = () => {
     fetchResults();
   }, [id]);
 
-  const { paragraph_answers, multiple_choice_stats, feedback_sentiments } = results;
+  const { paragraph_answers, multiple_choice_stats, feedback_sentiments } =
+    results;
 
   // Colors for bar and pie charts
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8A2BE2"];
@@ -62,7 +63,10 @@ const SurveyResults = () => {
   let positiveCount = 0;
   let negativeCount = 0;
   Object.values(feedback_sentiments).forEach((sentimentData) => {
-    const average_sentiment = sentimentData.count > 0 ? sentimentData.total_score / sentimentData.count : 0;
+    const average_sentiment =
+      sentimentData.count > 0
+        ? sentimentData.total_score / sentimentData.count
+        : 0;
     if (average_sentiment >= 3) {
       positiveCount++;
     } else {
@@ -116,7 +120,9 @@ const SurveyResults = () => {
                 {paragraph_answers.length > 0 ? (
                   paragraph_answers.map((item, index) => (
                     <Box key={index} mb={2}>
-                      <Typography variant="body1">{item.question_text}</Typography>
+                      <Typography variant="body1">
+                        {item.question_text}
+                      </Typography>
                       <Typography variant="body2">{item.answer}</Typography>
                     </Box>
                   ))
@@ -208,62 +214,86 @@ const SurveyResults = () => {
                 width: "60vw",
               }}
             >
-              <Typography variant="h4" gutterBottom>
-                Feedback Sentiments
-              </Typography>
-              {Object.keys(feedback_sentiments).length > 0 ? (
-                Object.keys(feedback_sentiments).map((questionId) => {
-                  const sentimentData = feedback_sentiments[questionId];
-                  const {
-                    feedback = [],
-                    question_text,
-                    total_score,
-                    count,
-                  } = sentimentData;
+              <Box
+                sx={{ display: "flex", justifyContent: "center ", margin: 1 }}
+              >
+                <Typography variant="h4">Feedback Sentiments</Typography>
+              </Box>
 
-                  const average_sentiment = count > 0 ? total_score / count : 0;
+              <Box
+                mb={4}
+                sx={{ margin: 3, overflowY: "auto", maxHeight: "55vh" }}
+              >
+                {Object.keys(feedback_sentiments).length > 0 ? (
+                  Object.keys(feedback_sentiments).map((questionId) => {
+                    const sentimentData = feedback_sentiments[questionId];
+                    const {
+                      feedback = [],
+                      question_text,
+                      total_score,
+                      count,
+                    } = sentimentData;
 
-                  return (
-                    <Box key={questionId} mb={4}>
-                      <Typography variant="h6" gutterBottom>
-                        Question: {question_text}
-                      </Typography>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Feedback</TableCell>
-                            <TableCell>Sentiment Score</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {feedback.length > 0 ? (
-                            feedback.map(({ answer, sentiment_score }, index) => (
-                              <TableRow key={index}>
+                    const average_sentiment =
+                      count > 0 ? total_score / count : 0;
+
+                    return (
+                      <Box key={questionId} mb={4}>
+                        <Typography variant="h6" gutterBottom>
+                          Question: {question_text}
+                        </Typography>
+                        <Paper sx={{ overflowY: "auto" }}>
+                          <Table>
+                            <TableHead>
+                              <TableRow>
                                 <TableCell>
-                                  {answer || "No feedback provided"}
+                                  {" "}
+                                  <Typography variant="h6">Feedback</Typography>
                                 </TableCell>
-                                <TableCell>{sentiment_score}</TableCell>
+                                <TableCell>
+                                  {" "}
+                                  <Typography variant="h6">
+                                    Sentiment Score
+                                  </Typography>
+                                </TableCell>
                               </TableRow>
-                            ))
-                          ) : (
-                            <TableRow>
-                              <TableCell colSpan={2} align="center">
-                                No feedback provided for this question.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                      <Typography variant="body2" sx={{ marginTop: 2 }}>
-                        Average Sentiment Score:{" "}
-                        {average_sentiment.toFixed(2)}
-                      </Typography>
-                    </Box>
-                  );
-                })
-              ) : (
-                <Typography variant="body1">No feedback sentiments.</Typography>
-              )}
+                            </TableHead>
+                            <TableBody>
+                              {feedback.length > 0 ? (
+                                feedback.map(
+                                  ({ answer, sentiment_score }, index) => (
+                                    <TableRow key={index}>
+                                      <TableCell>
+                                        {answer || "No feedback provided"}
+                                      </TableCell>
+                                      <TableCell>{sentiment_score}</TableCell>
+                                    </TableRow>
+                                  )
+                                )
+                              ) : (
+                                <TableRow>
+                                  <TableCell colSpan={2} align="center">
+                                    No feedback provided for this question.
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </Paper>
+
+                        <Typography variant="body2" sx={{ marginTop: 2 }}>
+                          Average Sentiment Score:{" "}
+                          {average_sentiment.toFixed(2)}
+                        </Typography>
+                      </Box>
+                    );
+                  })
+                ) : (
+                  <Typography variant="body1">
+                    No feedback sentiments.
+                  </Typography>
+                )}
+              </Box>
             </Paper>
 
             {/* Pie Chart */}

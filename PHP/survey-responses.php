@@ -76,21 +76,25 @@ while ($row = $result->fetch_assoc()) {
             }
             $responses['multiple_choice_stats'][$questionId]['options'][$answer]++;
             break;
-        case 'feedback':
-            // Collect sentiment scores and feedback answers
-            if (!isset($responses['feedback_sentiments'][$questionId])) {
-                $responses['feedback_sentiments'][$questionId] = [
-                    'question_text' => $questionText,
-                    'total_score' => 0,
-                    'count' => 0,
-                    'feedback' => [] // Initialize feedback array
+            case 'feedback':
+                // Collect sentiment scores and feedback answers
+                if (!isset($responses['feedback_sentiments'][$questionId])) {
+                    $responses['feedback_sentiments'][$questionId] = [
+                        'question_text' => $questionText,
+                        'total_score' => 0,
+                        'count' => 0,
+                        'feedback' => [] // Initialize feedback array
+                    ];
+                }
+                $responses['feedback_sentiments'][$questionId]['total_score'] += $sentimentScore;
+                $responses['feedback_sentiments'][$questionId]['count']++;
+                // Store feedback along with its sentiment score
+                $responses['feedback_sentiments'][$questionId]['feedback'][] = [
+                    'answer' => $answer,
+                    'sentiment_score' => $sentimentScore
                 ];
-            }
-            $responses['feedback_sentiments'][$questionId]['total_score'] += $sentimentScore;
-            $responses['feedback_sentiments'][$questionId]['count']++;
-            // Store the feedback answer
-            $responses['feedback_sentiments'][$questionId]['feedback'][] = $answer;
-            break;
+                break;
+            
     }
 }
 
