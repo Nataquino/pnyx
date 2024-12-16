@@ -23,7 +23,7 @@ const RewardsAdmin = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:5000/api/rewards", {
+            const response = await axios.post("http://localhost/survey-app/add-reward.php", {
                 name: rewardName,
                 description: rewardDescription,
                 voucher_code: voucherCode,
