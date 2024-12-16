@@ -9,6 +9,9 @@ import {
   Grid,
   CardActions,
   Stack,
+  Modal,
+  TextField,
+  Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import SurveyNavBar from "../components/SurveyNavBar";
@@ -16,24 +19,26 @@ import SurveyNavBar from "../components/SurveyNavBar";
 const SurveyList = () => {
   const [surveys, setSurveys] = useState([]);
   const [showComment, setShowComment] = useState({});
+  const [lockModal, setLockModal] = useState({ open: false, surveyId: null });
+  const [passcode, setPasscode] = useState("");
 
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get('http://localhost/survey-app/get-owned-surveys.php', { withCredentials: true });
-        console.log(response.data); // Log the fetched data
-        
-        // Ensure surveys is always an array
-        setSurveys(Array.isArray(response.data) ? response.data : []); 
+        const response = await axios.get(
+          "http://localhost/survey-app/get-owned-surveys.php",
+          { withCredentials: true }
+        );
+        console.log(response.data);
+        setSurveys(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
-        console.error("Error fetching surveys:", error); // Handle errors
+        console.error("Error fetching surveys:", error);
       }
     };
 
-    fetchSurveys(); // Call the fetch function
-  }, []); 
+    fetchSurveys();
+  }, []);
 
-  // Function to return the status label color
   const getStatusLabelColor = (status) => {
     switch (status) {
       case "pending":
@@ -43,13 +48,31 @@ const SurveyList = () => {
       case "approved":
         return "green";
       case "activated":
-        return "blue"; // Added color for "activated"
+        return "blue";
       default:
         return "gray";
     }
   };
 
-  // Function to toggle comment visibility for declined surveys
+  // Add this function to handle survey activation
+const activateSurvey = async (surveyId) => {
+  try {
+    const response = await axios.post(
+      "http://localhost/survey-app/activate-survey.php",
+      { survey_id: surveyId },
+      { withCredentials: true }
+    );
+    console.log(response.data);
+    alert(response.data.message || "Survey activated successfully");
+    // Optionally, refetch surveys after activation
+    // fetchSurveys();
+  } catch (error) {
+    console.error("Error activating survey:", error);
+    alert("Failed to activate the survey. Please try again.");
+  }
+};
+
+
   const toggleComment = (id) => {
     setShowComment((prevState) => ({
       ...prevState,
@@ -57,29 +80,51 @@ const SurveyList = () => {
     }));
   };
 
-  // Function to activate the survey
-  const activateSurvey = async (surveyId) => {
+  const lockSurvey = async (surveyId, passcode) => {
     try {
       const response = await axios.post(
-        'http://localhost/survey-app/activate-survey.php',
-        { survey_id: surveyId },
+        "http://localhost/survey-app/lock-survey.php",
+        { survey_id: surveyId, passcode: passcode },
         { withCredentials: true }
       );
       console.log(response.data);
-      alert(response.data.message || "Survey activated successfully");
-      // Optionally, refetch surveys after activation
-      // fetchSurveys();
+      alert(response.data.message || "Survey locked successfully.");
     } catch (error) {
-      console.error("Error activating survey:", error);
-      alert("Failed to activate the survey. Please try again.");
+      console.error("Error locking survey:", error);
+      alert("Failed to lock the survey. Please try again.");
     }
+  };
+  
+
+  const handleLockButtonClick = (surveyId) => {
+    setLockModal({ open: true, surveyId });
+  };
+
+  const handleLockSubmit = () => {
+    if (passcode.trim() === "") {
+      alert("Please enter a passcode to lock the survey.");
+      return;
+    }
+    lockSurvey(lockModal.surveyId, passcode);
   };
 
   return (
-    <Stack maxHeight={"100vh"} sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack
+      maxHeight={"100vh"}
+      sx={{ backgroundColor: "skyblue", height: "100vh" }}
+    >
       <SurveyNavBar />
-      <Container maxWidth={false} sx={{ marginTop: 10, paddingBottom: 2, flexGrow: 1, overflowY: "auto", padding: 5, height: "50vh" }}>
-        {/* Check if surveys array is empty and display message */}
+      <Container
+        maxWidth={false}
+        sx={{
+          marginTop: 10,
+          paddingBottom: 2,
+          flexGrow: 1,
+          overflowY: "auto",
+          padding: 5,
+          height: "50vh",
+        }}
+      >
         {surveys.length === 0 ? (
           <Stack alignItems="center" spacing={3}>
             <Typography variant="h5" sx={{ marginTop: 5 }}>
@@ -111,7 +156,6 @@ const SurveyList = () => {
                   }}
                 >
                   <CardContent>
-                    {/* Survey Title */}
                     <Typography
                       variant="h5"
                       component="div"
@@ -119,8 +163,6 @@ const SurveyList = () => {
                     >
                       {survey.title}
                     </Typography>
-
-                    {/* Survey Description */}
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -128,8 +170,6 @@ const SurveyList = () => {
                     >
                       {survey.description}
                     </Typography>
-
-                    {/* Status Indicator */}
                     <Typography
                       variant="caption"
                       sx={{
@@ -138,42 +178,9 @@ const SurveyList = () => {
                         color: getStatusLabelColor(survey.status),
                       }}
                     >
-                      {survey.status === "pending"
-                        ? "Status: Pending"
-                        : survey.status === "declined"
-                        ? "Status: Declined"
-                        : survey.status === "approved"
-                        ? "Status: Approved"
-                        : survey.status === "activated"
-                        ? "Status: Activated"
-                        : "Status: Unknown"}
+                      {`Status: ${survey.status}`}
                     </Typography>
-
-                    {/* Show comment button for declined surveys */}
-                    {survey.status === "declined" && (
-                      <>
-                        <Button
-                          size="small"
-                          onClick={() => toggleComment(survey.id)}
-                          sx={{ marginTop: 1 }}
-                        >
-                          {showComment[survey.id] ? "Hide Comment" : "View Comment"}
-                        </Button>
-
-                        {/* Conditionally display comment */}
-                        {showComment[survey.id] && (
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ marginTop: 1 }}
-                          >
-                            Comment: {survey.comment}
-                          </Typography>
-                        )}
-                      </>
-                    )}
                   </CardContent>
-
                   <CardActions
                     sx={{
                       marginTop: "auto",
@@ -182,31 +189,35 @@ const SurveyList = () => {
                     }}
                   >
                     {/* See Results Button */}
-                    {survey.status !== "declined" && survey.status !== "pending" && (
-                      <Button
-                        size="small"
-                        color="primary"
-                        component={Link}
-                        to={`/result/${survey.id}`}
-                      >
-                        See Results
-                      </Button>
-                    )}
+                    {survey.status !== "declined" &&
+                      survey.status !== "pending" && (
+                        <Button
+                          size="small"
+                          color="primary"
+                          component={Link}
+                          to={`/result/${survey.id}`}
+                        >
+                          See Results
+                        </Button>
+                      )}
 
-                    {/* Activate Survey Button - Disable if already activated */}
+                    {/* Activate Survey Button */}
                     {survey.status === "approved" && (
                       <Button
                         size="small"
                         color="success"
                         onClick={() => activateSurvey(survey.id)}
-                        disabled={survey.status === "activated"} // Disable if already activated
+                        disabled={survey.status === "activated"}
                       >
-                        {survey.status === "activated" ? "Activated" : "Activate Survey"}
+                        {survey.status === "activated"
+                          ? "Activated"
+                          : "Activate Survey"}
                       </Button>
                     )}
 
-                    {/* Edit Survey Button - Display for "approved" or "activated" surveys */}
-                    {(survey.status === "approved" || survey.status === "activated") && (
+                    {/* Edit Survey Button */}
+                    {(survey.status === "approved" ||
+                      survey.status === "activated") && (
                       <Button
                         size="small"
                         color="primary"
@@ -216,6 +227,17 @@ const SurveyList = () => {
                         Edit Survey
                       </Button>
                     )}
+
+                    {/* Lock Survey Button */}
+                    {survey.status === "activated" && (
+                      <Button
+                        size="small"
+                        color="secondary"
+                        onClick={() => handleLockButtonClick(survey.id)}
+                      >
+                        Lock Survey
+                      </Button>
+                    )}
                   </CardActions>
                 </Card>
               </Grid>
@@ -223,6 +245,44 @@ const SurveyList = () => {
           </Grid>
         )}
       </Container>
+
+      {/* Modal for locking survey */}
+      <Modal
+        open={lockModal.open}
+        onClose={() => setLockModal({ open: false, surveyId: null })}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            p: 4,
+            borderRadius: 2,
+            boxShadow: 24,
+          }}
+        >
+          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+            Lock Survey
+          </Typography>
+          <TextField
+            label="Passcode"
+            variant="outlined"
+            fullWidth
+            value={passcode}
+            onChange={(e) => setPasscode(e.target.value)}
+            sx={{ marginBottom: 2 }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLockSubmit}
+          >
+            Submit
+          </Button>
+        </Box>
+      </Modal>
     </Stack>
   );
 };
