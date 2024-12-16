@@ -114,18 +114,22 @@ const SurveyResults = () => {
                 backgroundColor: "lightgray",
                 width: "40vw",
                 maxHeight: "50vh",
-                overflowX: "auto",
               }}
             >
-              <Box sx={{ padding: 2 }}>
-                <Typography variant="h6">Paragraph Answers:</Typography>
+              <Box
+                sx={{ display: "flex", justifyContent: "center ", margin: 1 }}
+              >
+                <Typography variant="h4">Paragraph Answers:</Typography>
+              </Box>
+
+              <Box sx={{ padding: 2, overflowX: "auto", maxHeight: "38vh"}}>
                 {paragraph_answers.length > 0 ? (
                   paragraph_answers.map((item, index) => (
                     <Box key={index} mb={2}>
-                      <Typography variant="body1">
+                      <Typography sx={{fontSize:"18px", fontWeight: "bold" }}>
                         {item.question_text}
                       </Typography>
-                      <Typography variant="body2">{item.answer}</Typography>
+                      <Typography sx={{fontStyle:"italic"}}>- {item.answer}</Typography>
                     </Box>
                   ))
                 ) : (
@@ -315,7 +319,7 @@ const SurveyResults = () => {
             {/* Pie Chart */}
             <Paper sx={{ padding: 3, width: "60vw", textAlign: "center" }}>
               <Typography variant="h5" gutterBottom>
-                Sentiment Analysis (Positive vs Negative)
+                Sentiment Analysis
               </Typography>
               <Box display="flex" justifyContent="center">
                 <PieChart width={500} height={400}>
