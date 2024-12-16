@@ -70,11 +70,10 @@ const LoginPage = () => {
       >
         <Card
           sx={{
-            width: "80vw",
+            width: "100vw",
             display: "flex",
             justifyContent: "center",
             borderRadius: 15,
-            backgroundColor: "black",
           }}
         >
           <Box
@@ -168,6 +167,7 @@ const LoginPage = () => {
             sx={{
               backgroundColor: "#12A1E6",
               justifyContent: "center",
+              width: "100vh"
             }}
           >
             <Box
