@@ -22,7 +22,7 @@ if (!isset($_COOKIE['user_id'])) {
 $user_id = intval($_COOKIE['user_id']); // Sanitize the user ID
 
 // Fetch user information
-$sql_user = "SELECT id, firstname,lastname, email, username, reward_points FROM users WHERE id = ?";
+$sql_user = "SELECT id, firstname,lastname, email, username, reward_points, bio FROM users WHERE id = ?";
 $stmt_user = $conn->prepare($sql_user);
 
 if (!$stmt_user) {

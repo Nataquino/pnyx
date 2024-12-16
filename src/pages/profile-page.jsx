@@ -84,7 +84,8 @@ const Account = () => {
                   width: "15vw",
                   height: "25vh",
                 }}
-              ></Container>{" "}
+              >
+                </Container>{" "}
               <Container>
                 <Box sx={{ marginTop: 3, marginLeft: 5 }}>
                   <Typography>Bio</Typography>
@@ -217,11 +218,11 @@ const Account = () => {
         >
           <Box
             sx={{ backgroundColor: "white", width: "65vw", height: "40vh" }}
-          ></Box>
+          >voucher here</Box>
           <Box sx={{ height: "6vh" }}></Box>
           <Box
             sx={{ backgroundColor: "white", width: "65vw", height: "40vh" }}
-          ></Box>
+          >Answered surveys here. Or you can decide if what do you want to put in here</Box>
         </Stack>
       </Stack>
     </Paper>
