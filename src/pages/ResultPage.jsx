@@ -57,28 +57,30 @@ const SurveyResults = () => {
 
   // Colors for bar and pie charts
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8A2BE2"];
-  const pieCOLORS = ["#4CAF50", "#F44336"]; // Green for Positive, Red for Negative
+  const sentimentCounts = { Positive: 0, Negative: 0, Neutral: 0 };
 
-  // Calculate positive and negative feedback counts
-  let positiveCount = 0;
-  let negativeCount = 0;
-  Object.values(feedback_sentiments).forEach((sentimentData) => {
-    const average_sentiment =
-      sentimentData.count > 0
-        ? sentimentData.total_score / sentimentData.count
-        : 0;
-    if (average_sentiment >= 3) {
-      positiveCount++;
-    } else {
-      negativeCount++;
-    }
+  Object.keys(feedback_sentiments).forEach((questionId) => {
+    const { feedback = [] } = feedback_sentiments[questionId];
+    feedback.forEach(({ sentiment_score }) => {
+      if (sentiment_score > 0) {
+        sentimentCounts.Positive += 1;
+      } else if (sentiment_score < 0) {
+        sentimentCounts.Negative += 1;
+      } else {
+        sentimentCounts.Neutral += 1;
+      }
+    });
   });
 
-  // Data for Pie Chart
-  const chartData = [
-    { name: "Positive", value: positiveCount },
-    { name: "Negative", value: negativeCount },
+  // Data for the pie chart
+  const pieData = [
+    { name: "Positive", value: sentimentCounts.Positive },
+    { name: "Neutral", value: sentimentCounts.Neutral },
+    { name: "Negative", value: sentimentCounts.Negative },
   ];
+
+  // Colors for the pie chart
+  const pieCOLORS = ["#4caf50", "#800080", "#f44336"]; // Green, Yellow, Red
 
   return (
     <Stack>
@@ -112,18 +114,22 @@ const SurveyResults = () => {
                 backgroundColor: "lightgray",
                 width: "40vw",
                 maxHeight: "50vh",
-                overflowX: "auto",
               }}
             >
-              <Box sx={{ padding: 2 }}>
-                <Typography variant="h6">Paragraph Answers:</Typography>
+              <Box
+                sx={{ display: "flex", justifyContent: "center ", margin: 1 }}
+              >
+                <Typography variant="h4">Paragraph Answers:</Typography>
+              </Box>
+
+              <Box sx={{ padding: 2, overflowX: "auto", maxHeight: "38vh"}}>
                 {paragraph_answers.length > 0 ? (
                   paragraph_answers.map((item, index) => (
                     <Box key={index} mb={2}>
-                      <Typography variant="body1">
+                      <Typography sx={{fontSize:"18px", fontWeight: "bold" }}>
                         {item.question_text}
                       </Typography>
-                      <Typography variant="body2">{item.answer}</Typography>
+                      <Typography sx={{fontStyle:"italic"}}>- {item.answer}</Typography>
                     </Box>
                   ))
                 ) : (
@@ -255,9 +261,7 @@ const SurveyResults = () => {
                                   </Typography>
                                 </TableCell>
                                 <TableCell>
-                                  <Typography variant="h6">
-                                    Remarks
-                                  </Typography>
+                                  <Typography variant="h6">Remarks</Typography>
                                 </TableCell>
                               </TableRow>
                             </TableHead>
@@ -315,23 +319,32 @@ const SurveyResults = () => {
             {/* Pie Chart */}
             <Paper sx={{ padding: 3, width: "60vw", textAlign: "center" }}>
               <Typography variant="h5" gutterBottom>
-                Sentiment Analysis (Positive vs Negative)
+                Sentiment Analysis
               </Typography>
               <Box display="flex" justifyContent="center">
-                <PieChart width={400} height={300}>
+                <PieChart width={500} height={400}>
                   <Pie
-                    data={chartData}
-                    dataKey="value"
-                    nameKey="name"
+                    data={pieData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={100}
-                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={(entry) => {
+                      const total = pieData.reduce(
+                        (acc, cur) => acc + cur.value,
+                        0
+                      );
+                      const percentage = ((entry.value / total) * 100).toFixed(
+                        2
+                      );
+                      return `${entry.name}: ${percentage}%`;
+                    }}
                   >
-                    {chartData.map((entry, index) => (
+                    {pieData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={pieCOLORS[index % pieCOLORS.length]}
+                        fill={pieCOLORS[index % COLORS.length]}
                       />
                     ))}
                   </Pie>
