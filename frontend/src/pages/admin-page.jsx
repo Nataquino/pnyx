@@ -6,8 +6,8 @@ import axios from "axios";
 const Admin = () => {
   const [userCount, setUserCount] = useState(0);
   const [surveyCount, setSurveyCount] = useState(0);
-  const [users, setUsers] = useState([]);
-  const [surveys, setSurveys] = useState([]);
+  const [setUsers] = useState([]);
+  const [setSurveys] = useState([]);
   const [error, setError] = useState(""); // Added state for error messages
 
   useEffect(() => {

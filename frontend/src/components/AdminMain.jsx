@@ -17,8 +17,6 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { useState } from "react";
-import axios from "axios";
 
 import PollIcon from "@mui/icons-material/Poll";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
@@ -36,8 +34,6 @@ const adminSurveyPages = [
 const AdminMain = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
