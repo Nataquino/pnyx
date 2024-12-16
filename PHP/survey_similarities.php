@@ -8,10 +8,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 include 'connection.php';
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
@@ -59,29 +56,47 @@ for ($i = 0; $i < count($survey_ids); $i++) {
                 $sum_square_2 += $rating_2 * $rating_2;
             }
 
-            $similarity_score = $dot_product / (sqrt($sum_square_1) * sqrt($sum_square_2));
+            // Avoid division by zero
+            if ($sum_square_1 > 0 && $sum_square_2 > 0) {
+                $similarity_score = $dot_product / (sqrt($sum_square_1) * sqrt($sum_square_2));
 
-            // Prepare the data for inserting into survey_similarities
-            $survey_similarities[] = [
-                'survey_id_1' => $survey_id_1,
-                'survey_id_2' => $survey_id_2,
-                'similarity_score' => $similarity_score
-            ];
+                // Prepare the data for inserting into survey_similarities
+                $survey_similarities[] = [
+                    'survey_id_1' => $survey_id_1,
+                    'survey_id_2' => $survey_id_2,
+                    'similarity_score' => $similarity_score
+                ];
+            }
         }
     }
 }
 
 // Insert similarity scores into survey_similarities table
 foreach ($survey_similarities as $similarity) {
-    $stmt = $conn->prepare("INSERT INTO survey_similarities (survey_id_1, survey_id_2, similarity_score) VALUES (?, ?, ?)");
-    $stmt->bind_param("iid", $similarity['survey_id_1'], $similarity['survey_id_2'], $similarity['similarity_score']);
-    if (!$stmt->execute()) {
-        echo json_encode(["error" => "Error inserting similarity: " . $stmt->error]);
-        exit;
+    // Check if similarity already exists
+    $check_sql = "SELECT COUNT(*) AS count FROM survey_similarities WHERE (survey_id_1 = ? AND survey_id_2 = ?) OR (survey_id_1 = ? AND survey_id_2 = ?)";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param(
+        "iiii", 
+        $similarity['survey_id_1'], 
+        $similarity['survey_id_2'], 
+        $similarity['survey_id_2'], 
+        $similarity['survey_id_1']
+    );
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    $row = $check_result->fetch_assoc();
+
+    if ($row['count'] == 0) {
+        // Insert similarity
+        $stmt = $conn->prepare("INSERT INTO survey_similarities (survey_id_1, survey_id_2, similarity_score) VALUES (?, ?, ?)");
+        $stmt->bind_param("iid", $similarity['survey_id_1'], $similarity['survey_id_2'], $similarity['similarity_score']);
+        if (!$stmt->execute()) {
+            echo json_encode(["error" => "Error inserting similarity: " . $stmt->error]);
+            exit;
+        }
     }
 }
-
-echo json_encode(["message" => "Item similarities calculated and inserted successfully"]);
-
 $conn->close();
+
 ?>
