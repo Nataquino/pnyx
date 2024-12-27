@@ -24,7 +24,7 @@ const Account = () => {
       try {
         // Send the updated bio to the backend
         const response = await axios.post(
-          "http://localhost/survey-app/update-userprofile.php", // Backend endpoint to update bio
+          "http://localhost/survey-app/get-userprofile.php", // Backend endpoint to update bio
           { bio: editedText }, // Send the new bio value
           { withCredentials: true }
         );
