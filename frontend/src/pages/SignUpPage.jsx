@@ -12,19 +12,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Grid,
 } from "@mui/material";
 import { useState } from "react";
-import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignUpPage = () => {
   const steps = ["Create an account", "Interest", "Finish"];
-
-  const handleChange = (event) => {
-    setGender(event.target.value);
-  };
-
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [firstname, setFname] = useState("");
@@ -33,8 +28,12 @@ const SignUpPage = () => {
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // Added confirm password state
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleChange = (event) => {
+    setGender(event.target.value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,44 +62,29 @@ const SignUpPage = () => {
     fData.append("password", password);
 
     try {
-      // Show loading spinner, disable submit button
       setLoading(true);
 
       const response = await axios.post(url, fData, { withCredentials: true });
 
       if (response.status === 200) {
-        // Registration success
         alert(response.data.message);
-        navigate("/verification"); // Redirect to verification page
+        navigate("/verification");
       } else {
-        // Handle unexpected responses
-        alert(
-          `Unexpected response: ${response.data.message || "Please try again."}`
-        );
+        alert(`Unexpected response: ${response.data.message || "Please try again."}`);
       }
     } catch (error) {
-      // Better error handling
       if (error.response) {
-        // Server responded with a status other than 2xx
-        alert(
-          `Server error: ${
-            error.response.data.message || "Failed to register."
-          }`
-        );
+        alert(`Server error: ${error.response.data.message || "Failed to register."}`);
       } else if (error.request) {
-        // No response was received from the server
         alert("Network error: No response received from server.");
       } else {
-        // Other errors (setup, configuration, etc.)
         alert(`Error: ${error.message}`);
       }
     } finally {
-      // Reset loading state after request
       setLoading(false);
     }
   };
 
-  // Validation function to check form inputs
   const validateForm = () => {
     if (!username.trim()) return "Username cannot be blank";
     if (!firstname.trim()) return "First Name cannot be blank";
@@ -114,17 +98,19 @@ const SignUpPage = () => {
     <Stack
       sx={{
         backgroundColor: "skyblue",
-        height: "110vh",
+        minHeight: "100vh",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 2,
       }}
     >
-      <Box>
-        <Button
-          sx={{ marginTop: "20px", marginLeft: "30px" }}
-          variant="contained"
-          onClick={() => navigate("/")}
-        >
+      <Box sx={{ position: "absolute", top: 0, left: 0, padding: 2 }}>
+        <Button variant="contained" onClick={() => navigate("/")}>
           Back
         </Button>
+      </Box>
+
+      <Box sx={{ width: "100%", maxWidth: 500 }}>
         <Stepper activeStep={0} alternativeLabel sx={{ marginTop: "30px" }}>
           {steps.map((label) => (
             <Step key={label}>
@@ -136,163 +122,129 @@ const SignUpPage = () => {
       <Container
         sx={{
           backgroundColor: "#F5F5F5",
-          width: "45vw",
-          height: "85vh",
+          width: "50vw",
+          maxWidth: 500,  // Changed maxWidth to 500px for a smaller box
+          padding: 3,
+          marginTop: 4,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
-          marginTop: "20px",
+          borderRadius: 2,
         }}
       >
-        <Typography sx={{ fontSize: "45px", marginTop: 8 }}>
+        <Typography sx={{ fontSize: { xs: "30px", sm: "45px" }, marginBottom: 4 }}>
           Signup
         </Typography>
-        <Container
-          sx={{
-            display: "flex",
-            alignItems: "flex-start", // Align items to the left
-            width: "80%", // Take the full width of the parent container
-            maxWidth: 500, // Set a maximum width for the container
-            padding: 1, // Add padding to the container
-          }}
-        >
+        <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+          <Grid container spacing={2}>
+            {/* Username */}
+            <Grid item xs={12}>
+              <TextField
+                id="username"
+                label="Enter username"
+                fullWidth
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </Grid>
 
-          <TextField
-            id="username"
-            label="Enter username"
-            sx={{
-              width: "100%",
-            }}
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-        </Container>
-        <Container
-          sx={{
-            display: "flex",
-            alignItems: "flex-start", // Align items to the left
-            width: "80%", // Take the full width of the parent container
-            maxWidth: 500, // Set a maximum width for the container
-            padding: 1, // Add padding to the container
-          }}
-        >
-          <TextField
-            id="firstName"
-            label="Enter Firstname"
-            value={firstname}
-            onChange={(e) => {
-              setFname(e.target.value);
-            }}
-            sx={{ width: "50%" }}
-          />
-          <TextField
-            id="lastName"
-            label="Enter Lastname"
-            value={lastname}
-            onChange={(e) => {
-              setLname(e.target.value);
-            }}
-            sx={{ marginLeft: "30px", width: "50%" }}
-          />
-        </Container>
-        <Container
-          sx={{
-            display: "flex",
-            alignItems: "flex-start", // Align items to the left
-            width: "80%", // Take the full width of the parent container
-            maxWidth: 500, // Set a maximum width for the container
-            padding: 1, // Add padding to the container,
-          }}
-        >
-          <FormControl sx={{ width: "50%" }}>
-            <InputLabel id="select-gender">Gender</InputLabel>
-            <Select
-              labelId="select-gender"
-              id="gender"
-              value={gender}
-              label="gender"
-              onChange={handleChange}
-            >
-              <MenuItem value={"Male"}>Male</MenuItem>
-              <MenuItem value={"Female"}>Female</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            id="birthDate"
-            label="Birthdate"
-            value={birthdate}
-            onChange={(e) => {
-              setBirthdate(e.target.value);
-            }}
-            InputLabelProps={{ shrink: true }}
-            type="date"
-            sx={{ marginLeft: "30px", width: "50%" }}
-          />
-        </Container>
-        <Container
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start", // Align items to the left
-            width: "80%", // Take the full width of the parent container
-            maxWidth: 500, // Set a maximum width for the container
-            padding: 1,
-          }}
-        >
-          <TextField
-            id="email"
-            label="Enter Email"
-            sx={{
-              width: "100%",
-            }}
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-          <TextField
-            id="password"
-            label="Enter Password"
-            sx={{
-              width: "100%",
-              marginTop: "18px",
-            }}
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            type="password"
-          />
-          <TextField
-            id="confirmPassword"
-            label="Confirm Password"
-            sx={{
-              width: "100%",
-              marginTop: "18px",
-            }}
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-            }}
-            type="password"
-          />
-        </Container>
-        <Button
-          variant="contained"
-          sx={{
-            marginTop: 4,
-            backgroundColor: "#05B1BF",
-            width: 150,
-            marginBottom: 10,
-          }}
-          onClick={handleSubmit}
-          disabled={loading} // Disable button when loading
-        >
-          {loading ? "Submitting..." : "Register"}
-        </Button>
+            {/* Firstname and Lastname */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="firstName"
+                label="Enter Firstname"
+                fullWidth
+                value={firstname}
+                onChange={(e) => setFname(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="lastName"
+                label="Enter Lastname"
+                fullWidth
+                value={lastname}
+                onChange={(e) => setLname(e.target.value)}
+              />
+            </Grid>
+
+            {/* Gender and Birthdate */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel id="select-gender">Gender</InputLabel>
+                <Select
+                  labelId="select-gender"
+                  id="gender"
+                  value={gender}
+                  label="Gender"
+                  onChange={handleChange}
+                >
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="birthDate"
+                label="Birthdate"
+                type="date"
+                fullWidth
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+            {/* Email, Password, and Confirm Password */}
+            <Grid item xs={12}>
+              <TextField
+                id="email"
+                label="Enter Email"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="password"
+                label="Enter Password"
+                type="password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                fullWidth
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </Grid>
+
+            {/* Submit Button */}
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                sx={{
+                  marginTop: 4,
+                  backgroundColor: "#05B1BF",
+                  width: "100%",
+                  padding: "10px 0",
+                }}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Register"}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Container>
     </Stack>
   );
