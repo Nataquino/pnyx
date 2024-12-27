@@ -19,32 +19,64 @@ const Account = () => {
   const [text, setText] = useState("This is an editable paragraph.");
   const [editedText, setEditedText] = useState(text);
 
-  const handleEditToggle = () => {
+  const handleEditToggle = async () => {
     if (isEditing) {
-      setText(editedText); // Save the changes
+      try {
+        // Send the updated bio to the backend
+        const response = await axios.post(
+          "http://localhost/survey-app/update-userprofile.php", // Backend endpoint to update bio
+          { bio: editedText }, // Send the new bio value
+          { withCredentials: true }
+        );
+  
+        if (response.data.success) {
+          // Successfully updated the bio in the database
+          console.log("Bio updated successfully!");
+  
+          // Optionally, fetch the updated user data to ensure the display is up-to-date
+          const updatedResponse = await axios.get(
+            "http://localhost/survey-app/get-userprofile.php", // Backend endpoint to get updated user info
+            { withCredentials: true }
+          );
+  
+          if (updatedResponse.data.user) {
+            setText(updatedResponse.data.user.bio); // Update the bio in frontend
+            setEditedText(updatedResponse.data.user.bio); // Sync editedText with updated bio
+          } else {
+            console.error("Error fetching updated bio from the database");
+          }
+        } else {
+          console.error("Error updating bio:", response.data.error);
+        }
+      } catch (err) {
+        console.error("Error updating bio:", err);
+      }
+    } else {
+      // When switching to editing mode, initialize editedText with current bio value
+      setEditedText(text); // Ensure the current bio is shown in the TextField when editing
     }
+  
     setIsEditing(!isEditing); // Toggle editing state
   };
-
   const handleTextChange = (e) => {
-    setEditedText(e.target.value);
+    setEditedText(e.target.value); // Update the editedText state with the new value
   };
 
-  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Replace with your backend URL to fetch user data
         const response = await axios.get(
           "http://localhost/survey-app/get-userprofile.php",
           { withCredentials: true }
         );
-        console.log(response.data);
-        if (response.data) {
-          setUserData(response.data); // Set user data in state
-          setError(false); // Reset error state if successful
+
+        if (response.data && response.data.user) {
+          setUserData(response.data.user);
+          setText(response.data.user.bio || ""); // Set bio for non-editable state
+          setEditedText(response.data.user.bio || ""); // Set bio for editing
+          setError(false);
         } else {
-          setError(true); // Handle empty or unexpected response
+          setError(true);
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -53,7 +85,7 @@ const Account = () => {
     };
 
     fetchUserData();
-  }, []); // Empty array ensures this effect runs once after the initial render
+  }, []);
 
   return (
     <Paper fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
@@ -84,8 +116,7 @@ const Account = () => {
                   width: "15vw",
                   height: "25vh",
                 }}
-              >
-                </Container>{" "}
+              ></Container>{" "}
               <Container>
                 <Box sx={{ marginTop: 3, marginLeft: 5 }}>
                   <Typography>Bio</Typography>
@@ -107,40 +138,37 @@ const Account = () => {
                       overflowY: "auto", // Enable vertical scrolling
                       overflowX: "hidden", // Prevent horizontal scrolling
                       padding: 1,
-                      width:"18vw"
+                      width: "18vw",
                     }}
                   >
                     {isEditing ? (
                       <Box
                         sx={{
                           marginTop: -1,
-                          maxHeight: "12vh", // Limit the box height
-                          overflow: "hidden", // Ensure the box does not scroll
+                          maxHeight: "12vh",
+                          overflow: "hidden",
                         }}
                       >
                         <TextField
                           multiline
                           variant="outlined"
-                          value={editedText}
+                          value={editedText} // Display the edited value
                           onChange={handleTextChange}
-                          fullWidth // Ensures the TextField spans the full width of the Box
+                          fullWidth
                           sx={{
                             marginLeft: -1.5,
-                            height: "70%", // Makes the TextField take the full height of the Box
+                            height: "70%",
                             "& .MuiOutlinedInput-root": {
                               "& fieldset": {
-                                borderColor: "transparent", // Remove the blue border
+                                borderColor: "transparent", // Remove border
                               },
                               "&:hover fieldset": {
-                                borderColor: "transparent", // Ensure it's removed on hover as well
+                                borderColor: "transparent", // Remove hover border
                               },
                               "&.Mui-focused fieldset": {
-                                borderColor: "transparent", // Remove the border when focused
+                                borderColor: "transparent", // Remove focus border
                               },
                             },
-                          }}
-                          inputProps={{
-                            maxLength: 70, // Set maximum character limit
                           }}
                         />
                       </Box>
@@ -149,15 +177,14 @@ const Account = () => {
                         <Typography
                           variant="body2"
                           sx={{
-                            marginTop:0.5,
-                            whiteSpace: "pre-line", // Respect line breaks in the text
-                            wordWrap: "break-word", // Wrap long words to prevent overflow
-                            overflowWrap: "break-word", // Additional fallback for long unbroken strings
-                            wordBreak: "break-word", // Ensure long words are broken properly
-                            fontSize: "19px"
+                            whiteSpace: "pre-line", // Respect line breaks
+                            wordWrap: "break-word",
+                            overflowWrap: "break-word",
+                            wordBreak: "break-word",
+                            fontSize: "19px",
                           }}
                         >
-                          {text}
+                          {text} {/* Display the bio */}
                         </Typography>
                       </Box>
                     )}
@@ -194,7 +221,8 @@ const Account = () => {
                     sx={{ paddingLeft: "30px", paddingRight: "30px" }}
                     onClick={handleEditToggle}
                   >
-                    {isEditing ? "Save" : "Edit"}
+                    {isEditing ? "Save" : "Edit"}{" "}
+                    {/* Toggle between Edit and Save */}
                   </Button>
                 </Box>
               </Container>
@@ -216,13 +244,14 @@ const Account = () => {
             direction: "column",
           }}
         >
-          <Box
-            sx={{ backgroundColor: "white", width: "65vw", height: "40vh" }}
-          >voucher here</Box>
+          <Box sx={{ backgroundColor: "white", width: "65vw", height: "40vh" }}>
+            voucher here
+          </Box>
           <Box sx={{ height: "6vh" }}></Box>
-          <Box
-            sx={{ backgroundColor: "white", width: "65vw", height: "40vh" }}
-          >Answered surveys here. Or you can decide if what do you want to put in here</Box>
+          <Box sx={{ backgroundColor: "white", width: "65vw", height: "40vh" }}>
+            Answered surveys here. Or you can decide if what do you want to put
+            in here
+          </Box>
         </Stack>
       </Stack>
     </Paper>
