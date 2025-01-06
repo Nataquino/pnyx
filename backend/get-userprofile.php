@@ -23,7 +23,7 @@ $user_id = intval($_COOKIE['user_id']); // Sanitize the user ID
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Fetch user information
-    $sql_user = "SELECT id, firstname, lastname, email, username, reward_points, bio FROM users WHERE id = ?";
+    $sql_user = "SELECT id, firstname, lastname, email, birthdate, gender, username, reward_points, bio FROM users WHERE id = ?";
     $stmt_user = $conn->prepare($sql_user);
 
     if (!$stmt_user) {
@@ -107,6 +107,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt_update->close();
 }
+
+
+
+// UPLOAD IMAGE CODE HERE!!!!!
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Check if a file is uploaded
+    if (isset($_FILES['image'])) {
+        $error = $_FILES['image']['error'];
+
+        // If there's an upload error
+        if ($error !== UPLOAD_ERR_OK) {
+            echo json_encode(["error" => "File upload failed with error code: " . $error]);
+            exit;
+        }
+
+        // Directory to store uploaded files
+        $uploadDir = 'uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true); // Create the directory if it doesn't exist
+        }
+
+        // Get the file name and create a unique name to avoid conflicts
+        $fileName = basename($_FILES['image']['name']);
+        $targetFile = $uploadDir . uniqid() . "_" . $fileName;
+
+        // Move the uploaded file to the server directory
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+            // Update the user's avatar in the database
+            $sql_update_avatar = "UPDATE users SET avatar = ? WHERE id = ?";
+            $stmt_avatar = $conn->prepare($sql_update_avatar);
+            $stmt_avatar->bind_param("si", $targetFile, $user_id);
+            $stmt_avatar->execute();
+
+            if ($stmt_avatar->affected_rows > 0) {
+                echo json_encode(["success" => true, "avatar" => $targetFile]);
+            } else {
+                echo json_encode(["error" => "Failed to update avatar in database"]);
+            }
+
+            $stmt_avatar->close();
+        } else {
+            echo json_encode(["error" => "Failed to move uploaded file"]);
+        }
+    } else {
+        echo json_encode(["error" => "No image uploaded"]);
+    }
+}
+
 
 $conn->close();
 ?>
