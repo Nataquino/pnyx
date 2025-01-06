@@ -1,55 +1,67 @@
-import React, { useState,useEffect, } from "react";
+import React, { useState, useEffect } from "react"; // Import useEffect
 import { Chip, TextField, Box, Button } from "@mui/material";
-import axios from "axios";
+import axios from "axios"; // Import axios for making requests
 
 const ChipInterest = () => {
-  // const [surveys, setSurveys] = useState([]);
-  const [interests, setInterests] = useState([]);
+  const [userData, setUserData] = useState(null); // State to store user data
+  const [interests, setInterests] = useState([]); // Local state for interests
+  const [newInterest, setNewInterest] = useState(""); // New interest input value
+  const [isAdding, setIsAdding] = useState(false); // State to toggle between adding and displaying interests
+  const [error, setError] = useState(false); // State to track errors
 
-  const [newInterest, setNewInterest] = useState("");
-  const [isAdding, setIsAdding] = useState(false);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost/survey-app/get-userprofile.php",
+          { withCredentials: true }
+        );
+        if (response.data) {
+          const { user, preferences } = response.data;
+          setUserData(user);
+          setInterests(preferences || []); // Set user preferences to interests state
+          setError(false); // Clear error if successful
+          console.log(response.data);
+        } else {
+          setError(true); // Set error if no data
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError(true); // Set error on failed request
+      }
+    };
 
+    fetchUserData();
+  }, []); // Run only once when the component mounts
+
+  // Capitalize the first letter of the interest string
   const capitalizeInterest = (interest) => {
     return interest.charAt(0).toUpperCase() + interest.slice(1).toLowerCase();
   };
 
+  // Handle adding new interest
   const handleAddInterest = () => {
     if (newInterest.trim() !== "") {
-      setInterests([...interests, capitalizeInterest(newInterest)]);
-      setNewInterest("");
-      setIsAdding(false);
+      const capitalizedInterest = capitalizeInterest(newInterest);
+      setInterests([...interests, capitalizedInterest]); // Add to the list
+      setNewInterest(""); // Clear input
+      setIsAdding(false); // Exit adding mode
     }
   };
 
+  // Handle canceling the addition of a new interest
   const handleCancel = () => {
     setNewInterest(""); // Clear the input field
     setIsAdding(false); // Exit adding state
   };
 
-
-  useEffect(() => {
-    const fetchInterest = async () => {
-      try {
-        const response = await axios.get("http://localhost/survey-app/get-userprofile.php", { withCredentials: true });
-        console.log(response.data); // Log the response data
-        if (Array.isArray(response.data)) {
-          setInterests(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching interest:", error);
-      }
-    };
-
-    fetchInterest();
-  }, []);
-
   return (
     <Box>
-      {/* Render chips */}
-      {interests.map((interest) => (
+      {/* Render interests as Chips */}
+      {interests.map((interest, index) => (
         <Chip
-          key={interest.interest}
-          label={capitalizeInterest(interest)} // Capitalize the first letter of each interest
+          key={index} // Use the index or a unique value as key
+          label={interest}
           clickable
           color="primary"
           sx={{
@@ -61,7 +73,7 @@ const ChipInterest = () => {
         />
       ))}
 
-      {/* Add new interest chip */}
+      {/* Option to add new interest */}
       {isAdding ? (
         <Box sx={{ display: "flex", alignItems: "center", marginTop: "8px" }}>
           <TextField

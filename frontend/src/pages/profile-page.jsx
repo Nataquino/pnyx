@@ -25,6 +25,7 @@ const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("This is an editable paragraph.");
   const [editedText, setEditedText] = useState(text);
+  const [userInterest, setUserInterest] =useState(null);
 
   const handleEditToggle = async () => {
     if (isEditing) {
@@ -76,12 +77,12 @@ const Account = () => {
           "http://localhost/survey-app/get-userprofile.php",
           { withCredentials: true }
         );
-        if (response.data && response.data.user) {
-          setUserData(response.data.user);
-          setText(response.data.user.bio || ""); // Set bio for non-editable state
-          setEditedText(response.data.user.bio || ""); // Set bio for editing
+        if (response.data) {
+          const { user, preferences } = response.data;
+          setUserData(user);
+          setUserInterest(preferences || []); // Set user preferences
           setError(false);
-          console.log(response.data);
+          console.log(response.data)
         } else {
           setError(true);
         }
