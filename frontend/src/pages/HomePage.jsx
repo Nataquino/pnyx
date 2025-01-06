@@ -49,14 +49,19 @@ const HomePage = () => {
       });
 
       if (response.data.status === "success") {
-        // If passcode is correct, navigate to the survey
+        // If passcode is correct, navigate to the survey and close the passcode popup
         navigate(`/take-survey/${lockedSurveyId}`);
+        setLockedSurveyId(null); // Close the passcode popup
       } else {
         alert("Incorrect passcode.");
       }
     } catch (error) {
       console.error("Error verifying passcode:", error);
     }
+  };
+
+  const handleCancel = () => {
+    setLockedSurveyId(null); // Close the passcode popup if the user cancels
   };
 
   return (
@@ -140,6 +145,9 @@ const HomePage = () => {
           />
           <Button sx={{ marginTop: "10px" }} onClick={handlePasscodeSubmit}>
             Submit
+          </Button>
+          <Button sx={{ marginTop: "10px", color: "red" }} onClick={handleCancel}>
+            Cancel
           </Button>
         </Box>
       )}

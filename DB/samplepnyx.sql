@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 05, 2025 at 10:32 AM
+-- Generation Time: Jan 06, 2025 at 11:17 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -184,8 +184,8 @@ INSERT INTO `surveys` (`id`, `title`, `description`, `user_id`, `status`, `comme
 (40, 'Coffee cafe', 'Cafe that nevers serves coffee', 26, 'activated', '', '2024-10-16 10:12:10', '2025-01-12', NULL, 0),
 (41, 'Mayor Treñas stand on Illegal online gaming', 'In line with the directives from the President, the League of Cities of the Philippines (LCP) has issued Advisory No. 2024-0906, reinforcing our commitment to addressing the winding down of Philippine Offshore Gaming Operations (POGO) and tackling illegal online gaming activities in our cities.', 27, 'activated', '', '2024-10-16 10:12:10', '2025-01-14', NULL, 0),
 (42, 'FC Barcelona vs MC United', 'In an electrifying clash, MC United takes on the legendary FC Barcelona in a highly anticipated friendly match that promises to showcase the best of football. Both teams are eager to test their mettle ahead of the upcoming season, bringing together a mix of seasoned veterans and promising newcomers.', 26, 'activated', '', '2024-10-16 11:27:08', NULL, '123', 1),
-(43, 'Alice Guo running for Mayor Ulit?!', 'Alice Guo issue for running candidate ', 13, 'activated', '', '2024-10-17 13:36:03', '2025-01-12', NULL, 0),
-(44, 'Ungka Flyover Wala gyapon natapos?', 'Ungka flyover still ongoing repairs for 5 years', 32, 'activated', '', '2024-12-16 19:49:07', '2025-01-16', '29282212', 1),
+(43, 'Alice Guo running for Mayor Ulit?!', 'Alice Guo issue for running candidate ', 13, 'activated', '', '2024-10-17 13:36:03', '2025-01-12', '111111', 1),
+(44, 'Ungka Flyover Wala gyapon natapos?', 'Ungka flyover still ongoing repairs for 5 years', 32, 'activated', '', '2024-12-16 19:49:07', '2025-01-16', '121212', 1),
 (45, 'Telcos Face December Deadline to Remove Wires', 'The Iloilo City government has set a December 16, 2024, deadline for telecommunication companies to remove their wires from poles along Calle Real. This survey aims to gather opinions on this initiative and its potential impact on the community.', 32, 'activated', '', '2024-12-17 07:29:15', '2025-01-16', NULL, 0);
 
 -- --------------------------------------------------------
@@ -244,7 +244,10 @@ INSERT INTO `survey_interactions` (`id`, `user_id`, `survey_id`, `interaction_ty
 (5, 32, 40, 'rated', 4, '2024-12-16 19:44:41'),
 (6, 32, 41, 'rated', 3, '2024-12-16 19:45:04'),
 (7, 27, 45, 'rated', 4, '2024-12-17 08:42:35'),
-(8, 28, 45, 'rated', 2, '2024-12-17 08:45:22');
+(8, 28, 45, 'rated', 2, '2024-12-17 08:45:22'),
+(9, 13, 44, 'rated', 4, '2025-01-06 15:45:58'),
+(10, 32, 44, 'rated', 5, '2025-01-06 16:22:03'),
+(11, 32, 44, 'rated', 5, '2025-01-06 16:23:01');
 
 -- --------------------------------------------------------
 
@@ -365,7 +368,13 @@ INSERT INTO `survey_responses` (`id`, `survey_id`, `question_id`, `question_type
 (116, 45, 70, 'feedback', 'If designed well, such an initiative could be a step toward better service and equity. A collaborative approach that combines penalties with positive incentives might strike the right balance.', '3.00', 0),
 (117, 45, 68, 'multiple_choice', 'Yes', '0.00', 1),
 (118, 45, 69, 'paragraph', 'Hahahahahahah', '0.00', 0),
-(119, 45, 70, 'feedback', 'Slightly good and might be bad but not too sure', '0.00', 0);
+(119, 45, 70, 'feedback', 'Slightly good and might be bad but not too sure', '0.00', 0),
+(120, 44, 65, 'paragraph', 'Structure problem', '0.00', 0),
+(121, 44, 66, 'multiple_choice', 'No', '0.00', 1),
+(122, 44, 67, 'feedback', 'The problem is that it causes traffic and the people are getting frustrated on waiting time just to pass', '-4.00', 0),
+(123, 44, 65, 'paragraph', 'Politics maybe?', '0.00', 0),
+(124, 44, 66, 'multiple_choice', 'Yes', '0.00', 1),
+(125, 44, 67, 'feedback', 'It is still on construction for years and its causing problems to the local inhabitants', '-2.00', 0);
 
 -- --------------------------------------------------------
 
@@ -387,7 +396,10 @@ CREATE TABLE `survey_similarities` (
 INSERT INTO `survey_similarities` (`id`, `survey_id_1`, `survey_id_2`, `similarity_score`) VALUES
 (1, 42, 40, 1),
 (2, 41, 43, 1),
-(3, 40, 41, 1);
+(3, 40, 41, 1),
+(4, 42, 44, 1),
+(5, 40, 44, 1),
+(6, 41, 44, 1);
 
 -- --------------------------------------------------------
 
@@ -404,6 +416,7 @@ CREATE TABLE `users` (
   `birthdate` date NOT NULL,
   `email` varchar(25) NOT NULL,
   `bio` varchar(255) NOT NULL,
+  `avatar` varchar(255) NOT NULL,
   `otp` varchar(6) DEFAULT NULL,
   `otp_expiry` datetime DEFAULT NULL,
   `password` varchar(255) NOT NULL,
@@ -415,34 +428,34 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `bio`, `otp`, `otp_expiry`, `password`, `reward_points`, `is_verified`) VALUES
-(11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', '', NULL, NULL, '$2y$10$YCw7ZFH6eq.7w/JKOa', 0, 0),
-(12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', '', NULL, NULL, '$2y$10$Vb9ui0ZV1W/gfwxLHk', 0, 0),
-(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 100, 1),
-(14, 'Jerz', 'Jerzeil', 'Lira', 'Male', '1999-01-01', 'jerzeil@gmail.com', '', NULL, NULL, '$2y$10$Zlb2aoQK2n44dYT5wzJXueSDpKYfUGQP5povfsNWrlnZ9OeFcqtGq', 0, 0),
-(15, 'a', 'a', 'a', 'Male', '2024-07-09', 'a@gmail.com', '', NULL, NULL, '$2y$10$JtcN3KVq1ssTu/L/Xw1MReSLPN1SxnoVhYYY1KDRJsg9DYx0u4UUK', 0, 0),
-(16, 'b', 'b', 'b', 'Female', '2024-07-09', 'b@gmail.com', '', NULL, NULL, '$2y$10$7pGnP1aKYjHRC2VvZU0LtuZrQrSqr77yZMPo28HZPjC6Swepk5/Q.', 0, 0),
-(17, 'Steven', 'Steven', 'Absalon', 'Male', '1999-01-05', 'steven@gmail.com', '', NULL, NULL, '$2y$10$.JBsdRTnZMnY9cYimiB28.jYpKWYfNgzlb7513eu.7B9jDwclxx62', 0, 0),
-(18, 'Nathan', 'Nathaniel', 'Aquino', 'Male', '2000-10-29', 'nataquino@gmail.com', '', NULL, NULL, '$2y$10$sxmd8Xddotuh470ixq9W5uGHZUwa8QFJVEnG3SGoe49ERzUZD1Zem', 0, 0),
-(19, 'Juan', 'Juan', 'De la cruz', 'Male', '2024-02-15', 'juan@gmail.com', '', NULL, NULL, '$2y$10$VVvAJW//nerMBUH3/PmSKu2R0ZA4wrG3e52YSYdm9PwJsWRXy.PgK', 0, 0),
-(20, 'Harold', 'Harold', 'Halg', 'Male', '2024-09-18', 'harold@gmail.com', '', NULL, NULL, '$2y$10$Ge4irOLSEOj9c/quglY.tueS4WQKcADA4q3RegZMB0pGsZYs/FPpW', 0, 0),
-(21, 'Xenon', 'Carl Daniel', 'Aquino', 'Male', '2015-06-08', 'xeonix@gmail.com', '', NULL, NULL, '$2y$10$rAMydR0CVXeV18B.vxEDvu.KXVBDZ3iYzK5ydUw4RbQhRHDpQO1iu', 0, 0),
-(22, 'Hokage999', 'Ritchard', 'Constatine', 'Female', '2010-06-23', 'rits@gmail.com', '', NULL, NULL, '$2y$10$UpeK.t4XcxOnpXQlHfWMoOADcLaUptRNQpZHD437u68uzccdKqSQS', 0, 0),
-(23, 'DavidRox', 'David', 'Ross', 'Male', '2010-02-17', 'davidRoss19@gmail.com', '', NULL, NULL, '$2y$10$UQ1wPt80EtpYScmVpgALcezP8Ym.U7POeIOl2MEa6qvOSzzm2V82m', 0, 0),
-(24, 'Ruben27', 'Ruben', 'Beguas', 'Male', '2000-03-21', 'rubenbeguas27@gmail.com', '', '745471', NULL, '$2y$10$CNnZPMlsgUs8XGLZi3SYW.JQjTTMlRXSmDWqT2Cub4UH/p2dNQzki', 0, 0),
-(25, 'Rod16', 'Rod', 'Mag-aso', 'Female', '0000-00-00', 'rodEliMagaso@gmail.com', '', '924021', NULL, '$2y$10$wZg50dLSGles5tdE0bPweOORVF74JdkNbt5y.qNZQZ.IdqXXmJccK', 0, 0),
-(26, 'Nath1', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nath1@gmail.com', '', '137681', NULL, '$2y$10$vadBz/1Lgz3Km1cVSm3FJuba1OWtZLOU6CJbRWMi36Fuu.Ooz0gNC', 0, 1),
-(27, 'Nath2', 'nathaniel', 'Aquino', 'Female', '2001-10-29', 'nath2@gmail.com', '', '309079', NULL, '$2y$10$o1fYyo6iyq1zUGR2o5MxXOfWeQyDAdBmPHawtwGSvcYnoyyTx0h4G', 0, 1),
-(28, 'Nath3', 'Nathan', 'Absalon', 'Male', '0000-00-00', 'nath3@gmail.com', '', '254206', NULL, '$2y$10$MYtcoLLFsHCUPjbLuH3CMelMtfpf3kCWjuiiRwgO/3mVZj00K/0fi', 0, 1),
-(29, 'Nath4', 'Nat', 'Aquino', 'Male', '2222-02-22', 'nath4@gmail.com', '', '282147', NULL, '$2y$10$PqIkxs.E/COv.mSTbE17Q.hNDTy9lsEc4cos9tJbzFmfYX4x2IU4W', 0, 1),
-(30, 'Aquino Nathaniel', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nathaniel.aquino-19@cpu.e', '', '511160', NULL, '$2y$10$X3q4LIig0hm1eEovAThkheJmAozvjXZ5uiXc5cOIV22QIzT.sL8X2', 0, 1),
-(31, 'NathanAquino', 'nathaniel', 'Aquino', '', '0000-00-00', 'nathaniel.aquino-18@cpu.e', '', '679183', NULL, '$2y$10$pLu2SA/nyCs1q5x8vY1O6.0rvAdeY4Ev1iTy4h6P3ED74JCEof24m', 0, 1),
-(32, 'Nath5', 'nathaniel5', 'Aquino', 'Female', '2000-10-29', 'nathaniel5@gmail.com', '', '588259', NULL, '$2y$10$Ywjxh2UWRm9CUwHPV2182eUv2GZ6nlurq2JY9y1CX0RH6ieFDSYLS', 0, 1),
-(33, 'Josheph25', 'Joseph', 'Joses', 'Male', '2003-02-23', 'josejoses25@gmail.com', '', '359536', NULL, '$2y$10$EKz.yuGoO0jJW0gBy2rnd.xUn5E065Pdsu7YRfSy6vKCwYFobmtaK', 0, 1),
-(34, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '145928', NULL, '$2y$10$w13VNlooAFxv7gc5fmhpYuxB1PoxvyeR2Btgs7TSNssy6hNxRcZiC', 0, 0),
-(35, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '690982', NULL, '$2y$10$j7kez4uR19/METz4cC9iLupYzvm3J0k3MLnnhN19.OzGmIuY6lyFW', 0, 0),
-(36, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '927442', NULL, '$2y$10$NRdjQcWYgeF/Akd0/QcSo.IWqjDMCn42ZA8NsxMe70FgcplQ26PCm', 0, 0),
-(37, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '122298', NULL, '$2y$10$19fm1PsKdAYm5cdD8/CIHevfR83xQnrC8.11SrLe2mAL8k3OZFu1u', 0, 0);
+INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `bio`, `avatar`, `otp`, `otp_expiry`, `password`, `reward_points`, `is_verified`) VALUES
+(11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', '', '', NULL, NULL, '$2y$10$YCw7ZFH6eq.7w/JKOa', 0, 0),
+(12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', '', '', NULL, NULL, '$2y$10$Vb9ui0ZV1W/gfwxLHk', 0, 0),
+(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', 'I\\\'m just your typical average person in the web', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 100, 1),
+(14, 'Jerz', 'Jerzeil', 'Lira', 'Male', '1999-01-01', 'jerzeil@gmail.com', '', '', NULL, NULL, '$2y$10$Zlb2aoQK2n44dYT5wzJXueSDpKYfUGQP5povfsNWrlnZ9OeFcqtGq', 0, 0),
+(15, 'a', 'a', 'a', 'Male', '2024-07-09', 'a@gmail.com', '', '', NULL, NULL, '$2y$10$JtcN3KVq1ssTu/L/Xw1MReSLPN1SxnoVhYYY1KDRJsg9DYx0u4UUK', 0, 0),
+(16, 'b', 'b', 'b', 'Female', '2024-07-09', 'b@gmail.com', '', '', NULL, NULL, '$2y$10$7pGnP1aKYjHRC2VvZU0LtuZrQrSqr77yZMPo28HZPjC6Swepk5/Q.', 0, 0),
+(17, 'Steven', 'Steven', 'Absalon', 'Male', '1999-01-05', 'steven@gmail.com', '', '', NULL, NULL, '$2y$10$.JBsdRTnZMnY9cYimiB28.jYpKWYfNgzlb7513eu.7B9jDwclxx62', 0, 0),
+(18, 'Nathan', 'Nathaniel', 'Aquino', 'Male', '2000-10-29', 'nataquino@gmail.com', '', '', NULL, NULL, '$2y$10$sxmd8Xddotuh470ixq9W5uGHZUwa8QFJVEnG3SGoe49ERzUZD1Zem', 0, 0),
+(19, 'Juan', 'Juan', 'De la cruz', 'Male', '2024-02-15', 'juan@gmail.com', '', '', NULL, NULL, '$2y$10$VVvAJW//nerMBUH3/PmSKu2R0ZA4wrG3e52YSYdm9PwJsWRXy.PgK', 0, 0),
+(20, 'Harold', 'Harold', 'Halg', 'Male', '2024-09-18', 'harold@gmail.com', '', '', NULL, NULL, '$2y$10$Ge4irOLSEOj9c/quglY.tueS4WQKcADA4q3RegZMB0pGsZYs/FPpW', 0, 0),
+(21, 'Xenon', 'Carl Daniel', 'Aquino', 'Male', '2015-06-08', 'xeonix@gmail.com', '', '', NULL, NULL, '$2y$10$rAMydR0CVXeV18B.vxEDvu.KXVBDZ3iYzK5ydUw4RbQhRHDpQO1iu', 0, 0),
+(22, 'Hokage999', 'Ritchard', 'Constatine', 'Female', '2010-06-23', 'rits@gmail.com', '', '', NULL, NULL, '$2y$10$UpeK.t4XcxOnpXQlHfWMoOADcLaUptRNQpZHD437u68uzccdKqSQS', 0, 0),
+(23, 'DavidRox', 'David', 'Ross', 'Male', '2010-02-17', 'davidRoss19@gmail.com', '', '', NULL, NULL, '$2y$10$UQ1wPt80EtpYScmVpgALcezP8Ym.U7POeIOl2MEa6qvOSzzm2V82m', 0, 0),
+(24, 'Ruben27', 'Ruben', 'Beguas', 'Male', '2000-03-21', 'rubenbeguas27@gmail.com', '', '', '745471', NULL, '$2y$10$CNnZPMlsgUs8XGLZi3SYW.JQjTTMlRXSmDWqT2Cub4UH/p2dNQzki', 0, 0),
+(25, 'Rod16', 'Rod', 'Mag-aso', 'Female', '0000-00-00', 'rodEliMagaso@gmail.com', '', '', '924021', NULL, '$2y$10$wZg50dLSGles5tdE0bPweOORVF74JdkNbt5y.qNZQZ.IdqXXmJccK', 0, 0),
+(26, 'Nath1', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nath1@gmail.com', '', '', '137681', NULL, '$2y$10$vadBz/1Lgz3Km1cVSm3FJuba1OWtZLOU6CJbRWMi36Fuu.Ooz0gNC', 0, 1),
+(27, 'Nath2', 'nathaniel', 'Aquino', 'Female', '2001-10-29', 'nath2@gmail.com', '', '', '309079', NULL, '$2y$10$o1fYyo6iyq1zUGR2o5MxXOfWeQyDAdBmPHawtwGSvcYnoyyTx0h4G', 0, 1),
+(28, 'Nath3', 'Nathan', 'Absalon', 'Male', '0000-00-00', 'nath3@gmail.com', '', '', '254206', NULL, '$2y$10$MYtcoLLFsHCUPjbLuH3CMelMtfpf3kCWjuiiRwgO/3mVZj00K/0fi', 0, 1),
+(29, 'Nath4', 'Nat', 'Aquino', 'Male', '2222-02-22', 'nath4@gmail.com', '', '', '282147', NULL, '$2y$10$PqIkxs.E/COv.mSTbE17Q.hNDTy9lsEc4cos9tJbzFmfYX4x2IU4W', 0, 1),
+(30, 'Aquino Nathaniel', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nathaniel.aquino-19@cpu.e', '', '', '511160', NULL, '$2y$10$X3q4LIig0hm1eEovAThkheJmAozvjXZ5uiXc5cOIV22QIzT.sL8X2', 0, 1),
+(31, 'NathanAquino', 'nathaniel', 'Aquino', '', '0000-00-00', 'nathaniel.aquino-18@cpu.e', '', '', '679183', NULL, '$2y$10$pLu2SA/nyCs1q5x8vY1O6.0rvAdeY4Ev1iTy4h6P3ED74JCEof24m', 0, 1),
+(32, 'Nath5', 'nathaniel5', 'Aquino', 'Female', '2000-10-29', 'nathaniel5@gmail.com', '', '', '588259', NULL, '$2y$10$Ywjxh2UWRm9CUwHPV2182eUv2GZ6nlurq2JY9y1CX0RH6ieFDSYLS', 0, 1),
+(33, 'Josheph25', 'Joseph', 'Joses', 'Male', '2003-02-23', 'josejoses25@gmail.com', '', '', '359536', NULL, '$2y$10$EKz.yuGoO0jJW0gBy2rnd.xUn5E065Pdsu7YRfSy6vKCwYFobmtaK', 0, 1),
+(34, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '', '145928', NULL, '$2y$10$w13VNlooAFxv7gc5fmhpYuxB1PoxvyeR2Btgs7TSNssy6hNxRcZiC', 0, 0),
+(35, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '', '690982', NULL, '$2y$10$j7kez4uR19/METz4cC9iLupYzvm3J0k3MLnnhN19.OzGmIuY6lyFW', 0, 0),
+(36, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '', '927442', NULL, '$2y$10$NRdjQcWYgeF/Akd0/QcSo.IWqjDMCn42ZA8NsxMe70FgcplQ26PCm', 0, 0),
+(37, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '', '122298', NULL, '$2y$10$19fm1PsKdAYm5cdD8/CIHevfR83xQnrC8.11SrLe2mAL8k3OZFu1u', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -474,6 +487,7 @@ INSERT INTO `user_preferences` (`user_id`, `category`, `preference_strength`) VA
 (31, 'Sports', 1),
 (32, 'Art', 1),
 (32, 'Food', 1),
+(32, 'Iloilo City', 10),
 (32, 'News', 1),
 (33, 'Academic', 1),
 (33, 'Business', 1),
@@ -638,19 +652,19 @@ ALTER TABLE `survey_categories`
 -- AUTO_INCREMENT for table `survey_interactions`
 --
 ALTER TABLE `survey_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `survey_responses`
 --
 ALTER TABLE `survey_responses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `survey_similarities`
 --
 ALTER TABLE `survey_similarities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
