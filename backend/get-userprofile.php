@@ -77,6 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt_preferences->close();
 }
 
+
+
+
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the new bio from the request body
     $inputData = json_decode(file_get_contents("php://input"), true);
@@ -108,9 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_update->close();
 }
 
-
-
-// UPLOAD IMAGE CODE HERE!!!!!
+// just add it here
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if a file is uploaded
