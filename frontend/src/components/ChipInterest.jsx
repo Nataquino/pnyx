@@ -1,15 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect, } from "react";
 import { Chip, TextField, Box, Button } from "@mui/material";
 
 const ChipInterest = () => {
-  const [interests, setInterests] = useState([
-    "Gaming",
-    "Sports",
-    "Travel",
-    "Coding",
-    "Music",
-    "Art",
-  ]);
+  // const [surveys, setSurveys] = useState([]);
+  const [interests, setInterests] = useState([]);
+
   const [newInterest, setNewInterest] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
@@ -30,12 +25,29 @@ const ChipInterest = () => {
     setIsAdding(false); // Exit adding state
   };
 
+
+  useEffect(() => {
+    const fetchInterest = async () => {
+      try {
+        const response = await axios.get("http://localhost/survey-app/get-userprofile.php", { withCredentials: true });
+        console.log(response.data); // Log the response data
+        if (Array.isArray(response.data)) {
+          setInterests(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching interest:", error);
+      }
+    };
+
+    fetchInterest();
+  }, []);
+
   return (
     <Box>
       {/* Render chips */}
-      {interests.map((interest, index) => (
+      {interests.map((interest) => (
         <Chip
-          key={index}
+          key={interest.interest}
           label={capitalizeInterest(interest)} // Capitalize the first letter of each interest
           clickable
           color="primary"
