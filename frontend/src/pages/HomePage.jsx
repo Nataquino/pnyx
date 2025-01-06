@@ -26,9 +26,9 @@ const HomePage = () => {
     fetchSurveys();
   }, []);
 
-  const handleSurveyClick = (surveyId, passcode) => {
-    if (surveyId && passcode) {
-      // If survey is locked, prompt for passcode
+  const handleSurveyClick = (surveyId, isLocked) => {
+    if (isLocked === 1) {
+      // If survey is locked (is_locked = 1), prompt for passcode
       setLockedSurveyId(surveyId);
     } else {
       navigate(`/take-survey/${surveyId}`);
@@ -101,8 +101,8 @@ const HomePage = () => {
                   </Typography>
                 </CardContent>
                 <CardActions sx={{ marginTop: "auto", display: "flex", justifyContent: "flex-end" }}>
-                  {survey.is_locked ? (
-                    <Button size="small" color="primary" onClick={() => handleSurveyClick(survey.id, survey.passcode)}>
+                  {survey.is_locked === 1 ? (
+                    <Button size="small" color="primary" onClick={() => handleSurveyClick(survey.id, survey.is_locked)}>
                       Enter passcode to open survey
                     </Button>
                   ) : (

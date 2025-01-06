@@ -76,12 +76,12 @@ const Account = () => {
           "http://localhost/survey-app/get-userprofile.php",
           { withCredentials: true }
         );
-
         if (response.data && response.data.user) {
           setUserData(response.data.user);
           setText(response.data.user.bio || ""); // Set bio for non-editable state
           setEditedText(response.data.user.bio || ""); // Set bio for editing
           setError(false);
+          console.log(response.data);
         } else {
           setError(true);
         }

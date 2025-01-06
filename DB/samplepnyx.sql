@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2024 at 08:11 AM
+-- Generation Time: Jan 05, 2025 at 10:32 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -44,7 +44,9 @@ INSERT INTO `categories` (`id`, `category_name`) VALUES
 (6, 'Politics'),
 (7, 'News'),
 (8, 'Business'),
-(9, 'Football');
+(9, 'Football'),
+(10, 'Iloilo City'),
+(11, 'Telecommunications');
 
 -- --------------------------------------------------------
 
@@ -64,20 +66,6 @@ CREATE TABLE `options` (
 --
 
 INSERT INTO `options` (`id`, `question_id`, `option_text`, `tally`) VALUES
-(23, 34, '1', 0),
-(24, 34, '2', 0),
-(25, 41, 'here', 0),
-(26, 41, 'there', 0),
-(27, 44, 'what?', 0),
-(28, 44, 'why?', 0),
-(29, 46, '1', 0),
-(30, 46, '2', 0),
-(31, 46, '3', 0),
-(32, 47, '1', 0),
-(33, 47, '2', 0),
-(34, 47, '3', 0),
-(35, 49, 'here 1', 0),
-(36, 49, 'here 2', 0),
 (37, 54, 'yes', 0),
 (38, 54, 'no', 0),
 (39, 60, 'Yes', 0),
@@ -86,7 +74,11 @@ INSERT INTO `options` (`id`, `question_id`, `option_text`, `tally`) VALUES
 (42, 62, 'MC United', 0),
 (43, 63, 'Great teamwork and collaboration between players', 0),
 (44, 63, 'Outstanding individual performances', 0),
-(45, 63, 'Strategic plays and formations', 0);
+(45, 63, 'Strategic plays and formations', 0),
+(46, 66, 'Yes', 0),
+(47, 66, 'No', 0),
+(48, 68, 'Yes', 0),
+(49, 68, 'No', 0);
 
 -- --------------------------------------------------------
 
@@ -106,26 +98,6 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `survey_id`, `question_text`, `question_type`) VALUES
-(33, 27, 'Feedback', 'paragraph'),
-(34, 28, 'what is bigger', 'multiple_choice'),
-(35, 30, 'test ', 'paragraph'),
-(36, 31, 'What is the color of your shirt', 'paragraph'),
-(37, 32, 'what is your password', 'paragraph'),
-(38, 33, 'Where are you?', 'paragraph'),
-(39, 33, 'How was our service?', 'feedback'),
-(40, 34, 'Where are you?', 'paragraph'),
-(41, 34, 'Where did you go', 'multiple_choice'),
-(42, 34, 'How was your day?', 'feedback'),
-(43, 35, 'Where are you?', 'paragraph'),
-(44, 35, 'what', 'multiple_choice'),
-(45, 35, 'Are you satisfied?', 'feedback'),
-(46, 36, 'Biggest Number', 'multiple_choice'),
-(47, 36, 'Smalles Number', 'multiple_choice'),
-(48, 37, 'what', 'paragraph'),
-(49, 37, 'where', 'multiple_choice'),
-(50, 38, 'what are you?', 'paragraph'),
-(51, 39, 'test 12', 'paragraph'),
-(52, 39, 'test 12', 'paragraph'),
 (53, 40, 'What coffee do you like?', 'paragraph'),
 (54, 40, 'Was it good?', 'multiple_choice'),
 (55, 40, 'Are you satisfied with our product', 'feedback'),
@@ -137,7 +109,53 @@ INSERT INTO `questions` (`id`, `survey_id`, `question_text`, `question_type`) VA
 (61, 42, 'Describe your thoughts on the match between MC United and FC Barcelona. What aspects of the teams\' performances stood out to you, and how do you think the match influenced the overall dynamics of their respective seasons? Please include any memorable moments or player performances that caught your attention.', 'paragraph'),
 (62, 42, 'Which team are you rooting for?', 'multiple_choice'),
 (63, 42, '\"What aspects of the match between MC United and FC Barcelona did you enjoy? (Select all that apply)\"', 'checkbox'),
-(64, 43, 'Do you think what she\'s doing is Ethical?', 'feedback');
+(64, 43, 'Do you think what she\'s doing is Ethical?', 'feedback'),
+(65, 44, 'Why do you think the project is still going after 5 years?', 'paragraph'),
+(66, 44, 'Does it bother you', 'multiple_choice'),
+(67, 44, 'What is your opinion of the problem it causes?', 'feedback'),
+(68, 45, 'Are you aware of the Iloilo City government’s deadline for telecommunication companies to remove their wires from Calle Real?', 'multiple_choice'),
+(69, 45, 'How important do you think it is to remove overhead wires in heritage areas like Calle Real?', 'paragraph'),
+(70, 45, 'Do you support the city’s initiative to impose penalties on non-compliant telecommunication companies?', 'feedback');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `redemptions`
+--
+
+CREATE TABLE `redemptions` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `reward_id` int(11) NOT NULL,
+  `voucher_code` varchar(255) NOT NULL,
+  `redeemed_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rewards`
+--
+
+CREATE TABLE `rewards` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `voucher_code` varchar(100) DEFAULT NULL,
+  `points_required` int(11) NOT NULL,
+  `stock` int(11) NOT NULL DEFAULT 0,
+  `expiry_date` datetime DEFAULT NULL,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `rewards`
+--
+
+INSERT INTO `rewards` (`id`, `name`, `description`, `voucher_code`, `points_required`, `stock`, `expiry_date`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Jollibee Free Drink', 'Jollibee free selective drink: Coke,Sprite,Royal', '172394812739128371293', 20, 50, '2025-01-01 00:00:00', 'active', '2024-12-16 20:59:01', '2024-12-16 20:59:01');
 
 -- --------------------------------------------------------
 
@@ -150,33 +168,25 @@ CREATE TABLE `surveys` (
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `user_id` int(11) NOT NULL,
-  `status` enum('approved','pending','declined','activated') DEFAULT 'pending',
+  `status` enum('approved','pending','declined','activated','expired') DEFAULT 'pending',
   `comment` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `expiry_date` date DEFAULT NULL
+  `expiry_date` date DEFAULT NULL,
+  `passcode` varchar(255) DEFAULT NULL,
+  `is_locked` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `surveys`
 --
 
-INSERT INTO `surveys` (`id`, `title`, `description`, `user_id`, `status`, `comment`, `created_at`, `expiry_date`) VALUES
-(27, 'Sample 1', '1', 11, 'declined', 'none', '2024-10-16 10:12:10', NULL),
-(28, 'sample 2', '1', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(30, 'Sample 3', 'test', 11, 'declined', 'test comment', '2024-10-16 10:12:10', NULL),
-(31, 'Sample 5', 'test', 19, 'declined', '', '2024-10-16 10:12:10', NULL),
-(32, 'Sample 6', '123456', 17, 'declined', '', '2024-10-16 10:12:10', NULL),
-(33, 'Sample 7', 'Extremely long description', 11, 'declined', 'test 2', '2024-10-16 10:12:10', NULL),
-(34, 'Sample 8', 'test ', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(35, 'Sample 9', 'test case', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(36, 'Sample 10', 'example', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(37, 'Sample 11', 'Test', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(38, 'Sample 11', 'hehe', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(39, 'Sample 12', 'testing', 11, 'declined', '', '2024-10-16 10:12:10', NULL),
-(40, 'Coffee cafe', 'Cafe that nevers serves coffee', 26, 'activated', '', '2024-10-16 10:12:10', '2025-01-12'),
-(41, 'Mayor Treñas stand on Illegal online gaming', 'In line with the directives from the President, the League of Cities of the Philippines (LCP) has issued Advisory No. 2024-0906, reinforcing our commitment to addressing the winding down of Philippine Offshore Gaming Operations (POGO) and tackling illegal online gaming activities in our cities.', 27, 'approved', '', '2024-10-16 10:12:10', NULL),
-(42, 'FC Barcelona vs MC United', 'In an electrifying clash, MC United takes on the legendary FC Barcelona in a highly anticipated friendly match that promises to showcase the best of football. Both teams are eager to test their mettle ahead of the upcoming season, bringing together a mix of seasoned veterans and promising newcomers.', 26, 'activated', '', '2024-10-16 11:27:08', NULL),
-(43, 'Alice Guo running for Mayor Ulit?!', 'Alice Guo issue for running candidate ', 13, 'activated', '', '2024-10-17 13:36:03', '2025-01-12');
+INSERT INTO `surveys` (`id`, `title`, `description`, `user_id`, `status`, `comment`, `created_at`, `expiry_date`, `passcode`, `is_locked`) VALUES
+(40, 'Coffee cafe', 'Cafe that nevers serves coffee', 26, 'activated', '', '2024-10-16 10:12:10', '2025-01-12', NULL, 0),
+(41, 'Mayor Treñas stand on Illegal online gaming', 'In line with the directives from the President, the League of Cities of the Philippines (LCP) has issued Advisory No. 2024-0906, reinforcing our commitment to addressing the winding down of Philippine Offshore Gaming Operations (POGO) and tackling illegal online gaming activities in our cities.', 27, 'activated', '', '2024-10-16 10:12:10', '2025-01-14', NULL, 0),
+(42, 'FC Barcelona vs MC United', 'In an electrifying clash, MC United takes on the legendary FC Barcelona in a highly anticipated friendly match that promises to showcase the best of football. Both teams are eager to test their mettle ahead of the upcoming season, bringing together a mix of seasoned veterans and promising newcomers.', 26, 'activated', '', '2024-10-16 11:27:08', NULL, '123', 1),
+(43, 'Alice Guo running for Mayor Ulit?!', 'Alice Guo issue for running candidate ', 13, 'activated', '', '2024-10-17 13:36:03', '2025-01-12', NULL, 0),
+(44, 'Ungka Flyover Wala gyapon natapos?', 'Ungka flyover still ongoing repairs for 5 years', 32, 'activated', '', '2024-12-16 19:49:07', '2025-01-16', '29282212', 1),
+(45, 'Telcos Face December Deadline to Remove Wires', 'The Iloilo City government has set a December 16, 2024, deadline for telecommunication companies to remove their wires from poles along Calle Real. This survey aims to gather opinions on this initiative and its potential impact on the community.', 32, 'activated', '', '2024-12-17 07:29:15', '2025-01-16', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -199,7 +209,13 @@ INSERT INTO `survey_categories` (`id`, `survey_id`, `category_name`) VALUES
 (2, 42, 'Football'),
 (3, 42, 'Football'),
 (4, 43, 'Politics'),
-(5, 43, 'News');
+(5, 43, 'News'),
+(6, 44, 'Iloilo City'),
+(7, 44, 'Iloilo City'),
+(8, 45, 'News'),
+(9, 45, 'Iloilo City'),
+(10, 45, 'Telecommunications'),
+(11, 45, 'Telecommunications');
 
 -- --------------------------------------------------------
 
@@ -221,7 +237,14 @@ CREATE TABLE `survey_interactions` (
 --
 
 INSERT INTO `survey_interactions` (`id`, `user_id`, `survey_id`, `interaction_type`, `rating`, `interaction_date`) VALUES
-(1, 13, 42, 'rated', 5, '2024-12-12 18:43:36');
+(1, 13, 42, 'rated', 5, '2024-12-12 18:43:36'),
+(2, 13, 40, 'rated', 5, '2024-12-15 21:00:12'),
+(3, 26, 41, 'rated', 3, '2024-12-15 21:02:23'),
+(4, 26, 43, 'rated', 3, '2024-12-15 21:02:54'),
+(5, 32, 40, 'rated', 4, '2024-12-16 19:44:41'),
+(6, 32, 41, 'rated', 3, '2024-12-16 19:45:04'),
+(7, 27, 45, 'rated', 4, '2024-12-17 08:42:35'),
+(8, 28, 45, 'rated', 2, '2024-12-17 08:45:22');
 
 -- --------------------------------------------------------
 
@@ -246,34 +269,24 @@ CREATE TABLE `survey_responses` (
 INSERT INTO `survey_responses` (`id`, `survey_id`, `question_id`, `question_type`, `answer`, `sentiment_score`, `option_score`) VALUES
 (11, 34, 40, 'paragraph', 'here', '0.00', 0),
 (12, 34, 41, 'multiple_choice', 'here', '0.00', 0),
-(13, 34, 42, 'feedback', '', '0.00', 0),
 (14, 34, 40, 'paragraph', 'somewhere out there', '0.00', 0),
 (15, 34, 41, 'multiple_choice', 'here', '0.00', 0),
-(16, 34, 42, 'feedback', '', '2.00', 0),
 (17, 34, 40, 'paragraph', 'der', '0.00', 0),
 (18, 34, 41, 'multiple_choice', 'there', '0.00', 0),
-(19, 34, 42, 'feedback', '', '0.00', 0),
 (20, 34, 40, 'paragraph', 'over here', '0.00', 0),
 (21, 34, 41, 'multiple_choice', 'here', '0.00', 1),
-(22, 34, 42, 'feedback', '', '3.00', 0),
 (23, 34, 40, 'paragraph', 'in the walls', '0.00', 0),
 (24, 34, 41, 'multiple_choice', 'here', '0.00', 1),
-(25, 34, 42, 'feedback', '', '0.00', 0),
 (26, 36, 46, 'multiple_choice', '3', '0.00', 1),
 (27, 36, 47, 'multiple_choice', '1', '0.00', 1),
 (28, 35, 43, 'paragraph', 'Here at SM', '0.00', 0),
 (29, 35, 44, 'multiple_choice', 'why?', '0.00', 1),
-(30, 35, 45, 'feedback', '', '0.00', 0),
 (31, 35, 43, 'paragraph', 'Here', '0.00', 0),
 (32, 35, 44, 'multiple_choice', 'what?', '0.00', 1),
-(33, 35, 45, 'feedback', '', '3.00', 0),
 (34, 39, 51, 'paragraph', 'sample answer 1', '0.00', 0),
 (35, 39, 52, 'paragraph', 'sample answer 2', '0.00', 0),
 (36, 40, 53, 'paragraph', 'anything', '0.00', 0),
 (37, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(38, 40, 55, 'feedback', '', '-3.00', 0),
-(39, 40, 56, 'feedback', '', '3.00', 0),
-(40, 40, 57, 'feedback', '', '1.00', 0),
 (41, 40, 53, 'paragraph', 'Decaf', '0.00', 0),
 (42, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
 (43, 40, 55, 'feedback', '', '3.00', 0),
@@ -329,7 +342,30 @@ INSERT INTO `survey_responses` (`id`, `survey_id`, `question_id`, `question_type
 (93, 42, 63, 'checkbox', 'Outstanding individual performances', '0.00', 0),
 (94, 42, 61, 'paragraph', 'test', '0.00', 0),
 (95, 42, 62, 'multiple_choice', 'FC barcelona', '0.00', 1),
-(96, 42, 63, 'checkbox', 'Outstanding individual performances', '0.00', 0);
+(96, 42, 63, 'checkbox', 'Outstanding individual performances', '0.00', 0),
+(97, 40, 53, 'paragraph', 'any', '0.00', 0),
+(98, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
+(99, 40, 55, 'feedback', 'Maybe', '0.00', 0),
+(100, 40, 56, 'feedback', 'yeah sure', '1.00', 0),
+(101, 40, 57, 'feedback', 'no', '-1.00', 0),
+(102, 41, 58, 'feedback', 'yes', '1.00', 0),
+(103, 41, 59, 'feedback', 'yes', '1.00', 0),
+(104, 41, 60, 'multiple_choice', 'Yes', '0.00', 1),
+(105, 43, 64, 'feedback', 'I dont know', '0.00', 0),
+(106, 40, 53, 'paragraph', 'Latte', '0.00', 0),
+(107, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
+(108, 40, 55, 'feedback', 'Yes', '1.00', 0),
+(109, 40, 56, 'feedback', 'Yes', '1.00', 0),
+(110, 40, 57, 'feedback', 'No', '-1.00', 0),
+(111, 41, 58, 'feedback', 'His doings were correct and just', '0.00', 0),
+(112, 41, 59, 'feedback', 'Yes', '1.00', 0),
+(113, 41, 60, 'multiple_choice', 'No', '0.00', 1),
+(114, 45, 68, 'multiple_choice', 'Yes', '0.00', 1),
+(115, 45, 69, 'paragraph', 'It is important because of the damages that it can cause', '0.00', 0),
+(116, 45, 70, 'feedback', 'If designed well, such an initiative could be a step toward better service and equity. A collaborative approach that combines penalties with positive incentives might strike the right balance.', '3.00', 0),
+(117, 45, 68, 'multiple_choice', 'Yes', '0.00', 1),
+(118, 45, 69, 'paragraph', 'Hahahahahahah', '0.00', 0),
+(119, 45, 70, 'feedback', 'Slightly good and might be bad but not too sure', '0.00', 0);
 
 -- --------------------------------------------------------
 
@@ -343,6 +379,15 @@ CREATE TABLE `survey_similarities` (
   `survey_id_2` int(11) DEFAULT NULL,
   `similarity_score` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `survey_similarities`
+--
+
+INSERT INTO `survey_similarities` (`id`, `survey_id_1`, `survey_id_2`, `similarity_score`) VALUES
+(1, 42, 40, 1),
+(2, 41, 43, 1),
+(3, 40, 41, 1);
 
 -- --------------------------------------------------------
 
@@ -358,6 +403,7 @@ CREATE TABLE `users` (
   `gender` varchar(25) NOT NULL,
   `birthdate` date NOT NULL,
   `email` varchar(25) NOT NULL,
+  `bio` varchar(255) NOT NULL,
   `otp` varchar(6) DEFAULT NULL,
   `otp_expiry` datetime DEFAULT NULL,
   `password` varchar(255) NOT NULL,
@@ -369,30 +415,34 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `otp`, `otp_expiry`, `password`, `reward_points`, `is_verified`) VALUES
-(11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', NULL, NULL, '$2y$10$YCw7ZFH6eq.7w/JKOa', 0, 0),
-(12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', NULL, NULL, '$2y$10$Vb9ui0ZV1W/gfwxLHk', 0, 0),
-(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 100, 1),
-(14, 'Jerz', 'Jerzeil', 'Lira', 'Male', '1999-01-01', 'jerzeil@gmail.com', NULL, NULL, '$2y$10$Zlb2aoQK2n44dYT5wzJXueSDpKYfUGQP5povfsNWrlnZ9OeFcqtGq', 0, 0),
-(15, 'a', 'a', 'a', 'Male', '2024-07-09', 'a@gmail.com', NULL, NULL, '$2y$10$JtcN3KVq1ssTu/L/Xw1MReSLPN1SxnoVhYYY1KDRJsg9DYx0u4UUK', 0, 0),
-(16, 'b', 'b', 'b', 'Female', '2024-07-09', 'b@gmail.com', NULL, NULL, '$2y$10$7pGnP1aKYjHRC2VvZU0LtuZrQrSqr77yZMPo28HZPjC6Swepk5/Q.', 0, 0),
-(17, 'Steven', 'Steven', 'Absalon', 'Male', '1999-01-05', 'steven@gmail.com', NULL, NULL, '$2y$10$.JBsdRTnZMnY9cYimiB28.jYpKWYfNgzlb7513eu.7B9jDwclxx62', 0, 0),
-(18, 'Nathan', 'Nathaniel', 'Aquino', 'Male', '2000-10-29', 'nataquino@gmail.com', NULL, NULL, '$2y$10$sxmd8Xddotuh470ixq9W5uGHZUwa8QFJVEnG3SGoe49ERzUZD1Zem', 0, 0),
-(19, 'Juan', 'Juan', 'De la cruz', 'Male', '2024-02-15', 'juan@gmail.com', NULL, NULL, '$2y$10$VVvAJW//nerMBUH3/PmSKu2R0ZA4wrG3e52YSYdm9PwJsWRXy.PgK', 0, 0),
-(20, 'Harold', 'Harold', 'Halg', 'Male', '2024-09-18', 'harold@gmail.com', NULL, NULL, '$2y$10$Ge4irOLSEOj9c/quglY.tueS4WQKcADA4q3RegZMB0pGsZYs/FPpW', 0, 0),
-(21, 'Xenon', 'Carl Daniel', 'Aquino', 'Male', '2015-06-08', 'xeonix@gmail.com', NULL, NULL, '$2y$10$rAMydR0CVXeV18B.vxEDvu.KXVBDZ3iYzK5ydUw4RbQhRHDpQO1iu', 0, 0),
-(22, 'Hokage999', 'Ritchard', 'Constatine', 'Female', '2010-06-23', 'rits@gmail.com', NULL, NULL, '$2y$10$UpeK.t4XcxOnpXQlHfWMoOADcLaUptRNQpZHD437u68uzccdKqSQS', 0, 0),
-(23, 'DavidRox', 'David', 'Ross', 'Male', '2010-02-17', 'davidRoss19@gmail.com', NULL, NULL, '$2y$10$UQ1wPt80EtpYScmVpgALcezP8Ym.U7POeIOl2MEa6qvOSzzm2V82m', 0, 0),
-(24, 'Ruben27', 'Ruben', 'Beguas', 'Male', '2000-03-21', 'rubenbeguas27@gmail.com', '745471', NULL, '$2y$10$CNnZPMlsgUs8XGLZi3SYW.JQjTTMlRXSmDWqT2Cub4UH/p2dNQzki', 0, 0),
-(25, 'Rod16', 'Rod', 'Mag-aso', 'Female', '0000-00-00', 'rodEliMagaso@gmail.com', '924021', NULL, '$2y$10$wZg50dLSGles5tdE0bPweOORVF74JdkNbt5y.qNZQZ.IdqXXmJccK', 0, 0),
-(26, 'Nath1', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nath1@gmail.com', '137681', NULL, '$2y$10$vadBz/1Lgz3Km1cVSm3FJuba1OWtZLOU6CJbRWMi36Fuu.Ooz0gNC', 0, 1),
-(27, 'Nath2', 'nathaniel', 'Aquino', 'Female', '2001-10-29', 'nath2@gmail.com', '309079', NULL, '$2y$10$o1fYyo6iyq1zUGR2o5MxXOfWeQyDAdBmPHawtwGSvcYnoyyTx0h4G', 0, 1),
-(28, 'Nath3', 'Nathan', 'Absalon', 'Male', '0000-00-00', 'nath3@gmail.com', '254206', NULL, '$2y$10$MYtcoLLFsHCUPjbLuH3CMelMtfpf3kCWjuiiRwgO/3mVZj00K/0fi', 0, 1),
-(29, 'Nath4', 'Nat', 'Aquino', 'Male', '2222-02-22', 'nath4@gmail.com', '282147', NULL, '$2y$10$PqIkxs.E/COv.mSTbE17Q.hNDTy9lsEc4cos9tJbzFmfYX4x2IU4W', 0, 1),
-(30, 'Aquino Nathaniel', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nathaniel.aquino-19@cpu.e', '511160', NULL, '$2y$10$X3q4LIig0hm1eEovAThkheJmAozvjXZ5uiXc5cOIV22QIzT.sL8X2', 0, 1),
-(31, 'NathanAquino', 'nathaniel', 'Aquino', '', '0000-00-00', 'nathaniel.aquino-18@cpu.e', '679183', NULL, '$2y$10$pLu2SA/nyCs1q5x8vY1O6.0rvAdeY4Ev1iTy4h6P3ED74JCEof24m', 0, 1),
-(32, 'Nath5', 'nathaniel5', 'Aquino', 'Female', '2000-10-29', 'nathaniel5@gmail.com', '588259', NULL, '$2y$10$Ywjxh2UWRm9CUwHPV2182eUv2GZ6nlurq2JY9y1CX0RH6ieFDSYLS', 0, 1),
-(33, 'Josheph25', 'Joseph', 'Joses', 'Male', '2003-02-23', 'josejoses25@gmail.com', '359536', NULL, '$2y$10$EKz.yuGoO0jJW0gBy2rnd.xUn5E065Pdsu7YRfSy6vKCwYFobmtaK', 0, 1);
+INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `bio`, `otp`, `otp_expiry`, `password`, `reward_points`, `is_verified`) VALUES
+(11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', '', NULL, NULL, '$2y$10$YCw7ZFH6eq.7w/JKOa', 0, 0),
+(12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', '', NULL, NULL, '$2y$10$Vb9ui0ZV1W/gfwxLHk', 0, 0),
+(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 100, 1),
+(14, 'Jerz', 'Jerzeil', 'Lira', 'Male', '1999-01-01', 'jerzeil@gmail.com', '', NULL, NULL, '$2y$10$Zlb2aoQK2n44dYT5wzJXueSDpKYfUGQP5povfsNWrlnZ9OeFcqtGq', 0, 0),
+(15, 'a', 'a', 'a', 'Male', '2024-07-09', 'a@gmail.com', '', NULL, NULL, '$2y$10$JtcN3KVq1ssTu/L/Xw1MReSLPN1SxnoVhYYY1KDRJsg9DYx0u4UUK', 0, 0),
+(16, 'b', 'b', 'b', 'Female', '2024-07-09', 'b@gmail.com', '', NULL, NULL, '$2y$10$7pGnP1aKYjHRC2VvZU0LtuZrQrSqr77yZMPo28HZPjC6Swepk5/Q.', 0, 0),
+(17, 'Steven', 'Steven', 'Absalon', 'Male', '1999-01-05', 'steven@gmail.com', '', NULL, NULL, '$2y$10$.JBsdRTnZMnY9cYimiB28.jYpKWYfNgzlb7513eu.7B9jDwclxx62', 0, 0),
+(18, 'Nathan', 'Nathaniel', 'Aquino', 'Male', '2000-10-29', 'nataquino@gmail.com', '', NULL, NULL, '$2y$10$sxmd8Xddotuh470ixq9W5uGHZUwa8QFJVEnG3SGoe49ERzUZD1Zem', 0, 0),
+(19, 'Juan', 'Juan', 'De la cruz', 'Male', '2024-02-15', 'juan@gmail.com', '', NULL, NULL, '$2y$10$VVvAJW//nerMBUH3/PmSKu2R0ZA4wrG3e52YSYdm9PwJsWRXy.PgK', 0, 0),
+(20, 'Harold', 'Harold', 'Halg', 'Male', '2024-09-18', 'harold@gmail.com', '', NULL, NULL, '$2y$10$Ge4irOLSEOj9c/quglY.tueS4WQKcADA4q3RegZMB0pGsZYs/FPpW', 0, 0),
+(21, 'Xenon', 'Carl Daniel', 'Aquino', 'Male', '2015-06-08', 'xeonix@gmail.com', '', NULL, NULL, '$2y$10$rAMydR0CVXeV18B.vxEDvu.KXVBDZ3iYzK5ydUw4RbQhRHDpQO1iu', 0, 0),
+(22, 'Hokage999', 'Ritchard', 'Constatine', 'Female', '2010-06-23', 'rits@gmail.com', '', NULL, NULL, '$2y$10$UpeK.t4XcxOnpXQlHfWMoOADcLaUptRNQpZHD437u68uzccdKqSQS', 0, 0),
+(23, 'DavidRox', 'David', 'Ross', 'Male', '2010-02-17', 'davidRoss19@gmail.com', '', NULL, NULL, '$2y$10$UQ1wPt80EtpYScmVpgALcezP8Ym.U7POeIOl2MEa6qvOSzzm2V82m', 0, 0),
+(24, 'Ruben27', 'Ruben', 'Beguas', 'Male', '2000-03-21', 'rubenbeguas27@gmail.com', '', '745471', NULL, '$2y$10$CNnZPMlsgUs8XGLZi3SYW.JQjTTMlRXSmDWqT2Cub4UH/p2dNQzki', 0, 0),
+(25, 'Rod16', 'Rod', 'Mag-aso', 'Female', '0000-00-00', 'rodEliMagaso@gmail.com', '', '924021', NULL, '$2y$10$wZg50dLSGles5tdE0bPweOORVF74JdkNbt5y.qNZQZ.IdqXXmJccK', 0, 0),
+(26, 'Nath1', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nath1@gmail.com', '', '137681', NULL, '$2y$10$vadBz/1Lgz3Km1cVSm3FJuba1OWtZLOU6CJbRWMi36Fuu.Ooz0gNC', 0, 1),
+(27, 'Nath2', 'nathaniel', 'Aquino', 'Female', '2001-10-29', 'nath2@gmail.com', '', '309079', NULL, '$2y$10$o1fYyo6iyq1zUGR2o5MxXOfWeQyDAdBmPHawtwGSvcYnoyyTx0h4G', 0, 1),
+(28, 'Nath3', 'Nathan', 'Absalon', 'Male', '0000-00-00', 'nath3@gmail.com', '', '254206', NULL, '$2y$10$MYtcoLLFsHCUPjbLuH3CMelMtfpf3kCWjuiiRwgO/3mVZj00K/0fi', 0, 1),
+(29, 'Nath4', 'Nat', 'Aquino', 'Male', '2222-02-22', 'nath4@gmail.com', '', '282147', NULL, '$2y$10$PqIkxs.E/COv.mSTbE17Q.hNDTy9lsEc4cos9tJbzFmfYX4x2IU4W', 0, 1),
+(30, 'Aquino Nathaniel', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nathaniel.aquino-19@cpu.e', '', '511160', NULL, '$2y$10$X3q4LIig0hm1eEovAThkheJmAozvjXZ5uiXc5cOIV22QIzT.sL8X2', 0, 1),
+(31, 'NathanAquino', 'nathaniel', 'Aquino', '', '0000-00-00', 'nathaniel.aquino-18@cpu.e', '', '679183', NULL, '$2y$10$pLu2SA/nyCs1q5x8vY1O6.0rvAdeY4Ev1iTy4h6P3ED74JCEof24m', 0, 1),
+(32, 'Nath5', 'nathaniel5', 'Aquino', 'Female', '2000-10-29', 'nathaniel5@gmail.com', '', '588259', NULL, '$2y$10$Ywjxh2UWRm9CUwHPV2182eUv2GZ6nlurq2JY9y1CX0RH6ieFDSYLS', 0, 1),
+(33, 'Josheph25', 'Joseph', 'Joses', 'Male', '2003-02-23', 'josejoses25@gmail.com', '', '359536', NULL, '$2y$10$EKz.yuGoO0jJW0gBy2rnd.xUn5E065Pdsu7YRfSy6vKCwYFobmtaK', 0, 1),
+(34, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '145928', NULL, '$2y$10$w13VNlooAFxv7gc5fmhpYuxB1PoxvyeR2Btgs7TSNssy6hNxRcZiC', 0, 0),
+(35, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '690982', NULL, '$2y$10$j7kez4uR19/METz4cC9iLupYzvm3J0k3MLnnhN19.OzGmIuY6lyFW', 0, 0),
+(36, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '927442', NULL, '$2y$10$NRdjQcWYgeF/Akd0/QcSo.IWqjDMCn42ZA8NsxMe70FgcplQ26PCm', 0, 0),
+(37, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '122298', NULL, '$2y$10$19fm1PsKdAYm5cdD8/CIHevfR83xQnrC8.11SrLe2mAL8k3OZFu1u', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -429,6 +479,23 @@ INSERT INTO `user_preferences` (`user_id`, `category`, `preference_strength`) VA
 (33, 'Business', 1),
 (33, 'Food', 1);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_rewards`
+--
+
+CREATE TABLE `user_rewards` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `reward_id` int(11) NOT NULL,
+  `redemption_date` datetime DEFAULT current_timestamp(),
+  `status` enum('redeemed','pending','expired') NOT NULL DEFAULT 'pending',
+  `voucher_code` varchar(100) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Indexes for dumped tables
 --
@@ -452,6 +519,21 @@ ALTER TABLE `options`
 ALTER TABLE `questions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `survey_id` (`survey_id`);
+
+--
+-- Indexes for table `redemptions`
+--
+ALTER TABLE `redemptions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `voucher_code` (`voucher_code`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `reward_id` (`reward_id`);
+
+--
+-- Indexes for table `rewards`
+--
+ALTER TABLE `rewards`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `surveys`
@@ -499,6 +581,14 @@ ALTER TABLE `user_preferences`
   ADD PRIMARY KEY (`user_id`,`category`);
 
 --
+-- Indexes for table `user_rewards`
+--
+ALTER TABLE `user_rewards`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `reward_id` (`reward_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -506,55 +596,73 @@ ALTER TABLE `user_preferences`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `options`
 --
 ALTER TABLE `options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+
+--
+-- AUTO_INCREMENT for table `redemptions`
+--
+ALTER TABLE `redemptions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `rewards`
+--
+ALTER TABLE `rewards`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `surveys`
 --
 ALTER TABLE `surveys`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `survey_categories`
 --
 ALTER TABLE `survey_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `survey_interactions`
 --
 ALTER TABLE `survey_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `survey_responses`
 --
 ALTER TABLE `survey_responses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
 
 --
 -- AUTO_INCREMENT for table `survey_similarities`
 --
 ALTER TABLE `survey_similarities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `user_rewards`
+--
+ALTER TABLE `user_rewards`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -571,6 +679,13 @@ ALTER TABLE `options`
 --
 ALTER TABLE `questions`
   ADD CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`);
+
+--
+-- Constraints for table `redemptions`
+--
+ALTER TABLE `redemptions`
+  ADD CONSTRAINT `redemptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `redemptions_ibfk_2` FOREIGN KEY (`reward_id`) REFERENCES `rewards` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `surveys`
@@ -596,6 +711,13 @@ ALTER TABLE `survey_interactions`
 --
 ALTER TABLE `user_preferences`
   ADD CONSTRAINT `user_preferences_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_rewards`
+--
+ALTER TABLE `user_rewards`
+  ADD CONSTRAINT `user_rewards_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `user_rewards_ibfk_2` FOREIGN KEY (`reward_id`) REFERENCES `rewards` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

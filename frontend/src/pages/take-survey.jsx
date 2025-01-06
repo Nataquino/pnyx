@@ -120,30 +120,51 @@ const TakeSurvey = () => {
     };
 
     const handleFeedbackSubmit = async () => {
-        const userId = getCookieValue("user_id");
-        try {
-            console.log("User feedback rating:", rating);
-            // Determine the interaction type based on the rating
-            const interactionType = rating === 0 ? "completed" : "rated";
-            // Prepare the payload for survey interactions
-            const payload = {
-                userId: userId, 
-                surveyId: id, 
-                interactionType: interactionType, 
-                rating: rating,
+    const userId = getCookieValue("user_id");
+    try {
+        console.log("User feedback rating:", rating);
+        // Determine the interaction type based on the rating
+        const interactionType = rating === 0 ? "completed" : "rated";
+
+        // Prepare the payload for survey interactions
+        const payload = {
+            userId: userId, 
+            surveyId: id, 
+            interactionType: interactionType, 
+            rating: rating,
+        };
+
+        // Submit the feedback interaction
+        const response = await axios.post(
+            "http://localhost/survey-app/submit-interaction.php",
+            payload
+        );
+
+        console.log("Feedback submitted successfully:", response.data);
+
+        // Adjust user preferences based on feedback rating
+        if (rating > 0) {
+            const updatePreferencesPayload = {
+                userId: userId,
+                surveyId: id,
+                feedbackScore: rating, // Send the rating as the feedback score
             };
-            const response = await axios.post(
-                "http://localhost/survey-app/submit-interaction.php",
-                payload
+
+            const preferenceResponse = await axios.post(
+                "http://localhost/survey-app/update-preferences.php",
+                updatePreferencesPayload
             );
-    
-            console.log("Feedback submitted successfully:", response.data);
-            setFeedbackOpen(false);
-            navigate("/home");
-        } catch (error) {
-            console.error("Error submitting feedback:", error);
+
+            console.log("Preferences updated successfully:", preferenceResponse.data);
         }
-    };
+
+        setFeedbackOpen(false);
+        navigate("/home");
+    } catch (error) {
+        console.error("Error submitting feedback or updating preferences:", error);
+    }
+};
+
 
     if (!survey) return <div>Loading...</div>;
 

@@ -217,16 +217,8 @@ const activateSurvey = async (surveyId) => {
 
                     {/* Edit Survey Button */}
                     {(survey.status === "approved" ||
-                      survey.status === "activated") && (
-                      <Button
-                        size="small"
-                        color="primary"
-                        component={Link}
-                        to={`/edit-survey/${survey.id}`}
-                      >
-                        Edit Survey
-                      </Button>
-                    )}
+                      survey.status === "activated")
+                    }
 
                     {/* Lock Survey Button */}
                     {survey.status === "activated" && (
