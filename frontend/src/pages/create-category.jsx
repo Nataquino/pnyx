@@ -4,10 +4,10 @@ import {
   Typography,
   TextField,
   Button,
-  List,
-  ListItem,
-  ListItemText,
+  Card,
+  CardContent,
   IconButton,
+  Divider,
 } from "@mui/material";
 import AdminMain from "../components/AdminMain";
 import { useState, useEffect } from "react";
@@ -17,19 +17,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const AdminCategories = () => {
   const [categoryName, setCategoryName] = useState("");
   const [message, setMessage] = useState("");
-  const [categories, setCategories] = useState([]); // State to hold the list of categories
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetchCategories(); // Fetch categories when the component mounts
+    fetchCategories();
   }, []);
 
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
         "http://localhost/survey-app/get-categories.php"
-      ); // Adjust endpoint as necessary
-      setCategories(response.data); // Assuming response.data is an array of categories
-      console.log(response.data);
+      );
+      setCategories(response.data);
     } catch (error) {
       setMessage(
         "Failed to fetch categories: " +
@@ -51,7 +50,7 @@ const AdminCategories = () => {
 
       setMessage(response.data.message);
       setCategoryName("");
-      fetchCategories(); // Refresh the category list after adding a new category
+      fetchCategories();
     } catch (error) {
       setMessage(
         "Failed to add category: " +
@@ -62,7 +61,7 @@ const AdminCategories = () => {
 
   const handleDeleteCategory = async (categoryId) => {
     if (!window.confirm("Are you sure you want to delete this category?")) {
-      return; // Exit if the user doesn't confirm the deletion
+      return;
     }
 
     try {
@@ -71,7 +70,7 @@ const AdminCategories = () => {
         { id: categoryId }
       );
       setMessage(response.data.message);
-      fetchCategories(); // Refresh the list after deletion
+      fetchCategories();
     } catch (error) {
       setMessage(
         "Failed to delete category: " +
@@ -81,68 +80,125 @@ const AdminCategories = () => {
   };
 
   return (
-    <Stack sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Stack sx={{ backgroundColor: "#f0f4f8", minHeight: "100vh" }}>
       <AdminMain />
-      <Box >
+      <Box sx={{ padding: { xs: 2, sm: 4 }, marginTop: { xs: 20 , sm: -15 } }}>
         <Stack
+          spacing={4}
           sx={{
-            marginTop: 5,
-            backgroundColor: "skyblue",
-            height: "100vh",
-            width: "auto",
-            padding: 4,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center", // Center items horizontally
+            maxWidth: { xs: "100%", sm: "600px" },
+            margin: "0 auto",
+            marginTop: -9,
+            backgroundColor: "#ffffff",
+            borderRadius: 4,
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+            padding: { xs: 2, sm: 4 },
+            minHeight: { xs: "auto", md: "90vh" },
+            justifyContent: "space-between",
           }}
         >
-          <Box sx={{ overflowY: "auto" }}>
-                      <Typography variant="h4" sx={{ marginBottom: 2 }}>
-            Add New Category
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{ color: "#333", fontSize: { xs: "1.5rem", sm: "2rem" } }}
+          >
+            Manage Categories
           </Typography>
-          <form onSubmit={handleAddCategory} style={{ width: "300px" }}>
-            <TextField
-              label="Category Name"
-              variant="outlined"
-              fullWidth
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-              required
-              sx={{ marginBottom: 2 }}
-            />
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ backgroundColor: "#05B1BF", width: "100%" }}
-            >
-              Add Category
-            </Button>
-          </form>
-          {message && <Typography sx={{ marginTop: 2 }}>{message}</Typography>}
 
-          <Typography variant="h5" sx={{ marginTop: 4 }}>
+          <form onSubmit={handleAddCategory}>
+            <Stack spacing={2}>
+              <TextField
+                label="Category Name"
+                variant="outlined"
+                fullWidth
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                required
+              />
+              <Button
+                variant="contained"
+                type="submit"
+                sx={{
+                  backgroundColor: "#1976d2",
+                  color: "#fff",
+                  "&:hover": { backgroundColor: "#145a8d" },
+                  fontSize: { xs: "0.875rem", sm: "1rem" },
+                }}
+              >
+                Add Category
+              </Button>
+            </Stack>
+          </form>
+
+          {message && (
+            <Typography
+              align="center"
+              sx={{
+                color: message.includes("Failed") ? "red" : "green",
+                fontSize: { xs: "0.875rem", sm: "1rem" },
+              }}
+            >
+              {message}
+            </Typography>
+          )}
+
+          <Divider sx={{ marginY: { xs: 1, sm: 2 } }} />
+
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{
+              color: "#555",
+              fontSize: { xs: "1.25rem", sm: "1.5rem" },
+            }}
+          >
             Existing Categories
           </Typography>
-          <List sx={{ width: "300px", marginTop: 2 }}>
-            {categories.map((category) => (
-              <ListItem
-                key={category.id}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDeleteCategory(category.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                }
-              >
-                <ListItemText primary={category.category_name} />
-              </ListItem>
-            ))}
-          </List>
-          </Box>
 
+          <Stack
+            spacing={2}
+            sx={{
+              overflowY: "auto",
+              maxHeight: { xs: "40vh", sm: "50vh" },
+              paddingX: { xs: 1, sm: 0 },
+            }}
+          >
+            {categories.map((category) => (
+              <Card
+                key={category.id}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: { xs: 1, sm: 2 },
+                  borderRadius: 2,
+                  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                  "&:hover": {
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
+                  },
+                }}
+              >
+                <CardContent
+                  sx={{
+                    flexGrow: 1,
+                    fontSize: { xs: "0.875rem", sm: "1rem" },
+                  }}
+                >
+                  <Typography>{category.category_name}</Typography>
+                </CardContent>
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => handleDeleteCategory(category.id)}
+                  sx={{
+                    color: "#d32f2f",
+                    "&:hover": { color: "#9a1c1c" },
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Card>
+            ))}
+          </Stack>
         </Stack>
       </Box>
     </Stack>

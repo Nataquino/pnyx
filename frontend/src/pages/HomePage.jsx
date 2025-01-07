@@ -1,4 +1,4 @@
-import { Stack, Box, Container, Card, CardContent, Typography, Button, CardActions } from "@mui/material";
+import { Stack, Box, Container, Card, CardContent, Typography, Button, CardActions, Grid } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
@@ -14,7 +14,6 @@ const HomePage = () => {
     const fetchSurveys = async () => {
       try {
         const response = await axios.get("http://localhost/survey-app/get-recommendations.php", { withCredentials: true });
-        console.log(response.data); // Log the response data
         if (Array.isArray(response.data)) {
           setSurveys(response.data);
         }
@@ -28,7 +27,6 @@ const HomePage = () => {
 
   const handleSurveyClick = (surveyId, isLocked) => {
     if (isLocked === 1) {
-      // If survey is locked (is_locked = 1), prompt for passcode
       setLockedSurveyId(surveyId);
     } else {
       navigate(`/take-survey/${surveyId}`);
@@ -42,16 +40,14 @@ const HomePage = () => {
     }
 
     try {
-      // Submit passcode to verify
       const response = await axios.post("http://localhost/survey-app/check-passcode.php", {
         survey_id: lockedSurveyId,
         passcode: passcode
       });
 
       if (response.data.status === "success") {
-        // If passcode is correct, navigate to the survey and close the passcode popup
         navigate(`/take-survey/${lockedSurveyId}`);
-        setLockedSurveyId(null); // Close the passcode popup
+        setLockedSurveyId(null);
       } else {
         alert("Incorrect passcode.");
       }
@@ -65,60 +61,68 @@ const HomePage = () => {
   };
 
   return (
-    <Stack sx={{ backgroundColor: "skyblue", height: "auto" }}>
+    <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
       <NavBar />
-      <Box
-        sx={{
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-          marginTop: "20px",
-          paddingBottom: 5,
-          width: "80vw",
-          minHeight: "100vh",
-        }}
-      >
-        <Container spacing={9} sx={{ marginTop: 5, marginBottom: 4, flexGrow: 1 }}>
+      <Box sx={{ paddingTop: 4, paddingBottom: 5 }}>
+        <Container sx={{ maxWidth: "lg" }}>
           {surveys.length === 0 && (
-            <Typography variant="h6" color="error">
+            <Typography variant="h6" color="error" align="center">
               No surveys found.
             </Typography>
           )}
-          <Stack spacing={4}>
+
+          <Grid container spacing={4} justifyContent="center">
             {surveys.map((survey) => (
-              <Card
-                key={survey.id}
-                sx={{
-                  width: "100vh",
-                  maxWidth: 900,
-                  height: "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                  borderRadius: 5,
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h5" component="div" sx={{ marginTop: 2, fontSize: "30px" }}>
-                    {survey.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ marginTop: 2 }}>
-                    {survey.description}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ marginTop: "auto", display: "flex", justifyContent: "flex-end" }}>
-                  {survey.is_locked === 1 ? (
-                    <Button size="small" color="primary" onClick={() => handleSurveyClick(survey.id, survey.is_locked)}>
-                      Enter passcode to open survey
-                    </Button>
-                  ) : (
-                    <Button size="small" color="primary" component={Link} to={`/take-survey/${survey.id}`}>
-                      Answer survey
-                    </Button>
-                  )}
-                </CardActions>
-              </Card>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={survey.id}>
+                <Card
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    borderRadius: 8,
+                    boxShadow: 6,
+                    height: "100%",
+                    maxWidth: 400,  // Fix max-width for uniform card size
+                    margin: "0 auto", // Center align cards
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography variant="h5" component="div" sx={{ fontSize: "24px", fontWeight: "bold" }}>
+                      {survey.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
+                      {survey.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: "center", padding: 2 }}>
+                    {survey.is_locked === 1 ? (
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => handleSurveyClick(survey.id, survey.is_locked)}
+                      >
+                        Enter passcode to open survey
+                      </Button>
+                    ) : (
+                      <Button
+                        size="small"
+                        color="primary"
+                        component={Link}
+                        to={`/take-survey/${survey.id}`}
+                      >
+                        Answer survey
+                      </Button>
+                    )}
+                  </CardActions>
+                </Card>
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
         </Container>
       </Box>
 
@@ -133,22 +137,39 @@ const HomePage = () => {
             padding: "20px",
             borderRadius: "8px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            width: "300px",
+            textAlign: "center",
+            zIndex: 1000,
           }}
         >
-          <Typography variant="h6">Enter Passcode</Typography>
+          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+            Enter Passcode
+          </Typography>
           <input
             type="text"
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
             placeholder="Enter passcode"
-            style={{ marginTop: "10px", padding: "10px", width: "100%" }}
+            style={{
+              marginTop: "10px",
+              padding: "10px",
+              width: "100%",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
           />
-          <Button sx={{ marginTop: "10px" }} onClick={handlePasscodeSubmit}>
-            Submit
-          </Button>
-          <Button sx={{ marginTop: "10px", color: "red" }} onClick={handleCancel}>
-            Cancel
-          </Button>
+          <Box sx={{ marginTop: "10px" }}>
+            <Button
+              variant="contained"
+              sx={{ marginRight: "10px" }}
+              onClick={handlePasscodeSubmit}
+            >
+              Submit
+            </Button>
+            <Button variant="outlined" color="error" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </Box>
         </Box>
       )}
     </Stack>

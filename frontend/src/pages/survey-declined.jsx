@@ -18,6 +18,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Paper,
 } from "@mui/material";
 
 import axios from "axios";
@@ -113,124 +114,132 @@ const Admin = () => {
   };
 
   return (
-    <Stack
-    maxHeight={"100vh"}
-      sx={{
-        backgroundColor: "skyblue",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "110vh",
-        paddingBottom: -8
-      }}
-    >
-      <AdminMain />
-      <Container sx={{ marginTop: 10, marginBottom: 5, flexGrow: 1, overflowY: "auto" , marginLeft: 35}}>
-        <Grid container spacing={3}>
-          {surveys.map((survey) => (
-            <Grid item xs={12} sm={6} md={4} key={survey.id}>
-              <Card
-                sx={{
-                  width: "100%",
-                  height: "50vh",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h5" component="div">
-                    {survey.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {survey.description}
-                  </Typography>
-                </CardContent>
-                <Box
-                  sx={{
-                    marginTop: "auto",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    onClick={() => handleView(survey)}
-                  >
-                    View
-                  </Button>
-                </Box>
-                <CardActions
-                  sx={{
-                    marginTop: "auto",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <Typography
-                    sx={{ color: "red" }}
-                    size="small"
-                  >
-                    DECLINED
-                  </Typography>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-      <Dialog
-        open={openDeclineDialog}
-        onClose={() => setOpenDeclineDialog(false)}
+    <Paper>
+              <AdminMain />
+      <Stack
+        maxHeight={"100vh"}
+        sx={{
+          backgroundColor: "skyblue",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "110vh",
+          marginTop: {md:-35}
+        }}
       >
-        <DialogTitle>Decline Survey</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Reason for declining the survey.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Comment"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDeclineDialog(false)}>Cancel</Button>
-          <Button onClick={handleDeclineConfirm}>Submit</Button>
-        </DialogActions>
-      </Dialog>
-      {survey && (
-        <Dialog open={openSurveyDialog} onClose={handleCloseSurveyDialog}>
-          <DialogTitle>{survey.title}</DialogTitle>
+
+        <Container
+          sx={{
+            marginTop: 10,
+            marginBottom: 5,
+            flexGrow: 1,
+            overflowY: "auto",
+            marginLeft: 35,
+          }}
+        >
+          <Grid container spacing={3}>
+            {surveys.map((survey) => (
+              <Grid item xs={12} sm={6} md={4} key={survey.id}>
+                <Card
+                  sx={{
+                    width: "100%",
+                    height: "50vh",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {survey.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {survey.description}
+                    </Typography>
+                  </CardContent>
+                  <Box
+                    sx={{
+                      marginTop: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={() => handleView(survey)}
+                    >
+                      View
+                    </Button>
+                  </Box>
+                  <CardActions
+                    sx={{
+                      marginTop: "auto",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <Typography sx={{ color: "red" }} size="small">
+                      DECLINED
+                    </Typography>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+        <Dialog
+          open={openDeclineDialog}
+          onClose={() => setOpenDeclineDialog(false)}
+        >
+          <DialogTitle>Decline Survey</DialogTitle>
           <DialogContent>
-            <DialogContentText>{survey.description}</DialogContentText>
-            <List>
-              {survey.questions.map((question) => (
-                <ListItem key={question.id}>
-                  <ListItemText primary={question.question_text} />
-                  {question.options.length > 0 && (
-                    <List>
-                      {question.options.map((option) => (
-                        <ListItem key={option.id}>
-                          <ListItemText primary={option.option_text} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  )}
-                </ListItem>
-              ))}
-            </List>
+            <DialogContentText>
+              Reason for declining the survey.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Comment"
+              type="text"
+              fullWidth
+              variant="standard"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseSurveyDialog}>Close</Button>
+            <Button onClick={() => setOpenDeclineDialog(false)}>Cancel</Button>
+            <Button onClick={handleDeclineConfirm}>Submit</Button>
           </DialogActions>
         </Dialog>
-      )}
-    </Stack>
+        {survey && (
+          <Dialog open={openSurveyDialog} onClose={handleCloseSurveyDialog}>
+            <DialogTitle>{survey.title}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>{survey.description}</DialogContentText>
+              <List>
+                {survey.questions.map((question) => (
+                  <ListItem key={question.id}>
+                    <ListItemText primary={question.question_text} />
+                    {question.options.length > 0 && (
+                      <List>
+                        {question.options.map((option) => (
+                          <ListItem key={option.id}>
+                            <ListItemText primary={option.option_text} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                  </ListItem>
+                ))}
+              </List>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseSurveyDialog}>Close</Button>
+            </DialogActions>
+          </Dialog>
+        )}
+      </Stack>
+    </Paper>
   );
 };
 
