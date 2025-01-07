@@ -153,34 +153,36 @@ const Account = () => {
                 <Container
                   sx={{
                     marginBottom: 2,
-                    backgroundColor: "floralwhite",
+                    backgroundColor: "floralwhite", // Soft background for a clean look
                     border: 2,
-                    borderBlockStyle: "solid",
-                    height: "15vh", // Fixed height for scrollability
+                    borderColor: "#ddd", // Light gray border for subtle separation
+                    borderRadius: 2, // Rounded corners for a modern touch
+                    height: "auto", // Flexible height based on content
                     width: "22vw",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Shadow for depth
+                    padding: 2,
+                    position: "relative", // Make the container relative to position child elements absolutely
                   }}
                 >
                   <Box
                     sx={{
-                      marginLeft: -3,
-                      maxHeight: "100px", // Limit the height for scrollable content
+                      marginLeft: -2,
+                      height: "10.5vh",
+                      maxHeight: "11vh", // Limit the height for scrollability
                       overflowY: "auto", // Enable vertical scrolling
                       overflowX: "hidden", // Prevent horizontal scrolling
-                      padding: 2,
-                      width: "19.7vw",
-
+                      width: "100%",
                     }}
                   >
                     {isEditing ? (
                       <Box
                         sx={{
-                          marginTop: -2,
-                          marginLeft: -2,
-                          maxHeight: "14vh",
+                          height: "10vh",
+                          maxHeight: "11vh", // Limit height for text input
                           overflow: "hidden",
-                          maxWidth: "21.5vw",
-                          width: "22vw",
-                          
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
                         <TextField
@@ -191,12 +193,11 @@ const Account = () => {
                           fullWidth
                           inputProps={{ maxLength: 60 }} // Limit to 60 characters
                           sx={{
-                            marginLeft: -1,
-                            maxHeight: "12vh",
-                            height: "13vh",
+                            borderRadius: 1,
+                            marginBottom: 1,
                             "& .MuiOutlinedInput-root": {
                               "& fieldset": {
-                                borderColor: "transparent", // Remove border
+                                borderColor: "transparent", // Remove default border
                               },
                               "&:hover fieldset": {
                                 borderColor: "transparent", // Remove hover border
@@ -206,15 +207,16 @@ const Account = () => {
                               },
                             },
                           }}
-                          
                         />
                         <Box
                           sx={{
+                            position: "absolute", // Position character count relative to the container
+                            bottom: "8px", // Distance from the bottom
+                            right: "8px", // Distance from the right
                             display: "flex",
                             justifyContent: "flex-end",
-                            marginTop: -0.5,
-
-
+                            alignItems: "center",
+                            zIndex: 1, // Ensure it's on top of other elements
                           }}
                         >
                           <Typography
@@ -222,7 +224,9 @@ const Account = () => {
                             color={
                               editedText.length > 60 ? "error" : "textSecondary"
                             }
-
+                            sx={{
+                              visibility: isEditing ? "visible" : "hidden", // Ensure visibility only in editing mode
+                            }}
                           >
                             {editedText.length} / 60
                           </Typography>
@@ -235,9 +239,7 @@ const Account = () => {
                           sx={{
                             whiteSpace: "pre-line", // Respect line breaks
                             wordWrap: "break-word",
-                            overflowWrap: "break-word",
-                            wordBreak: "break-word",
-                            fontSize: "19px",
+                            fontSize: "16px", // Slightly smaller font size for better readability
                           }}
                         >
                           {text} {/* Display the bio */}
@@ -246,35 +248,49 @@ const Account = () => {
                     )}
                   </Box>
 
-                  {/* <Typography>{userData.bio}</Typography> Assuming bio is in user data */}
-                </Container>
-                <Box
-                  sx={{
-                    marginTop: 3,
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    color={isEditing ? "success" : "primary"}
-                    sx={{ paddingLeft: "30px", paddingRight: "30px" }}
-                    onClick={handleEditToggle}
+                  <Box
+                    sx={{
+                      marginTop: 2,
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
                   >
-                    {isEditing ? "Save" : "Edit"}{" "}
-                    {/* Toggle between Edit and Save */}
-                  </Button>
-                </Box>
+                    <Button
+                      variant="contained"
+                      color={isEditing ? "success" : "primary"}
+                      sx={{
+                        paddingLeft: "30px",
+                        paddingRight: "30px",
+                        textTransform: "none", // Keep the text case consistent
+                        "&:hover": {
+                          transform: "scale(1.05)", // Slight scale effect on hover for interaction feedback
+                        },
+                      }}
+                      onClick={handleEditToggle}
+                    >
+                      {isEditing ? "Save" : "Edit"}{" "}
+                      {/* Toggle between Edit and Save */}
+                    </Button>
+                  </Box>
+                </Container>
+
                 <Box sx={{ marginTop: 2, marginLeft: 2 }}>
-                  <Typography>Interest</Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: "bold", marginBottom: 2 }}
+                  >
+                    Interests
+                  </Typography>
                 </Box>
 
                 <Container
                   sx={{
-                    backgroundColor: "white",
-                    border: 2,
+                    backgroundColor: "#f5f5f5", // Light gray background for a modern look
+                    border: "2px solid #ddd", // Subtle border for separation
+                    borderRadius: 2, // Rounded corners
                     borderBlockStyle: "solid",
-                    height: "15vh", // Fixed height for scrollability
+                    height: "13vh",
+                    maxHeight: "13vh", // Fixed height for scrollability
                     width: "22vw", // Slightly wider container for better chip spacing
                     overflowY: "auto", // Enable vertical scrolling
                     overflowX: "hidden", // Prevent horizontal scrolling
@@ -301,59 +317,98 @@ const Account = () => {
               }}
             >
               <Box
-                sx={{ backgroundColor: "white", width: "65vw", height: "55vh" }}
+                sx={{
+                  backgroundColor: "white",
+                  width: "65vw",
+                  height: "55vh",
+                  borderRadius: 2,
+                  boxShadow: 2,
+                }}
               >
-                <Stack sx={{ margin: 2 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      padding: 3,
-                      gap: 1,
-                    }}
+                <Stack sx={{ margin: 2, padding: 2 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{ fontWeight: "bold", marginBottom: 3 }}
                   >
-                    <Typography>Name:</Typography>
-                    <Typography>
-                      {userData.firstname.charAt(0).toUpperCase() +
-                        userData.firstname.slice(1)}{" "}
-                      {userData.lastname.charAt(0).toUpperCase() +
-                        userData.lastname.slice(1)}
-                    </Typography>
-                  </Box>
+                    User Information
+                  </Typography>
+
                   <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      padding: 3,
-                      gap: 1,
-                    }}
+                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                   >
-                    <Typography>Email:</Typography>
-                    <Typography>{userData.email}</Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      padding: 3,
-                      gap: 1,
-                    }}
-                  >
-                    <Typography>Birthdate:</Typography>
-                    <Typography>
-                      {format(new Date(userData.birthdate), "dd/MM/yyyy")}
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      padding: 3,
-                      gap: 1,
-                    }}
-                  >
-                    <Typography>Gender: </Typography>
-                    <Typography> {userData.gender} </Typography>
+                    {/* Name Section */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        padding: 2,
+                        alignItems: "center",
+                        borderBottom: "1px solid #ddd",
+                        gap: 2,
+                      }}
+                    >
+                      <Typography sx={{ fontWeight: "500" }}>Name:</Typography>
+                      <Typography sx={{ color: "gray", fontWeight: "400" }}>
+                        {userData.firstname.charAt(0).toUpperCase() +
+                          userData.firstname.slice(1)}{" "}
+                        {userData.lastname.charAt(0).toUpperCase() +
+                          userData.lastname.slice(1)}
+                      </Typography>
+                    </Box>
+
+                    {/* Email Section */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        padding: 2,
+                        alignItems: "center",
+                        borderBottom: "1px solid #ddd",
+                        gap: 2,
+                      }}
+                    >
+                      <Typography sx={{ fontWeight: "500" }}>Email:</Typography>
+                      <Typography sx={{ color: "gray", fontWeight: "400" }}>
+                        {userData.email}
+                      </Typography>
+                    </Box>
+
+                    {/* Birthdate Section */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        padding: 2,
+                        alignItems: "center",
+                        borderBottom: "1px solid #ddd",
+                        gap: 2,
+                      }}
+                    >
+                      <Typography sx={{ fontWeight: "500" }}>
+                        Birthdate:
+                      </Typography>
+                      <Typography sx={{ color: "gray", fontWeight: "400" }}>
+                        {format(new Date(userData.birthdate), "dd/MM/yyyy")}
+                      </Typography>
+                    </Box>
+
+                    {/* Gender Section */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        padding: 2,
+                        alignItems: "center",
+                        gap: 2,
+                      }}
+                    >
+                      <Typography sx={{ fontWeight: "500" }}>
+                        Gender:
+                      </Typography>
+                      <Typography sx={{ color: "gray", fontWeight: "400" }}>
+                        {userData.gender}
+                      </Typography>
+                    </Box>
                   </Box>
                 </Stack>
               </Box>
