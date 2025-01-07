@@ -18,7 +18,6 @@ import SurveyNavBar from "../components/SurveyNavBar";
 
 const SurveyList = () => {
   const [surveys, setSurveys] = useState([]);
-  const [showComment, setShowComment] = useState({});
   const [lockModal, setLockModal] = useState({ open: false, surveyId: null });
   const [passcode, setPasscode] = useState("");
 
@@ -54,30 +53,19 @@ const SurveyList = () => {
     }
   };
 
-  // Add this function to handle survey activation
-const activateSurvey = async (surveyId) => {
-  try {
-    const response = await axios.post(
-      "http://localhost/survey-app/activate-survey.php",
-      { survey_id: surveyId },
-      { withCredentials: true }
-    );
-    console.log(response.data);
-    alert(response.data.message || "Survey activated successfully");
-    // Optionally, refetch surveys after activation
-    // fetchSurveys();
-  } catch (error) {
-    console.error("Error activating survey:", error);
-    alert("Failed to activate the survey. Please try again.");
-  }
-};
-
-
-  const toggleComment = (id) => {
-    setShowComment((prevState) => ({
-      ...prevState,
-      [id]: !prevState[id],
-    }));
+  const activateSurvey = async (surveyId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost/survey-app/activate-survey.php",
+        { survey_id: surveyId },
+        { withCredentials: true }
+      );
+      console.log(response.data);
+      alert(response.data.message || "Survey activated successfully");
+    } catch (error) {
+      console.error("Error activating survey:", error);
+      alert("Failed to activate the survey. Please try again.");
+    }
   };
 
   const lockSurvey = async (surveyId, passcode) => {
@@ -94,7 +82,6 @@ const activateSurvey = async (surveyId) => {
       alert("Failed to lock the survey. Please try again.");
     }
   };
-  
 
   const handleLockButtonClick = (surveyId) => {
     setLockModal({ open: true, surveyId });
@@ -122,7 +109,6 @@ const activateSurvey = async (surveyId) => {
           flexGrow: 1,
           overflowY: "auto",
           padding: 5,
-          height: "50vh",
         }}
       >
         {surveys.length === 0 ? (
@@ -135,6 +121,11 @@ const activateSurvey = async (surveyId) => {
               color="primary"
               component={Link}
               to="/create-survey"
+              sx={{
+                borderRadius: "20px",
+                padding: "10px 20px",
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+              }}
             >
               Create Survey
             </Button>
@@ -145,28 +136,31 @@ const activateSurvey = async (surveyId) => {
               <Grid item xs={12} sm={6} md={4} key={survey.id}>
                 <Card
                   sx={{
-                    minWidth: 275,
-                    height: "auto",
+                    height: "100%", // Ensure uniform height
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 5,
-                    backgroundColor: "#f5f5f5",
-                    paddingBottom: 2,
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.1)",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                      boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.15)",
+                    },
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography
                       variant="h5"
                       component="div"
-                      sx={{ marginTop: 2, fontSize: "30px" }}
+                      sx={{ fontSize: "22px", fontWeight: "bold" }}
                     >
                       {survey.title}
                     </Typography>
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ marginTop: 2 }}
+                      sx={{ marginTop: 1, fontSize: "16px" }}
                     >
                       {survey.description}
                     </Typography>
@@ -183,9 +177,9 @@ const activateSurvey = async (surveyId) => {
                   </CardContent>
                   <CardActions
                     sx={{
-                      marginTop: "auto",
                       display: "flex",
                       justifyContent: "space-between",
+                      padding: "10px",
                     }}
                   >
                     {/* See Results Button */}
@@ -208,6 +202,11 @@ const activateSurvey = async (surveyId) => {
                         color="success"
                         onClick={() => activateSurvey(survey.id)}
                         disabled={survey.status === "activated"}
+                        sx={{
+                          borderRadius: "20px",
+                          padding: "8px 16px",
+                          fontSize: "14px",
+                        }}
                       >
                         {survey.status === "activated"
                           ? "Activated"
@@ -215,17 +214,17 @@ const activateSurvey = async (surveyId) => {
                       </Button>
                     )}
 
-                    {/* Edit Survey Button */}
-                    {(survey.status === "approved" ||
-                      survey.status === "activated")
-                    }
-
                     {/* Lock Survey Button */}
                     {survey.status === "activated" && (
                       <Button
                         size="small"
                         color="secondary"
                         onClick={() => handleLockButtonClick(survey.id)}
+                        sx={{
+                          borderRadius: "20px",
+                          padding: "8px 16px",
+                          fontSize: "14px",
+                        }}
                       >
                         Lock Survey
                       </Button>
@@ -253,6 +252,7 @@ const activateSurvey = async (surveyId) => {
             p: 4,
             borderRadius: 2,
             boxShadow: 24,
+            width: "350px",
           }}
         >
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
@@ -270,6 +270,11 @@ const activateSurvey = async (surveyId) => {
             variant="contained"
             color="primary"
             onClick={handleLockSubmit}
+            sx={{
+              width: "100%",
+              padding: "12px",
+              fontSize: "16px",
+            }}
           >
             Submit
           </Button>
