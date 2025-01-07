@@ -23,38 +23,31 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Get user interactions
-$sql = "SELECT survey_id, rating FROM survey_interactions WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
+// Get user preferences
+$sql_preferences = "SELECT category, preference_strength FROM user_preferences WHERE user_id = ?";
+$stmt_preferences = $conn->prepare($sql_preferences);
+$stmt_preferences->bind_param("i", $user_id);
+$stmt_preferences->execute();
+$result_preferences = $stmt_preferences->get_result();
+
+$user_preferences = [];
+while ($row = $result_preferences->fetch_assoc()) {
+    $user_preferences[$row['category']] = $row['preference_strength'];
+}
+$stmt_preferences->close();
+
+// Get user interactions (surveys the user has already interacted with)
+$sql_interactions = "SELECT survey_id, rating FROM survey_interactions WHERE user_id = ?";
+$stmt_interactions = $conn->prepare($sql_interactions);
+$stmt_interactions->bind_param("i", $user_id);
+$stmt_interactions->execute();
+$result_interactions = $stmt_interactions->get_result();
 
 $user_ratings = [];
-while ($row = $result->fetch_assoc()) {
+while ($row = $result_interactions->fetch_assoc()) {
     $user_ratings[$row['survey_id']] = $row['rating'];
 }
-$stmt->close();
-
-if (empty($user_ratings)) {
-    // If no interactions exist, fetch all activated surveys excluding those created by the user
-    $sql_all_surveys = "SELECT id, title, description FROM surveys WHERE status = 'activated' AND user_id != ?";
-    $stmt_all = $conn->prepare($sql_all_surveys);
-    $stmt_all->bind_param("i", $user_id);
-    $stmt_all->execute();
-    $all_surveys_result = $stmt_all->get_result();
-
-    $all_surveys = [];
-    while ($row = $all_surveys_result->fetch_assoc()) {
-        $all_surveys[] = $row;
-    }
-    $stmt_all->close();
-
-    // Output fallback surveys directly
-    echo json_encode($all_surveys);
-    $conn->close();
-    exit;
-}
+$stmt_interactions->close();
 
 // Retrieve survey-survey similarities
 $sql_similarities = "SELECT survey_id_1, survey_id_2, similarity_score FROM survey_similarities";
@@ -65,7 +58,7 @@ while ($row = $similarities_result->fetch_assoc()) {
     $survey_similarities[$row['survey_id_1']][$row['survey_id_2']] = $row['similarity_score'];
 }
 
-// Generate recommendations based on user interactions
+// Generate recommendations based on user interactions and preferences
 $recommendations = [];
 foreach ($user_ratings as $survey_id => $rating) {
     if ($rating > 0 && isset($survey_similarities[$survey_id])) {
@@ -77,46 +70,69 @@ foreach ($user_ratings as $survey_id => $rating) {
     }
 }
 
-arsort($recommendations);
-$recommended_survey_ids = array_keys(array_slice($recommendations, 0, 5));
-
-// Fetch recommended surveys
-$recommended_surveys = [];
-if (!empty($recommended_survey_ids)) {
-    $placeholders = implode(',', array_fill(0, count($recommended_survey_ids), '?'));
-    $sql_recommended = "SELECT id, title, description FROM surveys WHERE id IN ($placeholders)";
+// Fetch recommended surveys with categories from `survey_categories`
+$weighted_recommendations = [];
+if (!empty($recommendations)) {
+    $placeholders = implode(',', array_fill(0, count($recommendations), '?'));
+    $sql_recommended = "
+        SELECT s.id, s.title, s.description, sc.category_name, s.is_locked
+        FROM surveys s
+        LEFT JOIN survey_categories sc ON s.id = sc.survey_id
+        WHERE s.id IN ($placeholders)";
     $stmt_recommended = $conn->prepare($sql_recommended);
 
-    $stmt_recommended->bind_param(str_repeat('i', count($recommended_survey_ids)), ...$recommended_survey_ids);
+    $stmt_recommended->bind_param(str_repeat('i', count($recommendations)), ...array_keys($recommendations));
     $stmt_recommended->execute();
     $result_recommended = $stmt_recommended->get_result();
 
     while ($row = $result_recommended->fetch_assoc()) {
-        $recommended_surveys[] = $row;
+        $survey_id = $row['id'];
+        $category = $row['category_name'];
+        $base_score = $recommendations[$survey_id] ?? 0;
+
+        // Apply preference weight
+        $preference_weight = $user_preferences[$category] ?? 1; // Default to 1 if no preference
+        $final_score = $base_score * $preference_weight;
+
+        $row['weighted_score'] = $final_score;
+        $weighted_recommendations[$survey_id] = $row; // Use survey ID as key to avoid duplicates
     }
     $stmt_recommended->close();
+
+    // Sort recommendations by weighted_score in descending order
+    usort($weighted_recommendations, function ($a, $b) {
+        return $b['weighted_score'] <=> $a['weighted_score'];
+    });
 }
 
-// Fetch all activated surveys excluding the user's own surveys
-$sql_all_surveys = "SELECT id, title, description FROM surveys WHERE status = 'activated' AND user_id != ?";
+// Fetch all activated surveys excluding the user's own surveys and surveys they have interacted with
+$sql_all_surveys = "
+    SELECT s.id, s.title, s.description, sc.category_name, s.is_locked
+    FROM surveys s
+    LEFT JOIN survey_categories sc ON s.id = sc.survey_id
+    WHERE s.status = 'activated' AND s.user_id != ? AND s.id NOT IN (SELECT survey_id FROM survey_interactions WHERE user_id = ?)";
 $stmt_all = $conn->prepare($sql_all_surveys);
-$stmt_all->bind_param("i", $user_id);
+$stmt_all->bind_param("ii", $user_id, $user_id); // Exclude surveys the user has interacted with
 $stmt_all->execute();
 $all_surveys_result = $stmt_all->get_result();
 
 $all_surveys = [];
 while ($row = $all_surveys_result->fetch_assoc()) {
-    $all_surveys[] = $row;
+    $all_surveys[$row['id']] = $row; // Use survey ID as key to avoid duplicates
 }
 $stmt_all->close();
 
-// Combine recommended surveys with all activated surveys
-$final_surveys = array_unique(
-    array_merge($recommended_surveys, $all_surveys),
-    SORT_REGULAR
-);
+// Combine and deduplicate surveys
+$final_surveys = [];
+$seen_ids = [];
+foreach (array_merge($weighted_recommendations, $all_surveys) as $survey) {
+    if (!in_array($survey['id'], $seen_ids)) {
+        $final_surveys[] = $survey;
+        $seen_ids[] = $survey['id'];
+    }
+}
 
-// Output the surveys
-echo json_encode(array_values($final_surveys));
+// Output the surveys, including the `is_locked` field for frontend to check passcode status
+echo json_encode($final_surveys);
 $conn->close();
 ?>

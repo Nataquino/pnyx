@@ -16,6 +16,7 @@ const HomePage = () => {
         const response = await axios.get("http://localhost/survey-app/get-recommendations.php", { withCredentials: true });
         if (Array.isArray(response.data)) {
           setSurveys(response.data);
+          console.log(response.data)
         }
       } catch (error) {
         console.error("Error fetching surveys:", error);
