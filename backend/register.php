@@ -24,51 +24,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate a 6-digit OTP
     $otp = random_int(100000, 999999);
 
-    // Insert the user into the database
-    $sqlRegister = "INSERT INTO users (username, firstname, lastname, gender, birthdate, email, password, otp, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
-    $stmt = $conn->prepare($sqlRegister);
-    $stmt->bind_param("ssssssss", $userName, $userFirstName, $userLastName, $userGender, $userBirthdate, $userEmail, $hashedPassword, $otp);
+    // Send the OTP via email before inserting the user into the database
+    $mail = new PHPMailer(true);
 
-    if ($stmt->execute()) {
-        // Get the last inserted ID (user_id)
-        $userId = $conn->insert_id;
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'mail.pnyx-surveys.com';  // Outgoing mail server
+        $mail->SMTPAuth = true;
+        $mail->Username = 'nathan@pnyx-surveys.com';  // Use your updated email address
+        $mail->Password = 'nathan102908?';  // Use your email account’s password
+        $mail->SMTPSecure = 'ssl';  // SSL encryption
+        $mail->Port = 465;  // Port 465 for SSL
 
-        // Set cookies for user_id, username, and email
-        setcookie("user_id", $userId, time() + (86400 * 30), "/", "localhost", true, false);  // Expires in 30 days
-        setcookie("username", $userName, time() + (86400 * 30), "/", "localhost", true, false); // Expires in 30 days
-        setcookie("email", $userEmail, time() + (86400 * 30), "/", "localhost", true, false); // Expires in 30 days
+        $mail->setFrom('nathan@pnyx-surveys.com', 'Pnyx Surveys'); // Replace with your sender details
+        $mail->addAddress($userEmail, $userFirstName);
 
-        // Send the OTP via email
-        $mail = new PHPMailer(true);
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Your OTP for Email Verification';
+        $mail->AltBody = "Hi $userFirstName, \nYour OTP for verifying your account is: $otp";
 
-        try {
-            // Server settings
-            $mail->isSMTP();
-            $mail->Host = 'localhost';  // Mailhog
-            $mail->Port = 1025;
+        // Attempt to send the email
+        $mail->send();
 
-            // Recipients
-            $mail->setFrom('your_email@example.com', 'Survey App');
-            $mail->addAddress($userEmail, $userFirstName);
+        // If email is sent successfully, insert the user into the database
+        $sqlRegister = "INSERT INTO users (username, firstname, lastname, gender, birthdate, email, password, otp, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
+        $stmt = $conn->prepare($sqlRegister);
+        $stmt->bind_param("ssssssss", $userName, $userFirstName, $userLastName, $userGender, $userBirthdate, $userEmail, $hashedPassword, $otp);
 
-            // Content
-            $mail->isHTML(true);
-            $mail->Subject = 'Your OTP for Email Verification';
-            $mail->Body    = "Hi $userFirstName, <br> Your OTP for verifying your account is: <strong>$otp</strong>";
+        if ($stmt->execute()) {
+            // Get the last inserted ID (user_id)
+            $userId = $conn->insert_id;
 
-            $mail->send();
+            // Set cookies for user_id, username, and email
+            setcookie("user_id", $userId, time() + (86400 * 30), "/", "localhost", true, false);  // Expires in 30 days
+            setcookie("username", $userName, time() + (86400 * 30), "/", "localhost", true, false); // Expires in 30 days
+            setcookie("email", $userEmail, time() + (86400 * 30), "/", "localhost", true, false); // Expires in 30 days
+
             http_response_code(200);
             echo json_encode(['message' => 'Registration successful. Please check your email for the OTP.']);
-        } catch (Exception $e) {
+        } else {
+            error_log("Database Error: " . $stmt->error);
             http_response_code(500);
-            echo json_encode(['message' => 'OTP could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
+            echo json_encode(['message' => 'Registration failed.']);
         }
-    } else {
-        http_response_code(500);
-        echo json_encode(['message' => 'Registration failed']);
-    }
 
-    $stmt->close();
-    $conn->close();
+        $stmt->close();
+        $conn->close();
+    } catch (Exception $e) {
+        // If the OTP email fails to send, return an error without inserting the user
+        error_log("Mailer Error: " . $mail->ErrorInfo);
+        http_response_code(500);
+        echo json_encode(['message' => 'Registration failed, OTP email could not be sent.']);
+    }
 }
 ?>
