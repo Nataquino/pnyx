@@ -12,18 +12,13 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-} from "@mui/material";
-
-import QrCodeIcon from "@mui/icons-material/QrCode";
+} from "@mui/material"; 
 
 import { format } from "date-fns";
-import Avatar from "../components/AvatarPic";
 import ChipInterest from "../components/ChipInterest";
 import NavBar from "../components/NavBar";
-import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import AvatarPic from "../components/AvatarPic";
 import QRCode from "react-qr-code"; // Import QRCode library
 
 const Account = () => {
@@ -162,7 +157,39 @@ const Account = () => {
                   padding: 2, // Added padding for better spacing
                 }}
               >
-                <AvatarPic />
+                <Container
+                  sx={{
+                    marginTop: 1,
+                    width: "25vw",
+                    height: "30vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "8px",
+                    padding: 2,
+                    marginLeft: -7,
+                  }}
+                >
+                  {/* Circle with name inside */}
+                  <Box
+                    sx={{
+                      width: 170,
+                      height: 2000,
+                      backgroundColor: "grey",
+                      borderRadius: "50%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontFamily: "Arial, sans-serif",
+                      fontSize: "16px",
+                      marginTop: 2,
+                    }}
+                  >
+                    <Typography>{userData.username}</Typography>
+                  </Box>
+                </Container>
               </Container>
 
               <Container>

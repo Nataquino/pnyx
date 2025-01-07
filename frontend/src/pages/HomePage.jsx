@@ -1,7 +1,6 @@
 import {
   Stack,
   Box,
-  Container,
   Card,
   CardContent,
   Typography,
@@ -10,7 +9,7 @@ import {
   Grid,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -31,7 +30,6 @@ const HomePage = () => {
         );
         if (Array.isArray(surveyResponse.data)) {
           setSurveys(surveyResponse.data);
-          console.log(surveyResponse.data);
         }
 
         // Fetch user energy
@@ -48,11 +46,26 @@ const HomePage = () => {
     fetchSurveysAndEnergy();
   }, []);
 
+  // Function to refresh energy dynamically
+  const refreshEnergy = async () => {
+    try {
+      const energyResponse = await axios.get(
+        "http://localhost/survey-app/get-user-energy.php",
+        { withCredentials: true }
+      );
+      setEnergy(energyResponse.data.energy);
+    } catch (error) {
+      console.error("Error refreshing energy:", error);
+    }
+  };
+
   const handleSurveyClick = (surveyId, isLocked) => {
     if (isLocked === 1) {
       setLockedSurveyId(surveyId);
     } else {
+      // Navigate to survey and refresh energy after completion
       navigate(`/take-survey/${surveyId}`);
+      refreshEnergy();
     }
   };
 
@@ -74,6 +87,7 @@ const HomePage = () => {
       if (response.data.status === "success") {
         navigate(`/take-survey/${lockedSurveyId}`);
         setLockedSurveyId(null);
+        refreshEnergy(); // Refresh energy after unlocking the survey
       } else {
         alert("Incorrect passcode.");
       }
@@ -90,7 +104,7 @@ const HomePage = () => {
     <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
       <NavBar />
       <Box sx={{ paddingTop: 4, paddingBottom: 5 }}>
-        <Container sx={{ maxWidth: "lg" }}>
+        <Box sx={{ maxWidth: "90%", marginLeft: 10 }}>
           {surveys.length === 0 && (
             <Typography variant="h6" color="error" align="center">
               No surveys found.
@@ -124,7 +138,9 @@ const HomePage = () => {
                       transform:
                         energy === 0 ? "none" : "scale(1.05)", // Disable hover if energy is 0
                       boxShadow:
-                        energy === 0 ? "none" : "0 12px 30px rgba(0, 0, 0, 0.2)",
+                        energy === 0
+                          ? "none"
+                          : "0 12px 30px rgba(0, 0, 0, 0.2)",
                     },
                     opacity: energy === 0 ? 0.5 : 1, // Dim card if energy is 0
                   }}
@@ -174,7 +190,7 @@ const HomePage = () => {
               </Grid>
             ))}
           </Grid>
-        </Container>
+        </Box>
       </Box>
 
       {lockedSurveyId && (
