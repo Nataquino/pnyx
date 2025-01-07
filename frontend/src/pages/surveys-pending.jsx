@@ -180,7 +180,7 @@ const Admin = () => {
     // Render surveys if they exist
     <Grid container spacing={3} justifyContent="flex-start">
       {surveys.map((survey) => (
-        <Grid item xs={12} sm={6} md={4} key={survey.id}>
+        <Grid item xs={12} sm={9} md={4.5} key={survey.id}>
           <Card
             sx={{
               marginTop: 1,
