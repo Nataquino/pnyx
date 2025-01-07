@@ -1,95 +1,110 @@
-import { Stack, Box, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Stack, Box, Typography, Alert, CircularProgress } from "@mui/material";
 import AdminMain from "../components/AdminMain";
-import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Admin = () => {
   const [userCount, setUserCount] = useState(0);
   const [surveyCount, setSurveyCount] = useState(0);
-  const [setUsers] = useState([]);
-  const [setSurveys] = useState([]);
-  const [error, setError] = useState(""); // Added state for error messages
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get("http://localhost/survey-app/admin-stats.php")
       .then((res) => {
         if (res.data && res.data.users && res.data.surveys) {
-          // Check if the response is structured correctly
-          setUsers(res.data.users);
-          setSurveys(res.data.surveys);
+          // Update counts based on response
           setUserCount(res.data.users.length);
-          setSurveyCount(res.data.surveys.length);
+          setSurveyCount(res.data.surveys.filter((survey) => survey.status === "active").length);
         } else {
           setError("Unexpected data structure received.");
-          console.log(res.data);
+          console.error("Response:", res.data);
         }
       })
-      .catch((error) => {
-        setError("There was an error fetching the admin stats!"); // Set error message for user
-        console.error("There was an error fetching the admin stats!", error);
+      .catch((err) => {
+        setError("There was an error fetching the admin stats!");
+        console.error("Error:", err);
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading after fetching data
       });
-  },);
+  }, []);
 
   return (
-    <Stack sx={{ backgroundColor: "skyblue", height: "100vh" }}>
-      <Box>
-        <AdminMain />
-        <Stack
-          sx={{ backgroundColor: "lightgray", height: "100vh", padding: 4 , display: "flex", justifyContent: "center",}}
-        >
-          <Box sx={{ marginTop: 5, marginBottom: 5, marginLeft: 91,  }}>
-            <Typography variant="h4">Admin Dashboard</Typography>
-          </Box>
-          {error && ( // Display error message if there is an error
-            <Box
-              sx={{
-                padding: 2,
-                backgroundColor: "red",
-                color: "white",
-                borderRadius: 2,
-                marginBottom: 4,
-                width: "50vw",
-                marginLeft: 59, 
-                textAlign: "center"
-                
-              }}
-            >
-              <Typography variant="h6">{error}</Typography>
-            </Box>
-          )}
+    <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
+      <AdminMain />
+      <Stack
+        sx={{
+          backgroundColor: "lightgray",
+          minHeight: "100vh",
+          padding: 4,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ textAlign: "center", marginBottom: 4 }}>
+          <Typography variant="h4" gutterBottom>
+            Admin Dashboard
+          </Typography>
+        </Box>
+        {loading ? (
+          <CircularProgress color="primary" />
+        ) : error ? (
+          <Alert severity="error" sx={{ width: "50%", textAlign: "center" }}>
+            {error}
+          </Alert>
+        ) : (
           <Box
-            sx={{ display: "flex", justifyContent: "center", marginLeft: 30 }}
+            sx={{
+              display: "flex",
+              gap: 4,
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
           >
+            {/* User Count */}
             <Box
               sx={{
                 textAlign: "center",
-                width: "20vw",
-                margin: 10,
-                padding: 10,
+                padding: 4,
                 backgroundColor: "white",
                 borderRadius: 2,
+                boxShadow: 2,
+                width: "20%",
               }}
             >
-              <Typography variant="h6">Users</Typography>
-              <Typography variant="h4">{userCount}</Typography>
+              <Typography variant="h6" gutterBottom>
+                Total Users
+              </Typography>
+              <Typography variant="h3" color="primary">
+                {userCount}
+              </Typography>
             </Box>
+
+            {/* Active Surveys Count */}
             <Box
               sx={{
                 textAlign: "center",
-                width: "20vw",
-                margin: 10,
-                padding: 10,
+                padding: 4,
                 backgroundColor: "white",
                 borderRadius: 2,
+                boxShadow: 2,
+                width: "20%",
               }}
             >
-              <Typography variant="h6">Surveys</Typography>
-              <Typography variant="h4">{surveyCount}</Typography>
+              <Typography variant="h6" gutterBottom>
+                Active Surveys
+              </Typography>
+              <Typography variant="h3" color="secondary">
+                {surveyCount}
+              </Typography>
             </Box>
           </Box>
-        </Stack>
-      </Box>
+        )}
+      </Stack>
     </Stack>
   );
 };
