@@ -16,7 +16,7 @@ const HomePage = () => {
         const response = await axios.get("http://localhost/survey-app/get-recommendations.php", { withCredentials: true });
         if (Array.isArray(response.data)) {
           setSurveys(response.data);
-          console.log(response.data)
+          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching surveys:", error);
@@ -82,7 +82,7 @@ const HomePage = () => {
                     justifyContent: "space-between",
                     borderRadius: 12,
                     boxShadow: 8,
-                    height: "350px", // Shortened height for compact cards
+                    height: "380px", // Adjusted height to fit points and other content
                     maxWidth: 420,  // Slightly increased width for better content fit
                     margin: "0 auto", // Center align cards
                     transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -98,6 +98,10 @@ const HomePage = () => {
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1, fontSize: "15px" }}>
                       {survey.description}
+                    </Typography>
+                    {/* Display the points of the survey */}
+                    <Typography variant="body2" color="text.primary" sx={{ marginTop: 2, fontWeight: "bold" }}>
+                      Points: {survey.survey_pts}
                     </Typography>
                   </CardContent>
                   <CardActions sx={{ justifyContent: "center", padding: 2 }}>
