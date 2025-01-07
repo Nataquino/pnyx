@@ -40,14 +40,35 @@ const ChipInterest = () => {
   };
 
   // Handle adding new interest
-  const handleAddInterest = () => {
+  const handleAddInterest = async () => {
     if (newInterest.trim() !== "") {
       const capitalizedInterest = capitalizeInterest(newInterest);
-      setInterests([...interests, capitalizedInterest]); // Add to the list
+      setInterests([...interests, capitalizedInterest]); // Update state with new interest
       setNewInterest(""); // Clear input
       setIsAdding(false); // Exit adding mode
+  
+      try {
+        // Send the new interest (category) and action to the backend
+        const response = await axios.post(
+          "http://localhost/survey-app/get-userprofile.php", // Same endpoint as for getting user data
+          { 
+            action: "add_interest", 
+            interest: capitalizedInterest 
+          },
+          { withCredentials: true }
+        );
+  
+        if (response.data.success) {
+          console.log("Interest saved successfully");
+        } else {
+          console.error("Error saving interest:", response.data.error);
+        }
+      } catch (err) {
+        console.error("Error saving interest to the database:", err);
+      }
     }
   };
+  
 
   // Handle canceling the addition of a new interest
   const handleCancel = () => {

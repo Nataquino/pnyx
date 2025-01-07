@@ -11,7 +11,7 @@ import {
   CircularProgress,
   Dialog,
   DialogActions,
-  DialogContent
+  DialogContent,
 } from "@mui/material";
 
 import QrCodeIcon from "@mui/icons-material/QrCode";
@@ -44,7 +44,6 @@ const Account = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
 
   const handleEditToggle = async () => {
     if (isEditing) {
@@ -80,7 +79,6 @@ const Account = () => {
   const handleTextChange = (e) => {
     setEditedText(e.target.value); // Update the editedText state with the new value
     setText(e.target.value); // Update the displayed text in real-time as the user types
-    
   };
 
   useEffect(() => {
@@ -125,9 +123,6 @@ const Account = () => {
     fetchUserData();
     fetchRewards();
   }, []);
-
-
-
 
   return (
     <Paper
@@ -486,146 +481,170 @@ const Account = () => {
                       <Grid container spacing={3}>
                         {rewards.map((reward, index) => (
                           <Grid item xs={12} sm={6} md={4} key={index}>
-    <Card
-      sx={{
-        backgroundColor: "#F9FAFB",
-        padding: 3,
-        borderRadius: 2,
-        boxShadow: 3,
-        transition: "transform 0.3s ease",
-        "&:hover": { transform: "scale(1.05)" },
-      }}
-    >
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: "600",
-          marginBottom: 1,
-          fontSize: "1.1rem",
-        }}
-      >
-        {reward.name}
-      </Typography>
-      
-      <Typography
-        sx={{
-          fontSize: "0.95rem",
-          color: "text.secondary",
-          marginBottom: 2,
-        }}
-      >
-        {reward.description}
-      </Typography>
+                            <Card
+                              sx={{
+                                backgroundColor: "#F9FAFB",
+                                padding: 3,
+                                borderRadius: 2,
+                                boxShadow: 3,
+                                transition: "transform 0.3s ease",
+                                "&:hover": { transform: "scale(1.05)" },
+                              }}
+                            >
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  fontWeight: "600",
+                                  marginBottom: 1,
+                                  fontSize: "1.1rem",
+                                }}
+                              >
+                                {reward.name}
+                              </Typography>
 
-      <Box sx={{ display: "flex", alignItems: "center", marginBottom: 1 }}>
-        <Typography
-          sx={{
-            fontSize: "0.85rem",
-            fontWeight: "bold",
-            marginRight: 1,
-            color: "primary.main",
-          }}
-        >
-          Voucher Code:
-        </Typography>
-        <Typography sx={{ fontSize: "0.85rem" }}>
-          <span style={{ fontWeight: "normal" }}>{reward.voucher_code}</span>
-        </Typography>
-      </Box>
+                              <Typography
+                                sx={{
+                                  fontSize: "0.95rem",
+                                  color: "text.secondary",
+                                  marginBottom: 2,
+                                }}
+                              >
+                                {reward.description}
+                              </Typography>
 
-      <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-        <Typography
-          sx={{
-            fontSize: "0.85rem",
-            fontWeight: "bold",
-            marginRight: 1,
-            color: "text.secondary",
-          }}
-        >
-          Expiry Date:
-        </Typography>
-        <Typography sx={{ fontSize: "0.85rem" }}>
-          {reward.expiry_date}
-        </Typography>
-      </Box>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  marginBottom: 1,
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: "0.85rem",
+                                    fontWeight: "bold",
+                                    marginRight: 1,
+                                    color: "primary.main",
+                                  }}
+                                >
+                                  Voucher Code:
+                                </Typography>
+                                <Typography sx={{ fontSize: "0.85rem" }}>
+                                  <span style={{ fontWeight: "normal" }}>
+                                    {reward.voucher_code}
+                                  </span>
+                                </Typography>
+                              </Box>
 
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingX: 3,
-          paddingY: 1,
-          borderRadius: 2,
-          boxShadow: 2,
-          fontSize: "0.875rem",
-          fontWeight: "bold",
-          "&:hover": { boxShadow: 3, transform: "scale(1.05)" },
-        }}
-        onClick={handleClickOpen}
-      >
-        <Typography sx={{ marginRight: 1 }}>Use QR</Typography>
-      </Button>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  marginBottom: 2,
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: "0.85rem",
+                                    fontWeight: "bold",
+                                    marginRight: 1,
+                                    color: "text.secondary",
+                                  }}
+                                >
+                                  Expiry Date:
+                                </Typography>
+                                <Typography sx={{ fontSize: "0.85rem" }}>
+                                  {reward.expiry_date}
+                                </Typography>
+                              </Box>
 
-      {/* Dialog for QR Code */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogActions>
-          {/* Simple X button */}
-          <Button
-            sx={{
-              position: "absolute",
-              top: 10,
-              right: 10,
-              zIndex: 1,
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-              color: "text.primary",
-            }}
-            onClick={handleClose}
-          >
-            X
-          </Button>
-        </DialogActions>
-        <DialogContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 3,
-          }}
-        >
-          {/* QR Code */}
-          <QRCode value={reward.voucher_code} size={256} />
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  paddingX: 3,
+                                  paddingY: 1,
+                                  borderRadius: 2,
+                                  boxShadow: 2,
+                                  fontSize: "0.875rem",
+                                  fontWeight: "bold",
+                                  "&:hover": {
+                                    boxShadow: 3,
+                                    transform: "scale(1.05)",
+                                  },
+                                }}
+                                onClick={handleClickOpen}
+                              >
+                                <Typography sx={{ marginRight: 1 }}>
+                                  Use QR
+                                </Typography>
+                              </Button>
 
-          {/* Voucher Code Text below QR */}
-          <Box sx={{ marginTop: 2, textAlign: "center" }}>
-            <Typography
-              sx={{
-                fontSize: "1rem",
-                fontWeight: "bold",
-                color: "text.primary",
-                marginBottom: 1,
-              }}
-            >
-              Voucher Code:
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "1.1rem",
-                fontWeight: "600",
-                color: "primary.main",
-                wordWrap: "break-word",
-              }}
-            >
-              {reward.voucher_code}
-            </Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
-    </Card>
+                              {/* Dialog for QR Code */}
+                              <Dialog open={open} onClose={handleClose}>
+                                <DialogActions>
+                                  {/* Simple X button */}
+                                  <Button
+                                    sx={{
+                                      position: "absolute",
+                                      top: 10,
+                                      right: 10,
+                                      zIndex: 1,
+                                      fontSize: "1.5rem",
+                                      fontWeight: "bold",
+                                      color: "text.primary",
+                                    }}
+                                    onClick={handleClose}
+                                  >
+                                    X
+                                  </Button>
+                                </DialogActions>
+                                <DialogContent
+                                  sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    padding: 3,
+                                  }}
+                                >
+                                  {/* QR Code */}
+                                  <QRCode
+                                    value={reward.voucher_code}
+                                    size={256}
+                                  />
+
+                                  {/* Voucher Code Text below QR */}
+                                  <Box
+                                    sx={{ marginTop: 2, textAlign: "center" }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        fontSize: "1rem",
+                                        fontWeight: "bold",
+                                        color: "text.primary",
+                                        marginBottom: 1,
+                                      }}
+                                    >
+                                      Voucher Code:
+                                    </Typography>
+                                    <Typography
+                                      sx={{
+                                        fontSize: "1.1rem",
+                                        fontWeight: "600",
+                                        color: "primary.main",
+                                        wordWrap: "break-word",
+                                      }}
+                                    >
+                                      {reward.voucher_code}
+                                    </Typography>
+                                  </Box>
+                                </DialogContent>
+                              </Dialog>
+                            </Card>
                           </Grid>
                         ))}
                       </Grid>
