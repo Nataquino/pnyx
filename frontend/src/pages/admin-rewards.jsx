@@ -45,7 +45,6 @@ const RewardsAdmin = () => {
         {
           name: rewardName,
           description: rewardDescription,
-          voucher_code: voucherCode,
           points_required: pointsRequired,
           stock: stock,
           expiry_date: expiryDate,
@@ -99,13 +98,6 @@ const RewardsAdmin = () => {
             required
             multiline
             rows={4}
-          />
-          <TextField
-            fullWidth
-            label="Voucher Code"
-            value={voucherCode}
-            onChange={(e) => setVoucherCode(e.target.value)}
-            margin="normal"
           />
           <TextField
             fullWidth
