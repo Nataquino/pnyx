@@ -58,8 +58,8 @@ const RedeemPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost/survey-app/get-rewards.php", // Update the PHP file URL if needed
-        { points: pointsRequired },
+        "http://localhost/survey-app/get-rewards.php", // URL to backend for redemption
+        { points: pointsRequired }, // Points required for redemption
         { withCredentials: true }
       );
 
@@ -72,6 +72,7 @@ const RedeemPage = () => {
       }
     } catch (error) {
       console.error("Error redeeming reward:", error);
+      alert("There was an error redeeming the reward. Please try again.");
     }
   };
 
@@ -176,9 +177,7 @@ const RedeemPage = () => {
                   textAlign: "center",
                 }}
               >
-                <Typography sx={{ fontSize: "20px" }}>
-                  No rewards available
-                </Typography>
+                <Typography sx={{ fontSize: "20px" }}>No rewards available</Typography>
               </Box>
             ) : (
               rewards.map((reward, index) => (
@@ -297,7 +296,7 @@ const RedeemPage = () => {
               sx={{ marginTop: 2, fontWeight: "bold" }}
             >
               Your Voucher Code: {voucherCode}
-            </Typography>
+            </Typography> 
           )}
         </DialogContent>
       </Dialog>
