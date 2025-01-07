@@ -9,7 +9,12 @@ import {
   Grid,
   Card,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent
 } from "@mui/material";
+
+import QrCodeIcon from "@mui/icons-material/QrCode";
 
 import { format } from "date-fns";
 import Avatar from "../components/AvatarPic";
@@ -19,6 +24,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AvatarPic from "../components/AvatarPic";
+import QRCode from "react-qr-code"; // Import QRCode library
 
 const Account = () => {
   const [userData, setUserData] = useState(null); // State to store user data
@@ -29,6 +35,16 @@ const Account = () => {
   const [userInterest, setUserInterest] = useState(null);
   const [rewards, setRewards] = useState([]); // State for redeemed rewards
   const [loading, setLoading] = useState(true); // Loading state for rewards
+  const [open, setOpen] = useState(false); // Manage dialog state
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   const handleEditToggle = async () => {
     if (isEditing) {
@@ -64,6 +80,7 @@ const Account = () => {
   const handleTextChange = (e) => {
     setEditedText(e.target.value); // Update the editedText state with the new value
     setText(e.target.value); // Update the displayed text in real-time as the user types
+    
   };
 
   useEffect(() => {
@@ -109,8 +126,14 @@ const Account = () => {
     fetchRewards();
   }, []);
 
+
+
+
   return (
-    <Paper fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
+    <Paper
+      fullWidth
+      sx={{ backgroundColor: "skyblue", height: "100vh", overflowY: "auto" }}
+    >
       <NavBar />
       <Stack
         sx={{
@@ -125,9 +148,10 @@ const Account = () => {
             <Box
               sx={{
                 marginLeft: 5,
+                marginBottom: 3,
                 backgroundColor: "white",
                 width: "25vw",
-                height: "83vh",
+                height: "90vh",
               }}
             >
               <Container
@@ -413,54 +437,200 @@ const Account = () => {
                 </Stack>
               </Box>
 
-              <Box sx={{ height: "6vh" }}></Box>
               <Box
-                sx={{ backgroundColor: "red", width: "65vw", height: "40vh" }}
+                sx={{
+                  backgroundColor: "red",
+                  width: "65vw",
+                  maxHeight: "20vh",
+                  position: "relative", // Position relative for internal elements
+                  marginTop: 2,
+                }}
               >
                 <Box
                   sx={{
-                    width: "65vw",
                     backgroundColor: "white",
                     borderRadius: 2,
-                    padding: 2,
-                    overflowY: "auto",
-                    maxHeight: "44vh",
-                    margin: 5,
+                    boxShadow: 3,
+                    padding: 3,
+                    height: "26.5vh",
+                    display: "flex",
+                    flexDirection: "column", // Allow flexible layout
                   }}
                 >
-                  <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{ marginBottom: 3, fontWeight: "bold" }}
+                  >
                     Redeemed Vouchers
                   </Typography>
-                  <Grid container spacing={2}>
-                    {loading ? (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          minHeight: "40vh",
-                        }}
-                      >
-                        <CircularProgress />
-                      </Box>
-                    ) : rewards.length === 0 ? (
-                      <Typography>No redeemed vouchers available.</Typography>
-                    ) : (
-                      rewards.map((reward, index) => (
-                        <Grid item xs={12} sm={6} md={4} key={index}>
-                          <Card sx={{ padding: 2, backgroundColor: "#EBEBF0" }}>
-                            <Typography variant="h6">{reward.name}</Typography>
-                            <Typography>{reward.description}</Typography>
-                            <Typography>
-                              Voucher Code: {reward.voucher_code}
-                            </Typography>
-                            <Typography>
-                              Expiry Date: {reward.expiry_date}
-                            </Typography>
-                          </Card>
-                        </Grid>
-                      ))
-                    )}
-                  </Grid>
+
+                  {loading ? (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <CircularProgress size={60} color="primary" />
+                    </Box>
+                  ) : rewards.length === 0 ? (
+                    <Box sx={{ textAlign: "center", padding: 3 }}>
+                      <Typography variant="h6" sx={{ color: "gray" }}>
+                        You haven't redeemed any vouchers yet.
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ overflowY: "auto", flexGrow: 1 }}>
+                      <Grid container spacing={3}>
+                        {rewards.map((reward, index) => (
+                          <Grid item xs={12} sm={6} md={4} key={index}>
+    <Card
+      sx={{
+        backgroundColor: "#F9FAFB",
+        padding: 3,
+        borderRadius: 2,
+        boxShadow: 3,
+        transition: "transform 0.3s ease",
+        "&:hover": { transform: "scale(1.05)" },
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: "600",
+          marginBottom: 1,
+          fontSize: "1.1rem",
+        }}
+      >
+        {reward.name}
+      </Typography>
+      
+      <Typography
+        sx={{
+          fontSize: "0.95rem",
+          color: "text.secondary",
+          marginBottom: 2,
+        }}
+      >
+        {reward.description}
+      </Typography>
+
+      <Box sx={{ display: "flex", alignItems: "center", marginBottom: 1 }}>
+        <Typography
+          sx={{
+            fontSize: "0.85rem",
+            fontWeight: "bold",
+            marginRight: 1,
+            color: "primary.main",
+          }}
+        >
+          Voucher Code:
+        </Typography>
+        <Typography sx={{ fontSize: "0.85rem" }}>
+          <span style={{ fontWeight: "normal" }}>{reward.voucher_code}</span>
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+        <Typography
+          sx={{
+            fontSize: "0.85rem",
+            fontWeight: "bold",
+            marginRight: 1,
+            color: "text.secondary",
+          }}
+        >
+          Expiry Date:
+        </Typography>
+        <Typography sx={{ fontSize: "0.85rem" }}>
+          {reward.expiry_date}
+        </Typography>
+      </Box>
+
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingX: 3,
+          paddingY: 1,
+          borderRadius: 2,
+          boxShadow: 2,
+          fontSize: "0.875rem",
+          fontWeight: "bold",
+          "&:hover": { boxShadow: 3, transform: "scale(1.05)" },
+        }}
+        onClick={handleClickOpen}
+      >
+        <Typography sx={{ marginRight: 1 }}>Use QR</Typography>
+      </Button>
+
+      {/* Dialog for QR Code */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogActions>
+          {/* Simple X button */}
+          <Button
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              zIndex: 1,
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              color: "text.primary",
+            }}
+            onClick={handleClose}
+          >
+            X
+          </Button>
+        </DialogActions>
+        <DialogContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 3,
+          }}
+        >
+          {/* QR Code */}
+          <QRCode value={reward.voucher_code} size={256} />
+
+          {/* Voucher Code Text below QR */}
+          <Box sx={{ marginTop: 2, textAlign: "center" }}>
+            <Typography
+              sx={{
+                fontSize: "1rem",
+                fontWeight: "bold",
+                color: "text.primary",
+                marginBottom: 1,
+              }}
+            >
+              Voucher Code:
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "1.1rem",
+                fontWeight: "600",
+                color: "primary.main",
+                wordWrap: "break-word",
+              }}
+            >
+              {reward.voucher_code}
+            </Typography>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </Card>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Box>
+                  )}
                 </Box>
               </Box>
             </Stack>
