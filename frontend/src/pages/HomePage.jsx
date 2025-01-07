@@ -65,14 +65,14 @@ const HomePage = () => {
     <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
       <NavBar />
       <Box sx={{ paddingTop: 4, paddingBottom: 5 }}>
-        <Container sx={{ maxWidth: "lg" }}>
+        <Box sx={{ maxWidth: "150%",    border: "5px solid rgba(0, 0, 0, 0.1)", height: "90vh"}}>
           {surveys.length === 0 && (
             <Typography variant="h6" color="error" align="center">
               No surveys found.
             </Typography>
           )}
 
-          <Grid container spacing={4} justifyContent="center">
+          <Grid container spacing={4}>
             {surveys.map((survey) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={survey.id}>
                 <Card
@@ -92,7 +92,7 @@ const HomePage = () => {
                     },
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, padding: "20px" }}>
+                  <CardContent sx={{ flexGrow: 1, padding: "25px" }}>
                     <Typography variant="h5" component="div" sx={{ fontSize: "20px", fontWeight: "bold" }}>
                       {survey.title}
                     </Typography>
@@ -130,7 +130,7 @@ const HomePage = () => {
               </Grid>
             ))}
           </Grid>
-        </Container>
+        </Box>
       </Box>
 
       {/* Passcode Modal */}
