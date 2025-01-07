@@ -5,5 +5,5 @@ header('Access-Control-Allow-Credentials: true');
 
 include 'connection.php';
 
- echo 'Heeeeheeee';
+echo 'Heeeeheeee';
 ?>
