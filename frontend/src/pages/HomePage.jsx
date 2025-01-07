@@ -80,23 +80,23 @@ const HomePage = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    borderRadius: 8,
-                    boxShadow: 6,
-                    height: "100%",
-                    maxWidth: 400,  // Fix max-width for uniform card size
+                    borderRadius: 12,
+                    boxShadow: 8,
+                    height: "350px", // Shortened height for compact cards
+                    maxWidth: 420,  // Slightly increased width for better content fit
                     margin: "0 auto", // Center align cards
                     transition: "transform 0.3s ease, box-shadow 0.3s ease",
                     "&:hover": {
                       transform: "scale(1.05)",
-                      boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
+                      boxShadow: "0 12px 30px rgba(0, 0, 0, 0.2)",
                     },
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h5" component="div" sx={{ fontSize: "24px", fontWeight: "bold" }}>
+                  <CardContent sx={{ flexGrow: 1, padding: "20px" }}>
+                    <Typography variant="h5" component="div" sx={{ fontSize: "20px", fontWeight: "bold" }}>
                       {survey.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1, fontSize: "15px" }}>
                       {survey.description}
                     </Typography>
                   </CardContent>
@@ -106,6 +106,7 @@ const HomePage = () => {
                         size="small"
                         color="primary"
                         onClick={() => handleSurveyClick(survey.id, survey.is_locked)}
+                        sx={{ fontWeight: "bold", borderRadius: "20px" }}
                       >
                         Enter passcode to open survey
                       </Button>
@@ -115,6 +116,7 @@ const HomePage = () => {
                         color="primary"
                         component={Link}
                         to={`/take-survey/${survey.id}`}
+                        sx={{ fontWeight: "bold", borderRadius: "20px" }}
                       >
                         Answer survey
                       </Button>
@@ -127,6 +129,7 @@ const HomePage = () => {
         </Container>
       </Box>
 
+      {/* Passcode Modal */}
       {lockedSurveyId && (
         <Box
           sx={{
@@ -136,14 +139,14 @@ const HomePage = () => {
             transform: "translate(-50%, -50%)",
             backgroundColor: "white",
             padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            borderRadius: "12px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
             width: "300px",
             textAlign: "center",
             zIndex: 1000,
           }}
         >
-          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+          <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: "bold" }}>
             Enter Passcode
           </Typography>
           <input
@@ -153,21 +156,27 @@ const HomePage = () => {
             placeholder="Enter passcode"
             style={{
               marginTop: "10px",
-              padding: "10px",
+              padding: "12px",
               width: "100%",
-              borderRadius: "5px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
+              fontSize: "16px",
             }}
           />
-          <Box sx={{ marginTop: "10px" }}>
+          <Box sx={{ marginTop: "20px" }}>
             <Button
               variant="contained"
-              sx={{ marginRight: "10px" }}
+              sx={{ marginRight: "10px", fontWeight: "bold", borderRadius: "8px" }}
               onClick={handlePasscodeSubmit}
             >
               Submit
             </Button>
-            <Button variant="outlined" color="error" onClick={handleCancel}>
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{ fontWeight: "bold", borderRadius: "8px" }}
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
           </Box>

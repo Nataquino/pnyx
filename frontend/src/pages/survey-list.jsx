@@ -109,6 +109,7 @@ const SurveyList = () => {
           flexGrow: 1,
           overflowY: "auto",
           padding: 5,
+          
         }}
       >
         {surveys.length === 0 ? (
@@ -136,7 +137,7 @@ const SurveyList = () => {
               <Grid item xs={12} sm={6} md={4} key={survey.id}>
                 <Card
                   sx={{
-                    height: "100%", // Ensure uniform height
+                    height: "100%", // Ensures the card takes up the full height of its container
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 5,
@@ -182,53 +183,7 @@ const SurveyList = () => {
                       padding: "10px",
                     }}
                   >
-                    {/* See Results Button */}
-                    {survey.status !== "declined" &&
-                      survey.status !== "pending" && (
-                        <Button
-                          size="small"
-                          color="primary"
-                          component={Link}
-                          to={`/result/${survey.id}`}
-                        >
-                          See Results
-                        </Button>
-                      )}
-
-                    {/* Activate Survey Button */}
-                    {survey.status === "approved" && (
-                      <Button
-                        size="small"
-                        color="success"
-                        onClick={() => activateSurvey(survey.id)}
-                        disabled={survey.status === "activated"}
-                        sx={{
-                          borderRadius: "20px",
-                          padding: "8px 16px",
-                          fontSize: "14px",
-                        }}
-                      >
-                        {survey.status === "activated"
-                          ? "Activated"
-                          : "Activate Survey"}
-                      </Button>
-                    )}
-
-                    {/* Lock Survey Button */}
-                    {survey.status === "activated" && (
-                      <Button
-                        size="small"
-                        color="secondary"
-                        onClick={() => handleLockButtonClick(survey.id)}
-                        sx={{
-                          borderRadius: "20px",
-                          padding: "8px 16px",
-                          fontSize: "14px",
-                        }}
-                      >
-                        Lock Survey
-                      </Button>
-                    )}
+                    {/* Buttons for survey actions */}
                   </CardActions>
                 </Card>
               </Grid>
