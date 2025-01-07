@@ -65,7 +65,7 @@ const HomePage = () => {
     <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
       <NavBar />
       <Box sx={{ paddingTop: 4, paddingBottom: 5 }}>
-        <Box sx={{ maxWidth: "150%",    border: "5px solid rgba(0, 0, 0, 0.1)", height: "90vh"}}>
+        <Box sx={{ maxWidth: "90%", marginLeft: 10}}>
           {surveys.length === 0 && (
             <Typography variant="h6" color="error" align="center">
               No surveys found.
