@@ -51,11 +51,12 @@ const Admin = () => {
           padding: 5,
           justifyContent: "center",
           alignItems: "center",
-          marginTop: -9,
+          marginTop: -9, 
+          marginLeft: {md: 16}
         }}
       >
         {/* Dashboard Title */}
-        <Box sx={{ textAlign: "center", marginBottom: 3 }}>
+        <Box sx={{ textAlign: "center", marginBottom: 3}}>
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             Admin Dashboard
           </Typography>
