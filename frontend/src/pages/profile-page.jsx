@@ -8,7 +8,7 @@ import {
   TextField,
   Grid,
   Card,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 
 import { format } from "date-fns";
@@ -24,7 +24,7 @@ const Account = () => {
   const [userData, setUserData] = useState(null); // State to store user data
   const [error, setError] = useState(false); // Error state if fetching fails
   const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState("This is an editable paragraph.");
+  const [text, setText] = useState("");
   const [editedText, setEditedText] = useState(text);
   const [userInterest, setUserInterest] = useState(null);
   const [rewards, setRewards] = useState([]); // State for redeemed rewards
@@ -33,7 +33,7 @@ const Account = () => {
   const handleEditToggle = async () => {
     if (isEditing) {
       try {
-        // Send the updated bio to the backend
+        // Update the bio in the database
         const response = await axios.post(
           "http://localhost/survey-app/get-userprofile.php",
           { bio: editedText },
@@ -42,43 +42,35 @@ const Account = () => {
 
         if (response.data.success) {
           console.log("Bio updated successfully!");
-
-          // Fetch the updated user data
-          const updatedResponse = await axios.get(
-            "http://localhost/survey-app/get-userprofile.php",
-            { withCredentials: true }
-          );
-
-          if (updatedResponse.data.user) {
-            // Update bio state with the new bio after successful update
-            setText(updatedResponse.data.user.bio);
-            setEditedText(updatedResponse.data.user.bio);
-          } else {
-            console.error("Error fetching updated bio from the database");
-          }
         } else {
           console.error("Error updating bio:", response.data.error);
+          // If the server responds with an error, revert the bio to the previous one
+          setText(text);
         }
       } catch (err) {
         console.error("Error updating bio:", err);
+        // If an error occurs, revert the bio to the previous one
+        setText(text);
       }
     } else {
-      // Initialize editedText with current bio value when switching to edit mode
+      // Initialize the editable bio text
       setEditedText(text);
     }
 
-    // Toggle editing state
+    // Toggle the editing mode
     setIsEditing(!isEditing);
   };
+
   const handleTextChange = (e) => {
     setEditedText(e.target.value); // Update the editedText state with the new value
+    setText(e.target.value); // Update the displayed text in real-time as the user types
   };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/survey-app/get-userprofile.php", 
+          "http://localhost/survey-app/get-userprofile.php",
           { withCredentials: true }
         );
 
@@ -170,31 +162,38 @@ const Account = () => {
                 >
                   <Box
                     sx={{
-                      marginLeft: -2.5,
+                      marginLeft: -3,
                       maxHeight: "100px", // Limit the height for scrollable content
                       overflowY: "auto", // Enable vertical scrolling
                       overflowX: "hidden", // Prevent horizontal scrolling
-                      padding: 1,
-                      width: "18vw",
+                      padding: 2,
+                      width: "19.7vw",
+
                     }}
                   >
                     {isEditing ? (
                       <Box
                         sx={{
-                          marginTop: -1,
-                          maxHeight: "12vh",
+                          marginTop: -2,
+                          marginLeft: -2,
+                          maxHeight: "14vh",
                           overflow: "hidden",
+                          maxWidth: "21.5vw",
+                          width: "22vw",
+                          
                         }}
                       >
                         <TextField
                           multiline
                           variant="outlined"
                           value={editedText} // Display the edited value
-                          onChange={handleTextChange}
+                          onChange={handleTextChange} // Handle text change
                           fullWidth
+                          inputProps={{ maxLength: 60 }} // Limit to 60 characters
                           sx={{
-                            marginLeft: -1.5,
-                            height: "70%",
+                            marginLeft: -1,
+                            maxHeight: "12vh",
+                            height: "13vh",
                             "& .MuiOutlinedInput-root": {
                               "& fieldset": {
                                 borderColor: "transparent", // Remove border
@@ -207,7 +206,27 @@ const Account = () => {
                               },
                             },
                           }}
+                          
                         />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            marginTop: -0.5,
+
+
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color={
+                              editedText.length > 60 ? "error" : "textSecondary"
+                            }
+
+                          >
+                            {editedText.length} / 60
+                          </Typography>
+                        </Box>
                       </Box>
                     ) : (
                       <Box>
@@ -355,30 +374,39 @@ const Account = () => {
                   }}
                 >
                   <Typography variant="h6" sx={{ marginBottom: 2 }}>
-                  Redeemed Vouchers
-                </Typography>
-                <Grid container spacing={2}>
-                  {loading ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", minHeight: "40vh" }}>
-                      <CircularProgress />
-                    </Box>
-                  ) : rewards.length === 0 ? (
-                    <Typography>No redeemed vouchers available.</Typography>
-                  ) : (
-                    rewards.map((reward, index) => (
-                      <Grid item xs={12} sm={6} md={4} key={index}>
-                        <Card sx={{ padding: 2, backgroundColor: "#EBEBF0" }}>
-                          <Typography variant="h6">{reward.name}</Typography>
-                          <Typography>{reward.description}</Typography>
-                          <Typography>Voucher Code: {reward.voucher_code}</Typography>
-                          <Typography>Expiry Date: {reward.expiry_date}</Typography>
-                        </Card>
-                      </Grid>
+                    Redeemed Vouchers
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {loading ? (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          minHeight: "40vh",
+                        }}
+                      >
+                        <CircularProgress />
+                      </Box>
+                    ) : rewards.length === 0 ? (
+                      <Typography>No redeemed vouchers available.</Typography>
+                    ) : (
+                      rewards.map((reward, index) => (
+                        <Grid item xs={12} sm={6} md={4} key={index}>
+                          <Card sx={{ padding: 2, backgroundColor: "#EBEBF0" }}>
+                            <Typography variant="h6">{reward.name}</Typography>
+                            <Typography>{reward.description}</Typography>
+                            <Typography>
+                              Voucher Code: {reward.voucher_code}
+                            </Typography>
+                            <Typography>
+                              Expiry Date: {reward.expiry_date}
+                            </Typography>
+                          </Card>
+                        </Grid>
                       ))
                     )}
                   </Grid>
                 </Box>
-
               </Box>
             </Stack>
           </>
