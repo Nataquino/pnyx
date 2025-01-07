@@ -147,7 +147,7 @@ const Account = () => {
               </Container>
 
               <Container>
-                <Box sx={{ marginTop: 3, marginLeft: 5 }}>
+                <Box sx={{ marginTop: 3, marginLeft: 2 }}>
                   <Typography>Bio</Typography>
                 </Box>
                 <Container
@@ -265,7 +265,7 @@ const Account = () => {
                     {/* Toggle between Edit and Save */}
                   </Button>
                 </Box>
-                <Box sx={{ marginTop: 2, marginLeft: 5 }}>
+                <Box sx={{ marginTop: 2, marginLeft: 2 }}>
                   <Typography>Interest</Typography>
                 </Box>
 
