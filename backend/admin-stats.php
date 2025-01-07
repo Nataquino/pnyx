@@ -2,9 +2,10 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-// Database credentials
+// Include database credentials
 include 'connection.php';
-// Create connection
+
+// Create a database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
@@ -23,8 +24,8 @@ if ($userDetailsResult->num_rows > 0) {
     }
 }
 
-// Get the survey details (title and description)
-$surveyDetailsSql = "SELECT title, description FROM surveys";
+// Get the survey details with status 'active' (title and description)
+$surveyDetailsSql = "SELECT title, description FROM surveys WHERE status = 'activated'";
 $surveyDetailsResult = $conn->query($surveyDetailsSql);
 
 $surveys = [];
@@ -40,6 +41,6 @@ echo json_encode([
     "surveys" => $surveys
 ]);
 
-// Close the connection
+// Close the database connection
 $conn->close();
 ?>
