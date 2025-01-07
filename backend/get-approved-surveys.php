@@ -9,7 +9,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 include 'connection.php';
 
-
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -18,8 +17,8 @@ if ($conn->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
 
-// Update the SQL query to also fetch `status` and `comment`
-$sql = "SELECT id, title, description, status, comment FROM surveys WHERE status = 'approved'";
+// Update the SQL query to also fetch `status`, `comment`, and `survey_pts`
+$sql = "SELECT id, title, description, status, comment, survey_pts FROM surveys WHERE status = 'approved'";
 $result = $conn->query($sql);
 
 $surveys = [];

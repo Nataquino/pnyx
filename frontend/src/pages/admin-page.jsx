@@ -52,7 +52,8 @@ const Admin = () => {
           justifyContent: "center",
           alignItems: "center",
           marginTop: {xs: -9, md:-35}, 
-          marginLeft: 0
+          marginLeft: 0,
+
         }}
       >
         {/* Dashboard Title */}
