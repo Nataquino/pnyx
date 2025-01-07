@@ -83,13 +83,13 @@ const AdminCategories = () => {
   return (
     <Stack sx={{ backgroundColor: "skyblue", height: "100vh" }}>
       <AdminMain />
-
       <Box >
         <Stack
           sx={{
             marginTop: 5,
-            backgroundColor: "lightgray",
+            backgroundColor: "skyblue",
             height: "100vh",
+            width: "auto",
             padding: 4,
             display: "flex",
             justifyContent: "center",
@@ -97,7 +97,6 @@ const AdminCategories = () => {
           }}
         >
           <Box sx={{ overflowY: "auto" }}>
-
                       <Typography variant="h4" sx={{ marginBottom: 2 }}>
             Add New Category
           </Typography>

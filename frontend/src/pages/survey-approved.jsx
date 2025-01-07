@@ -113,7 +113,7 @@ const Admin = () => {
   };
 
   return (
-    <Stack sx={{ backgroundColor: "white", height: "100vh" }}>
+    <Stack sx={{ backgroundColor: "skyblue", height: "100vh" }}>
       <AdminMain />
       <Container
         sx={{

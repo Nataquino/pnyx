@@ -14,9 +14,9 @@ const Admin = () => {
       .get("http://localhost/survey-app/admin-stats.php")
       .then((res) => {
         if (res.data && res.data.users && res.data.surveys) {
-          // Update counts based on response
+          console.log(res.data)
           setUserCount(res.data.users.length);
-          setSurveyCount(res.data.surveys.filter((survey) => survey.status === "active").length);
+          setSurveyCount(res.data.surveys.length);
         } else {
           setError("Unexpected data structure received.");
           console.error("Response:", res.data);

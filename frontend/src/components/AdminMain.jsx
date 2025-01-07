@@ -87,7 +87,7 @@ const AdminMain = () => {
         <Toolbar />
         <Box sx={{ overflow: "auto" }}>
           <List>
-            {["DASHBOARD", "ACCOUNTS", "SURVEY CATEGORIES"].map((text, index) => (
+            {["DASHBOARD", "SURVEY CATEGORIES"].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton
                   onClick={

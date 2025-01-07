@@ -116,7 +116,7 @@ const Admin = () => {
     <Stack
     maxHeight={"100vh"}
       sx={{
-        backgroundColor: "grey",
+        backgroundColor: "skyblue",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
