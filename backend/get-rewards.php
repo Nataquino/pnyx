@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
                                 // Insert into user_rewards table
                                 $redemption_query = "INSERT INTO user_rewards (user_id, reward_id, redemption_date, expiry_date, status, voucher_code) 
-                                                     VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'redeemed', ?)";
+                                                    VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'redeemed', ?)";
                                 if ($redemption_stmt = $conn->prepare($redemption_query)) {
                                     $redemption_stmt->bind_param("iis", $user_id, $reward_id, $voucher_code);
                                     if ($redemption_stmt->execute()) {

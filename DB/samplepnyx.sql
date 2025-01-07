@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 07, 2025 at 10:30 AM
+-- Generation Time: Jan 07, 2025 at 12:19 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -437,7 +437,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `bio`, `avatar`, `otp`, `otp_expiry`, `password`, `reward_points`, `is_verified`) VALUES
 (11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', '', '', NULL, NULL, '$2y$10$YCw7ZFH6eq.7w/JKOa', 0, 0),
 (12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', '', '', NULL, NULL, '$2y$10$Vb9ui0ZV1W/gfwxLHk', 0, 0),
-(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', 'I\\\'m just your typical average person in the web', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 40, 1),
+(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', 'I\\\'m just your typical average person in the web', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 20, 1),
 (14, 'Jerz', 'Jerzeil', 'Lira', 'Male', '1999-01-01', 'jerzeil@gmail.com', '', '', NULL, NULL, '$2y$10$Zlb2aoQK2n44dYT5wzJXueSDpKYfUGQP5povfsNWrlnZ9OeFcqtGq', 0, 0),
 (15, 'a', 'a', 'a', 'Male', '2024-07-09', 'a@gmail.com', '', '', NULL, NULL, '$2y$10$JtcN3KVq1ssTu/L/Xw1MReSLPN1SxnoVhYYY1KDRJsg9DYx0u4UUK', 0, 0),
 (16, 'b', 'b', 'b', 'Female', '2024-07-09', 'b@gmail.com', '', '', NULL, NULL, '$2y$10$7pGnP1aKYjHRC2VvZU0LtuZrQrSqr77yZMPo28HZPjC6Swepk5/Q.', 0, 0),
@@ -522,7 +522,8 @@ CREATE TABLE `user_rewards` (
 
 INSERT INTO `user_rewards` (`id`, `user_id`, `reward_id`, `redemption_date`, `status`, `voucher_code`, `description`, `expiry_date`) VALUES
 (1, 13, 1, '2025-01-07 10:45:08', 'redeemed', '866BFEFBE061', '', '0000-00-00 00:00:00'),
-(2, 13, 1, '2025-01-07 12:04:50', 'redeemed', '3D601A4243A8', '', '2025-01-07 12:04:50');
+(2, 13, 1, '2025-01-07 12:04:50', 'redeemed', '3D601A4243A8', '', '2025-01-07 12:04:50'),
+(3, 13, 1, '2025-01-07 19:11:12', 'redeemed', '691ABE00981F', '', '2025-02-06 19:11:12');
 
 --
 -- Indexes for dumped tables
@@ -690,7 +691,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_rewards`
 --
 ALTER TABLE `user_rewards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
