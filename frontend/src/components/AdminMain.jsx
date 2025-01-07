@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   Box,
   Drawer,
@@ -13,146 +13,148 @@ import {
   ListItemButton,
   ListItemText,
   Button,
-  Container,
-  Menu,
-  MenuItem,
+  IconButton,
 } from "@mui/material";
 
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import CategoryIcon from "@mui/icons-material/Category";
+import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
 import PollIcon from "@mui/icons-material/Poll";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard"; // Icon for Rewards
+import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
-const adminSurveyPages = [
-  { title: "Pending", path: "/pending" },
-  { title: "Approved", path: "/approve" },
-  { title: "Declined", path: "/decline" },
-];
+
 const AdminMain = () => {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = async () => {
+  const handleLogout = () => {
     navigate("/");
   };
+
+  const drawer = (
+    <Box sx={{ overflow: "auto", marginTop: 7 }}>
+      <List>
+        {/* Dashboard */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate("/admin")}>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="DASHBOARD" />
+          </ListItemButton>
+        </ListItem>
+
+        {/* Survey Categories */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate("/admin-categories")}>
+            <ListItemIcon>
+              <CategoryIcon />
+            </ListItemIcon>
+            <ListItemText primary="SURVEY CATEGORIES" />
+          </ListItemButton>
+        </ListItem>
+
+        <Divider />
+
+        {/* Surveys */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate("/pending")}>
+            <ListItemIcon>
+              <PollIcon />
+            </ListItemIcon>
+            <ListItemText primary="SURVEYS" />
+          </ListItemButton>
+        </ListItem>
+
+        <Divider />
+
+        {/* Rewards */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate("/add-rewards")}>
+            <ListItemIcon>
+              <CardGiftcardIcon />
+            </ListItemIcon>
+            <ListItemText primary="REWARDS" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ display: { sm: "none" }, marginRight: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             ADMIN
           </Typography>
-          <Container
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              justifyContent: "right",
-              marginRight: -3,
-            }}
+          <Button
+            color="inherit"
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+            sx={{ display: { xs: "none", md: "flex" } }}
           >
-            <Button color="inherit" onClick={handleLogout}>
-              Logout
-            </Button>
-          </Container>
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="permanent"
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 }}}
+        aria-label="admin navigation"
+      >
+        {/* Mobile Drawer */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        {/* Desktop Drawer */}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Box
+        component="main"
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            position: "absolute",
-          },
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {["DASHBOARD", "SURVEY CATEGORIES"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton
-                  onClick={
-                    text === "DASHBOARD"
-                      ? () => navigate("/admin")
-                      : text === "SURVEY CATEGORIES"
-                      ? () => navigate("/admin-categories")
-                      : null
-                  }
-                >
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-            <Divider />
-            <ListItem disablePadding>
-              <ListItemButton
-                aria-label="show notifications"
-                color="inherit"
-                onClick={handleClick}
-                sx={{ paddingRight: 3 }}
-              >
-                <ListItemIcon>
-                  <PollIcon />
-                </ListItemIcon>
-                <ListItemText primary="SURVEYS" />
-                <ArrowDropDownIcon />
-              </ListItemButton>
-            </ListItem>
-            <Divider />
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/add-rewards")}>
-                <ListItemIcon>
-                  <CardGiftcardIcon />
-                </ListItemIcon>
-                <ListItemText primary="REWARDS" />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        sx={{ height: "70vh" }}
-      >
-        <Box sx={{ py: 3, overflowY: "auto" }}>
-          {adminSurveyPages.map((status, index) => (
-            <MenuItem
-              key={index}
-              onClick={() => {
-                handleClose();
-                navigate(status.path);
-              }}
-              sx={{ width: "20vw", paddingTop: 2, paddingBottom: 2 }}
-            >
-              {status.title}
-            </MenuItem>
-          ))}
-        </Box>
-      </Menu>
+        {/* Content for each route will render here */}
+      </Box>
     </Box>
   );
 };

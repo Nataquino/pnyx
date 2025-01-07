@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Stack, Box, Typography, Alert, CircularProgress } from "@mui/material";
+import {
+  Stack,
+  Box,
+  Typography,
+  Alert,
+  CircularProgress,
+  Card,
+  CardContent,
+  Grid,
+} from "@mui/material";
+import PeopleIcon from "@mui/icons-material/People";
+import PollIcon from "@mui/icons-material/Poll";
 import AdminMain from "../components/AdminMain";
 import axios from "axios";
 
@@ -14,7 +25,6 @@ const Admin = () => {
       .get("http://localhost/survey-app/admin-stats.php")
       .then((res) => {
         if (res.data && res.data.users && res.data.surveys) {
-          console.log(res.data)
           setUserCount(res.data.users.length);
           setSurveyCount(res.data.surveys.length);
         } else {
@@ -32,22 +42,29 @@ const Admin = () => {
   }, []);
 
   return (
-    <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
+    <Stack sx={{ backgroundColor: "#f5f7fa", minHeight: "100vh" }}>
       <AdminMain />
       <Stack
         sx={{
-          backgroundColor: "lightgray",
+          backgroundColor: "skyblue",
           minHeight: "100vh",
-          padding: 4,
+          padding: 5,
           justifyContent: "center",
           alignItems: "center",
+          marginTop: -9,
         }}
       >
-        <Box sx={{ textAlign: "center", marginBottom: 4 }}>
-          <Typography variant="h4" gutterBottom>
+        {/* Dashboard Title */}
+        <Box sx={{ textAlign: "center", marginBottom: 3 }}>
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
             Admin Dashboard
           </Typography>
+          <Typography variant="subtitle1" color="textSecondary">
+            Overview of system statistics
+          </Typography>
         </Box>
+
+        {/* Loading or Error */}
         {loading ? (
           <CircularProgress color="primary" />
         ) : error ? (
@@ -55,54 +72,74 @@ const Admin = () => {
             {error}
           </Alert>
         ) : (
-          <Box
+          <Grid
+            container
+            spacing={4}
             sx={{
-              display: "flex",
-              gap: 4,
-              flexWrap: "wrap",
-              justifyContent: "center",
-              alignItems: "center",
               width: "100%",
+              maxWidth: "1200px",
+              margin: "0 auto",
+              justifyContent: "center",
             }}
           >
-            {/* User Count */}
-            <Box
-              sx={{
-                textAlign: "center",
-                padding: 4,
-                backgroundColor: "white",
-                borderRadius: 2,
-                boxShadow: 2,
-                width: "20%",
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Total Users
-              </Typography>
-              <Typography variant="h3" color="primary">
-                {userCount}
-              </Typography>
-            </Box>
+            {/* Total Users Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  backgroundColor: "#e3f2fd",
+                  borderRadius: 2,
+                  boxShadow: 2,
+                  textAlign: "center",
+                  padding: 2,
+                }}
+              >
+                <CardContent>
+                  <PeopleIcon
+                    sx={{
+                      fontSize: 50,
+                      color: "#1976d2",
+                      marginBottom: 1,
+                    }}
+                  />
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    Total Users
+                  </Typography>
+                  <Typography variant="h3" color="primary">
+                    {userCount}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-            {/* Active Surveys Count */}
-            <Box
-              sx={{
-                textAlign: "center",
-                padding: 4,
-                backgroundColor: "white",
-                borderRadius: 2,
-                boxShadow: 2,
-                width: "20%",
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Active Surveys
-              </Typography>
-              <Typography variant="h3" color="secondary">
-                {surveyCount}
-              </Typography>
-            </Box>
-          </Box>
+            {/* Active Surveys Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  backgroundColor: "#ede7f6",
+                  borderRadius: 2,
+                  boxShadow: 2,
+                  textAlign: "center",
+                  padding: 2,
+                }}
+              >
+                <CardContent>
+                  <PollIcon
+                    sx={{
+                      fontSize: 50,
+                      color: "#673ab7",
+                      marginBottom: 1,
+                    }}
+                  />
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    Active Surveys
+                  </Typography>
+                  <Typography variant="h3" color="secondary">
+                    {surveyCount}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         )}
       </Stack>
     </Stack>
