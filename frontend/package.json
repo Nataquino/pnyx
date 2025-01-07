@@ -1,5 +1,6 @@
 {
   "name": "pnyx_frontend",
+  "homepage": "http://pnyx-surveys.com/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

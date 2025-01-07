@@ -23,15 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     $user_id = $_COOKIE['user_id'];
 
-    // Define the query to fetch the user's current points using prepared statements to avoid SQL injection
+    // Define the query to fetch the user's current points
     $points_query = "SELECT reward_points FROM users WHERE id = ?";
 
     if ($stmt = $conn->prepare($points_query)) {
-        $stmt->bind_param("i", $user_id);  // Bind the user_id as an integer parameter
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Check if the points query was successful and the user exists
         if ($result && $result->num_rows > 0) {
             $points_row = $result->fetch_assoc();
             $user_points = $points_row['reward_points'];
@@ -44,16 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit;
     }
 
-    // Define the query to fetch the name, description, and points_required of all rewards
+    // Fetch all rewards
     $rewards_query = "SELECT id, name, description, points_required FROM rewards";
-
     if ($rewards_result = $conn->query($rewards_query)) {
-        // Check if the query was successful and if there are results
-        if ($rewards_result && $rewards_result->num_rows > 0) {
-            // Create an array to store the rewards
+        if ($rewards_result->num_rows > 0) {
             $rewards = [];
-
-            // Fetch each row and add to the rewards array
             while ($row = $rewards_result->fetch_assoc()) {
                 $rewards[] = [
                     'id' => $row['id'],
@@ -62,29 +56,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     'points_required' => $row['points_required']
                 ];
             }
-
-            // Send the rewards and user's points data as a JSON response
             echo json_encode([
                 'status' => 'success',
                 'reward_points' => $user_points,
                 'rewards' => $rewards
             ]);
         } else {
-            // If no rewards found, return an error message
             echo json_encode(['status' => 'error', 'message' => 'No rewards found']);
         }
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to fetch rewards']);
     }
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Check if user is authenticated
+    // Fetch user_id from cookie
     if (!isset($_COOKIE['user_id'])) {
         echo json_encode(['status' => 'error', 'message' => 'User not authenticated']);
         exit;
     }
     $user_id = $_COOKIE['user_id'];
 
-    // Get the number of points to redeem and reward id from the request body
+    // Decode request body
     $data = json_decode(file_get_contents('php://input'), true);
     $points_to_deduct = isset($data['points']) ? $data['points'] : 0;
 
@@ -93,9 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit;
     }
 
-    // Fetch the user's current points
+    // Check user's points
     $points_query = "SELECT reward_points FROM users WHERE id = ?";
-
     if ($stmt = $conn->prepare($points_query)) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
@@ -109,14 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 // Deduct points
                 $new_points = $current_points - $points_to_deduct;
                 $update_query = "UPDATE users SET reward_points = ? WHERE id = ?";
-
                 if ($update_stmt = $conn->prepare($update_query)) {
                     $update_stmt->bind_param("ii", $new_points, $user_id);
                     if ($update_stmt->execute()) {
                         // Generate voucher code
                         $voucher_code = generateVoucherCode();
 
-                        // Fetch reward id based on points deducted (assuming each reward has unique points)
+                        // Fetch reward ID
                         $reward_query = "SELECT id FROM rewards WHERE points_required = ?";
                         if ($reward_stmt = $conn->prepare($reward_query)) {
                             $reward_stmt->bind_param("i", $points_to_deduct);
@@ -126,10 +115,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                             if ($reward_result && $reward_result->num_rows > 0) {
                                 $reward_row = $reward_result->fetch_assoc();
                                 $reward_id = $reward_row['id'];
-                                
-                                // Insert into the redemptions table
-                                $redemption_query = "INSERT INTO redemptions (user_id, reward_id, voucher_code, redeemed_at) VALUES (?, ?, ?, NOW())";
-                                
+
+                                // Insert into user_rewards table
+                                $redemption_query = "INSERT INTO user_rewards (user_id, reward_id, redemption_date, expiry_date, status, voucher_code) 
+                                                     VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'redeemed', ?)";
                                 if ($redemption_stmt = $conn->prepare($redemption_query)) {
                                     $redemption_stmt->bind_param("iis", $user_id, $reward_id, $voucher_code);
                                     if ($redemption_stmt->execute()) {
@@ -137,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                                             'status' => 'success',
                                             'message' => 'Points redeemed successfully',
                                             'new_points' => $new_points,
-                                            'voucher_code' => $voucher_code // Include the generated voucher code
+                                            'voucher_code' => $voucher_code
                                         ]);
                                     } else {
                                         echo json_encode(['status' => 'error', 'message' => 'Failed to record redemption']);

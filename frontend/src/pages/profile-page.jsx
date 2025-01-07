@@ -7,7 +7,8 @@ import {
   Button,
   TextField,
   Grid,
-  Chip,
+  Card,
+  CircularProgress
 } from "@mui/material";
 
 import { format } from "date-fns";
@@ -25,7 +26,9 @@ const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("This is an editable paragraph.");
   const [editedText, setEditedText] = useState(text);
-  const [userInterest, setUserInterest] =useState(null);
+  const [userInterest, setUserInterest] = useState(null);
+  const [rewards, setRewards] = useState([]); // State for redeemed rewards
+  const [loading, setLoading] = useState(true); // Loading state for rewards
 
   const handleEditToggle = async () => {
     if (isEditing) {
@@ -91,8 +94,24 @@ const Account = () => {
         setError(true);
       }
     };
+    const fetchRewards = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost/survey-app/user-reward.php",
+          { withCredentials: true }
+        );
+        if (response.data && response.data.rewards) {
+          setRewards(response.data.rewards);
+        }
+      } catch (err) {
+        console.error("Error fetching rewards:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchUserData();
+    fetchRewards();
   }, []);
 
   return (
@@ -321,8 +340,42 @@ const Account = () => {
               <Box
                 sx={{ backgroundColor: "red", width: "65vw", height: "40vh" }}
               >
-                we will put here the voucher that they claimed
-                
+                <Box
+                  sx={{
+                    width: "65vw",
+                    backgroundColor: "white",
+                    borderRadius: 2,
+                    padding: 2,
+                    overflowY: "auto",
+                    maxHeight: "44vh",
+                    margin: 5,
+                  }}
+                >
+                  <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                  Redeemed Vouchers
+                </Typography>
+                <Grid container spacing={2}>
+                  {loading ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", minHeight: "40vh" }}>
+                      <CircularProgress />
+                    </Box>
+                  ) : rewards.length === 0 ? (
+                    <Typography>No redeemed vouchers available.</Typography>
+                  ) : (
+                    rewards.map((reward, index) => (
+                      <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Card sx={{ padding: 2, backgroundColor: "#EBEBF0" }}>
+                          <Typography variant="h6">{reward.name}</Typography>
+                          <Typography>{reward.description}</Typography>
+                          <Typography>Voucher Code: {reward.voucher_code}</Typography>
+                          <Typography>Expiry Date: {reward.expiry_date}</Typography>
+                        </Card>
+                      </Grid>
+                      ))
+                    )}
+                  </Grid>
+                </Box>
+
               </Box>
             </Stack>
           </>

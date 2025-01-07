@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 06, 2025 at 11:17 AM
+-- Generation Time: Jan 07, 2025 at 09:18 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -131,6 +131,13 @@ CREATE TABLE `redemptions` (
   `redeemed_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `redemptions`
+--
+
+INSERT INTO `redemptions` (`id`, `user_id`, `reward_id`, `voucher_code`, `redeemed_at`) VALUES
+(1, 13, 1, '34A5180D357D', '2025-01-07 10:21:27');
+
 -- --------------------------------------------------------
 
 --
@@ -141,7 +148,6 @@ CREATE TABLE `rewards` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `voucher_code` varchar(100) DEFAULT NULL,
   `points_required` int(11) NOT NULL,
   `stock` int(11) NOT NULL DEFAULT 0,
   `expiry_date` datetime DEFAULT NULL,
@@ -154,8 +160,8 @@ CREATE TABLE `rewards` (
 -- Dumping data for table `rewards`
 --
 
-INSERT INTO `rewards` (`id`, `name`, `description`, `voucher_code`, `points_required`, `stock`, `expiry_date`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Jollibee Free Drink', 'Jollibee free selective drink: Coke,Sprite,Royal', '172394812739128371293', 20, 50, '2025-01-01 00:00:00', 'active', '2024-12-16 20:59:01', '2024-12-16 20:59:01');
+INSERT INTO `rewards` (`id`, `name`, `description`, `points_required`, `stock`, `expiry_date`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Jollibee Free Drink', 'Jollibee free selective drink: Coke,Sprite,Royal', 20, 50, '2025-01-01 00:00:00', 'active', '2024-12-16 20:59:01', '2024-12-16 20:59:01');
 
 -- --------------------------------------------------------
 
@@ -431,7 +437,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birthdate`, `email`, `bio`, `avatar`, `otp`, `otp_expiry`, `password`, `reward_points`, `is_verified`) VALUES
 (11, 'user1', 'user', '1', 'Female', '2000-02-29', 'user1@gmail.com', '', '', NULL, NULL, '$2y$10$YCw7ZFH6eq.7w/JKOa', 0, 0),
 (12, 'user2', 'user', '2', 'Male', '3333-01-02', 'user2@gmail.com', '', '', NULL, NULL, '$2y$10$Vb9ui0ZV1W/gfwxLHk', 0, 0),
-(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', 'I\\\'m just your typical average person in the web', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 100, 1),
+(13, 'Nath', 'Nathan', 'Aqu', 'Male', '2000-10-29', 'nataquino29@gmail.com', 'I\\\'m just your typical average person in the web', '', NULL, '2024-10-16 10:36:37', '$2y$10$dT5p9cMo0CiGz0qfKAjC3udyJEETUrUaicMGA6LSxFOosK3EWeIn.', 40, 1),
 (14, 'Jerz', 'Jerzeil', 'Lira', 'Male', '1999-01-01', 'jerzeil@gmail.com', '', '', NULL, NULL, '$2y$10$Zlb2aoQK2n44dYT5wzJXueSDpKYfUGQP5povfsNWrlnZ9OeFcqtGq', 0, 0),
 (15, 'a', 'a', 'a', 'Male', '2024-07-09', 'a@gmail.com', '', '', NULL, NULL, '$2y$10$JtcN3KVq1ssTu/L/Xw1MReSLPN1SxnoVhYYY1KDRJsg9DYx0u4UUK', 0, 0),
 (16, 'b', 'b', 'b', 'Female', '2024-07-09', 'b@gmail.com', '', '', NULL, NULL, '$2y$10$7pGnP1aKYjHRC2VvZU0LtuZrQrSqr77yZMPo28HZPjC6Swepk5/Q.', 0, 0),
@@ -506,9 +512,17 @@ CREATE TABLE `user_rewards` (
   `redemption_date` datetime DEFAULT current_timestamp(),
   `status` enum('redeemed','pending','expired') NOT NULL DEFAULT 'pending',
   `voucher_code` varchar(100) DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `description` varchar(255) NOT NULL,
+  `expiry_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_rewards`
+--
+
+INSERT INTO `user_rewards` (`id`, `user_id`, `reward_id`, `redemption_date`, `status`, `voucher_code`, `description`, `expiry_date`) VALUES
+(1, 13, 1, '2025-01-07 10:45:08', 'redeemed', '866BFEFBE061', '', '0000-00-00 00:00:00'),
+(2, 13, 1, '2025-01-07 12:04:50', 'redeemed', '3D601A4243A8', '', '2025-01-07 12:04:50');
 
 --
 -- Indexes for dumped tables
@@ -628,7 +642,7 @@ ALTER TABLE `questions`
 -- AUTO_INCREMENT for table `redemptions`
 --
 ALTER TABLE `redemptions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rewards`
@@ -676,7 +690,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_rewards`
 --
 ALTER TABLE `user_rewards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
