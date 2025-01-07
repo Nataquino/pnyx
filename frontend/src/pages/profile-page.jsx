@@ -25,31 +25,31 @@ const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("This is an editable paragraph.");
   const [editedText, setEditedText] = useState(text);
-  const [userInterest, setUserInterest] =useState(null);
+  const [userInterest, setUserInterest] = useState(null);
 
   const handleEditToggle = async () => {
     if (isEditing) {
       try {
         // Send the updated bio to the backend
         const response = await axios.post(
-          "http://localhost/survey-app/get-userprofile.php", // Backend endpoint to update bio
-          { bio: editedText }, // Send the new bio value
+          "http://localhost/survey-app/get-userprofile.php",
+          { bio: editedText },
           { withCredentials: true }
         );
 
         if (response.data.success) {
-          // Successfully updated the bio in the database
           console.log("Bio updated successfully!");
 
-          // Optionally, fetch the updated user data to ensure the display is up-to-date
+          // Fetch the updated user data
           const updatedResponse = await axios.get(
-            "http://localhost/survey-app/get-userprofile.php", // Backend endpoint to get updated user info
+            "http://localhost/survey-app/get-userprofile.php",
             { withCredentials: true }
           );
 
           if (updatedResponse.data.user) {
-            setText(updatedResponse.data.user.bio); // Update the bio in frontend
-            setEditedText(updatedResponse.data.user.bio); // Sync editedText with updated bio
+            // Update bio state with the new bio after successful update
+            setText(updatedResponse.data.user.bio);
+            setEditedText(updatedResponse.data.user.bio);
           } else {
             console.error("Error fetching updated bio from the database");
           }
@@ -60,11 +60,12 @@ const Account = () => {
         console.error("Error updating bio:", err);
       }
     } else {
-      // When switching to editing mode, initialize editedText with current bio value
-      setEditedText(text); // Ensure the current bio is shown in the TextField when editing
+      // Initialize editedText with current bio value when switching to edit mode
+      setEditedText(text);
     }
 
-    setIsEditing(!isEditing); // Toggle editing state
+    // Toggle editing state
+    setIsEditing(!isEditing);
   };
   const handleTextChange = (e) => {
     setEditedText(e.target.value); // Update the editedText state with the new value
@@ -74,15 +75,17 @@ const Account = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/survey-app/get-userprofile.php",
+          "http://localhost/survey-app/get-userprofile.php", 
           { withCredentials: true }
         );
+
         if (response.data) {
           const { user, preferences } = response.data;
           setUserData(user);
-          setUserInterest(preferences || []); // Set user preferences
+          setUserInterest(preferences || []);
+          setText(user.bio || ""); // Set the initial bio text here
+          setEditedText(user.bio || ""); // Sync editedText with initial bio
           setError(false);
-          console.log(response.data)
         } else {
           setError(true);
         }
@@ -93,7 +96,7 @@ const Account = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, []); // Run this effect once when the component mounts
 
   return (
     <Paper fullWidth sx={{ backgroundColor: "skyblue", height: "100vh" }}>
@@ -322,7 +325,6 @@ const Account = () => {
                 sx={{ backgroundColor: "red", width: "65vw", height: "40vh" }}
               >
                 we will put here the voucher that they claimed
-                
               </Box>
             </Stack>
           </>
