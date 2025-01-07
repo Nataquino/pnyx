@@ -1,4 +1,14 @@
-import { Stack, Box, Container, Card, CardContent, Typography, Button, CardActions, Grid } from "@mui/material";
+import {
+  Stack,
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CardActions,
+  Grid,
+} from "@mui/material";
 import NavBar from "../components/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
@@ -8,22 +18,34 @@ const HomePage = () => {
   const [surveys, setSurveys] = useState([]);
   const [passcode, setPasscode] = useState(""); // To store the entered passcode
   const [lockedSurveyId, setLockedSurveyId] = useState(null); // Store the survey ID of the locked survey
+  const [energy, setEnergy] = useState(100); // Track user energy
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchSurveys = async () => {
+    const fetchSurveysAndEnergy = async () => {
       try {
-        const response = await axios.get("http://localhost/survey-app/get-recommendations.php", { withCredentials: true });
-        if (Array.isArray(response.data)) {
-          setSurveys(response.data);
-          console.log(response.data);
+        // Fetch surveys
+        const surveyResponse = await axios.get(
+          "http://localhost/survey-app/get-recommendations.php",
+          { withCredentials: true }
+        );
+        if (Array.isArray(surveyResponse.data)) {
+          setSurveys(surveyResponse.data);
+          console.log(surveyResponse.data);
         }
+
+        // Fetch user energy
+        const energyResponse = await axios.get(
+          "http://localhost/survey-app/get-user-energy.php",
+          { withCredentials: true }
+        );
+        setEnergy(energyResponse.data.energy);
       } catch (error) {
-        console.error("Error fetching surveys:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchSurveys();
+    fetchSurveysAndEnergy();
   }, []);
 
   const handleSurveyClick = (surveyId, isLocked) => {
@@ -41,10 +63,13 @@ const HomePage = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost/survey-app/check-passcode.php", {
-        survey_id: lockedSurveyId,
-        passcode: passcode
-      });
+      const response = await axios.post(
+        "http://localhost/survey-app/check-passcode.php",
+        {
+          survey_id: lockedSurveyId,
+          passcode: passcode,
+        }
+      );
 
       if (response.data.status === "success") {
         navigate(`/take-survey/${lockedSurveyId}`);
@@ -72,6 +97,15 @@ const HomePage = () => {
             </Typography>
           )}
 
+          <Typography
+            variant="h6"
+            color="text.primary"
+            align="center"
+            sx={{ marginBottom: 2 }}
+          >
+            Energy: {energy}
+          </Typography>
+
           <Grid container spacing={4} justifyContent="center">
             {surveys.map((survey) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={survey.id}>
@@ -82,49 +116,59 @@ const HomePage = () => {
                     justifyContent: "space-between",
                     borderRadius: 12,
                     boxShadow: 8,
-                    height: "380px", // Adjusted height to fit points and other content
-                    maxWidth: 420,  // Slightly increased width for better content fit
-                    margin: "0 auto", // Center align cards
+                    height: "380px",
+                    maxWidth: 420,
+                    margin: "0 auto",
                     transition: "transform 0.3s ease, box-shadow 0.3s ease",
                     "&:hover": {
-                      transform: "scale(1.05)",
-                      boxShadow: "0 12px 30px rgba(0, 0, 0, 0.2)",
+                      transform:
+                        energy === 0 ? "none" : "scale(1.05)", // Disable hover if energy is 0
+                      boxShadow:
+                        energy === 0 ? "none" : "0 12px 30px rgba(0, 0, 0, 0.2)",
                     },
+                    opacity: energy === 0 ? 0.5 : 1, // Dim card if energy is 0
                   }}
                 >
                   <CardContent sx={{ flexGrow: 1, padding: "20px" }}>
-                    <Typography variant="h5" component="div" sx={{ fontSize: "20px", fontWeight: "bold" }}>
+                    <Typography
+                      variant="h5"
+                      component="div"
+                      sx={{ fontSize: "20px", fontWeight: "bold" }}
+                    >
                       {survey.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ marginTop: 1, fontSize: "15px" }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ marginTop: 1, fontSize: "15px" }}
+                    >
                       {survey.description}
                     </Typography>
-                    {/* Display the points of the survey */}
-                    <Typography variant="body2" color="text.primary" sx={{ marginTop: 2, fontWeight: "bold" }}>
+                    <Typography
+                      variant="body2"
+                      color="text.primary"
+                      sx={{ marginTop: 2, fontWeight: "bold" }}
+                    >
                       Points: {survey.survey_pts}
                     </Typography>
                   </CardContent>
                   <CardActions sx={{ justifyContent: "center", padding: 2 }}>
-                    {survey.is_locked === 1 ? (
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => handleSurveyClick(survey.id, survey.is_locked)}
-                        sx={{ fontWeight: "bold", borderRadius: "20px" }}
-                      >
-                        Enter passcode to open survey
-                      </Button>
-                    ) : (
-                      <Button
-                        size="small"
-                        color="primary"
-                        component={Link}
-                        to={`/take-survey/${survey.id}`}
-                        sx={{ fontWeight: "bold", borderRadius: "20px" }}
-                      >
-                        Answer survey
-                      </Button>
-                    )}
+                    <Button
+                      size="small"
+                      color="primary"
+                      disabled={energy === 0} // Disable button if energy is 0 or survey is locked
+                      onClick={() =>
+                        handleSurveyClick(survey.id, survey.is_locked)
+                      }
+                      sx={{
+                        fontWeight: "bold",
+                        borderRadius: "20px",
+                      }}
+                    >
+                      {survey.is_locked === 1
+                        ? "Enter passcode to open survey"
+                        : "Answer survey"}
+                    </Button>
                   </CardActions>
                 </Card>
               </Grid>
@@ -133,7 +177,6 @@ const HomePage = () => {
         </Container>
       </Box>
 
-      {/* Passcode Modal */}
       {lockedSurveyId && (
         <Box
           sx={{
@@ -150,7 +193,10 @@ const HomePage = () => {
             zIndex: 1000,
           }}
         >
-          <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{ marginBottom: 2, fontWeight: "bold" }}
+          >
             Enter Passcode
           </Typography>
           <input
