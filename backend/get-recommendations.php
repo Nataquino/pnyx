@@ -75,7 +75,7 @@ $weighted_recommendations = [];
 if (!empty($recommendations)) {
     $placeholders = implode(',', array_fill(0, count($recommendations), '?'));
     $sql_recommended = "
-        SELECT s.id, s.title, s.description, sc.category_name, s.is_locked
+        SELECT s.id, s.title, s.description, sc.category_name, s.is_locked, s.survey_pts
         FROM surveys s
         LEFT JOIN survey_categories sc ON s.id = sc.survey_id
         WHERE s.id IN ($placeholders)";
@@ -107,7 +107,7 @@ if (!empty($recommendations)) {
 
 // Fetch all activated surveys excluding the user's own surveys and surveys they have interacted with
 $sql_all_surveys = "
-    SELECT s.id, s.title, s.description, sc.category_name, s.is_locked
+    SELECT s.id, s.title, s.description, sc.category_name, s.is_locked, s.survey_pts
     FROM surveys s
     LEFT JOIN survey_categories sc ON s.id = sc.survey_id
     WHERE s.status = 'activated' AND s.user_id != ? AND s.id NOT IN (SELECT survey_id FROM survey_interactions WHERE user_id = ?)";
