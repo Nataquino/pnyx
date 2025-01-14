@@ -23,7 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $user_id = $_COOKIE['user_id'] ?? null;
 
     if ($user_id) {
-        $sql = "SELECT notif_message, notif_date, notif_status FROM notification WHERE user_id = ? ORDER BY notif_date DESC";
+        $sql = "SELECT n.notif_message, n.notif_date, n.notif_status, n.survey_id, s.title AS survey_title
+        FROM notification n
+        JOIN surveys s ON n.survey_id = s.id
+        WHERE n.user_id = ?
+        ORDER BY n.notif_date DESC";
         $stmt = $conn->prepare($sql);
 
         if (!$stmt) {

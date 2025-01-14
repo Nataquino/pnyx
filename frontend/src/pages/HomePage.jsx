@@ -219,6 +219,7 @@ const HomePage = () => {
                     />
                   ))}
               </Box>
+
               {selectedSurvey.is_locked && (
                 <Box sx={{ marginTop: 2 }}>
                   <TextField
@@ -234,6 +235,21 @@ const HomePage = () => {
             </DialogContent>
 
             <DialogActions>
+            <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  width: "22vw",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: "left" }}
+                >
+                  Points: {selectedSurvey.survey_pts}
+                </Typography>
+              </Box>
               <Button onClick={handleCloseDialog} variant="outlined" color="error">
                 Close
               </Button>

@@ -17,6 +17,8 @@ import {
   DialogContent,
   DialogTitle,
   Button,
+  Divider,
+  Stack,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
@@ -84,9 +86,12 @@ const NavBar = () => {
     const userId = getCookieValue("user_id");
 
     if (userId) {
-      fetch(`http://localhost/survey-app/get-notifications.php?user_id=${userId}`, {
-        credentials: "include", // Ensure cookies are sent
-      })
+      fetch(
+        `http://localhost/survey-app/get-notifications.php?user_id=${userId}`,
+        {
+          credentials: "include", // Ensure cookies are sent
+        }
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -97,7 +102,10 @@ const NavBar = () => {
           if (Array.isArray(data)) {
             setNotifications(data);
           } else {
-            console.error("Error fetching notifications:", data.error || "Invalid data format");
+            console.error(
+              "Error fetching notifications:",
+              data.error || "Invalid data format"
+            );
           }
         })
         .catch((error) => console.error("Fetch error:", error));
@@ -153,24 +161,67 @@ const NavBar = () => {
             transformOrigin={{
               vertical: "top",
             }}
+            PaperProps={{
+              style: {
+                maxHeight: 300, // Limit height of the dropdown
+                width: 350, // Adjust width for more space
+                borderRadius: 8, // Rounded corners for the dropdown
+                boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)", // Soft shadow for depth
+                backgroundColor: "#fff", // White background for the dropdown
+                padding: "8px 0", // Add padding inside the dropdown
+              },
+            }}
           >
             <List>
               {notifications.length > 0 ? (
                 notifications.map((notif, index) => (
-                  <ListItem
-                    key={index}
-                    button
-                    onClick={() => handleNotifClick(notif)}
-                  >
-                    <ListItemText
-                      primary={notif.notif_message}
-                      secondary={`Date: ${notif.notif_date}`}
-                    />
-                  </ListItem>
+                  <React.Fragment key={notif.notif_id}>
+                    <ListItem
+                      button
+                      onClick={() => handleNotifClick(notif)}
+                      sx={{
+                        padding: "12px 16px",
+                        borderRadius: 4,
+                        transition: "background-color 0.3s ease",
+
+         
+                      }}
+                    >
+                      <ListItemText
+                        primary={
+                          <Stack>
+                            <Typography variant="body1" sx={{ color: "black", fontSize: "18px" }}>
+                              Survey: {notif.survey_title}
+                            </Typography>
+                            <Box sx={{height: "3vh"}}></Box>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontWeight: 500 }}
+                            >
+                              {notif.notif_message}
+                            </Typography>
+                          </Stack>
+                        }
+                        secondary={
+                          <Typography variant="caption" sx={{ color: "gray" }}>
+                            Date: {notif.notif_date}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                    {/* Add a divider for separation */}
+                    {index < notifications.length - 1 && <Divider />}
+                  </React.Fragment>
                 ))
               ) : (
                 <ListItem>
-                  <ListItemText primary="No notifications available" />
+                  <ListItemText
+                    primary={
+                      <Typography variant="body2" sx={{ textAlign: "center" }}>
+                        No notifications available
+                      </Typography>
+                    }
+                  />
                 </ListItem>
               )}
             </List>
@@ -203,7 +254,9 @@ const NavBar = () => {
         <DialogContent>
           {selectedNotif ? (
             <>
-              <Typography variant="h6">{selectedNotif.notif_message}</Typography>
+              <Typography variant="h6">
+                {selectedNotif.notif_message}
+              </Typography>
               <Typography variant="body2" color="textSecondary">
                 Date: {selectedNotif.notif_date}
               </Typography>
