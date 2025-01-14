@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 07, 2025 at 12:19 PM
--- Server version: 10.4.25-MariaDB
--- PHP Version: 8.1.10
+-- Generation Time: Jan 14, 2025 at 01:54 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `category_name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `categories`
@@ -46,7 +46,24 @@ INSERT INTO `categories` (`id`, `category_name`) VALUES
 (8, 'Business'),
 (9, 'Football'),
 (10, 'Iloilo City'),
-(11, 'Telecommunications');
+(11, 'Telecommunications'),
+(12, 'music'),
+(13, 'Global'),
+(14, 'School');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification`
+--
+
+CREATE TABLE `notification` (
+  `notif_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `notif_message` varchar(255) NOT NULL,
+  `notif_date` datetime NOT NULL,
+  `notif_status` enum('seen','unseen','','') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -59,7 +76,7 @@ CREATE TABLE `options` (
   `question_id` int(11) NOT NULL,
   `option_text` varchar(255) DEFAULT NULL,
   `tally` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `options`
@@ -78,7 +95,22 @@ INSERT INTO `options` (`id`, `question_id`, `option_text`, `tally`) VALUES
 (46, 66, 'Yes', 0),
 (47, 66, 'No', 0),
 (48, 68, 'Yes', 0),
-(49, 68, 'No', 0);
+(49, 68, 'No', 0),
+(50, 71, 'yes', 0),
+(51, 71, 'no', 0),
+(52, 72, '1', 0),
+(53, 72, '2', 0),
+(54, 72, '3', 0),
+(55, 72, '4', 0),
+(56, 72, '5', 0),
+(57, 77, 'dsrv', 0),
+(58, 77, 'ngahaw?', 0),
+(59, 78, 'yes', 0),
+(60, 78, 'no', 0),
+(61, 79, 'Engineering', 0),
+(62, 79, 'Computer Studies', 0),
+(63, 80, 'Yes', 0),
+(64, 80, 'No', 0);
 
 -- --------------------------------------------------------
 
@@ -91,7 +123,7 @@ CREATE TABLE `questions` (
   `survey_id` int(11) NOT NULL,
   `question_text` text NOT NULL,
   `question_type` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `questions`
@@ -115,7 +147,20 @@ INSERT INTO `questions` (`id`, `survey_id`, `question_text`, `question_type`) VA
 (67, 44, 'What is your opinion of the problem it causes?', 'feedback'),
 (68, 45, 'Are you aware of the Iloilo City government’s deadline for telecommunication companies to remove their wires from Calle Real?', 'multiple_choice'),
 (69, 45, 'How important do you think it is to remove overhead wires in heritage areas like Calle Real?', 'paragraph'),
-(70, 45, 'Do you support the city’s initiative to impose penalties on non-compliant telecommunication companies?', 'feedback');
+(70, 45, 'Do you support the city’s initiative to impose penalties on non-compliant telecommunication companies?', 'feedback'),
+(71, 46, 'Are you a gfriend fan', 'multiple_choice'),
+(72, 46, 'Rate the song of gfriend (5 is the highest and 1 is the lowest)', 'checkbox'),
+(73, 46, 'What do you think about their new song?', 'feedback'),
+(74, 47, '??', 'paragraph'),
+(75, 48, 'What do you think is the best thing to do as a normal person?', 'feedback'),
+(76, 49, 'why fire big?', 'paragraph'),
+(77, 50, 'ano tabo?', 'multiple_choice'),
+(78, 51, 'You like it?', 'multiple_choice'),
+(79, 52, 'What college are you?', 'multiple_choice'),
+(80, 53, 'Sure?', 'multiple_choice'),
+(81, 54, 'namit?', 'paragraph'),
+(82, 55, 'Banana Q', 'feedback'),
+(83, 56, 'is it good there? explain', 'feedback');
 
 -- --------------------------------------------------------
 
@@ -129,14 +174,16 @@ CREATE TABLE `redemptions` (
   `reward_id` int(11) NOT NULL,
   `voucher_code` varchar(255) NOT NULL,
   `redeemed_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `redemptions`
 --
 
 INSERT INTO `redemptions` (`id`, `user_id`, `reward_id`, `voucher_code`, `redeemed_at`) VALUES
-(1, 13, 1, '34A5180D357D', '2025-01-07 10:21:27');
+(1, 13, 1, '34A5180D357D', '2025-01-07 10:21:27'),
+(2, 26, 1, '4C5553C45335', '2025-01-07 20:52:11'),
+(3, 26, 1, '1F492EC8093B', '2025-01-07 20:57:51');
 
 -- --------------------------------------------------------
 
@@ -154,7 +201,7 @@ CREATE TABLE `rewards` (
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `rewards`
@@ -179,20 +226,32 @@ CREATE TABLE `surveys` (
   `created_at` datetime DEFAULT current_timestamp(),
   `expiry_date` date DEFAULT NULL,
   `passcode` varchar(255) DEFAULT NULL,
-  `is_locked` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `is_locked` tinyint(1) DEFAULT 0,
+  `survey_pts` int(3) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `surveys`
 --
 
-INSERT INTO `surveys` (`id`, `title`, `description`, `user_id`, `status`, `comment`, `created_at`, `expiry_date`, `passcode`, `is_locked`) VALUES
-(40, 'Coffee cafe', 'Cafe that nevers serves coffee', 26, 'activated', '', '2024-10-16 10:12:10', '2025-01-12', NULL, 0),
-(41, 'Mayor Treñas stand on Illegal online gaming', 'In line with the directives from the President, the League of Cities of the Philippines (LCP) has issued Advisory No. 2024-0906, reinforcing our commitment to addressing the winding down of Philippine Offshore Gaming Operations (POGO) and tackling illegal online gaming activities in our cities.', 27, 'activated', '', '2024-10-16 10:12:10', '2025-01-14', NULL, 0),
-(42, 'FC Barcelona vs MC United', 'In an electrifying clash, MC United takes on the legendary FC Barcelona in a highly anticipated friendly match that promises to showcase the best of football. Both teams are eager to test their mettle ahead of the upcoming season, bringing together a mix of seasoned veterans and promising newcomers.', 26, 'activated', '', '2024-10-16 11:27:08', NULL, '123', 1),
-(43, 'Alice Guo running for Mayor Ulit?!', 'Alice Guo issue for running candidate ', 13, 'activated', '', '2024-10-17 13:36:03', '2025-01-12', '111111', 1),
-(44, 'Ungka Flyover Wala gyapon natapos?', 'Ungka flyover still ongoing repairs for 5 years', 32, 'activated', '', '2024-12-16 19:49:07', '2025-01-16', '121212', 1),
-(45, 'Telcos Face December Deadline to Remove Wires', 'The Iloilo City government has set a December 16, 2024, deadline for telecommunication companies to remove their wires from poles along Calle Real. This survey aims to gather opinions on this initiative and its potential impact on the community.', 32, 'activated', '', '2024-12-17 07:29:15', '2025-01-16', NULL, 0);
+INSERT INTO `surveys` (`id`, `title`, `description`, `user_id`, `status`, `comment`, `created_at`, `expiry_date`, `passcode`, `is_locked`, `survey_pts`) VALUES
+(40, 'Coffee cafe', 'Cafe that nevers serves coffee', 26, 'activated', '', '2024-10-16 10:12:10', '2025-02-13', NULL, 0, 10),
+(41, 'Mayor Treñas stand on Illegal online gaming', 'In line with the directives from the President, the League of Cities of the Philippines (LCP) has issued Advisory No. 2024-0906, reinforcing our commitment to addressing the winding down of Philippine Offshore Gaming Operations (POGO) and tackling illegal online gaming activities in our cities.', 27, 'pending', '', '2024-10-16 10:12:10', '2025-01-14', NULL, 0, 0),
+(42, 'FC Barcelona vs MC United', 'In an electrifying clash, MC United takes on the legendary FC Barcelona in a highly anticipated friendly match that promises to showcase the best of football. Both teams are eager to test their mettle ahead of the upcoming season, bringing together a mix of seasoned veterans and promising newcomers.', 26, 'pending', '', '2024-10-16 11:27:08', NULL, '123456', 1, 0),
+(43, 'Alice Guo running for Mayor Ulit?!', 'Alice Guo issue for running candidate ', 13, 'pending', '', '2024-10-17 13:36:03', '2025-01-12', '111111', 1, 0),
+(44, 'Ungka Flyover Wala gyapon natapos?', 'Ungka flyover still ongoing repairs for 5 years', 32, 'pending', '', '2024-12-16 19:49:07', '2025-01-16', '121212', 1, 0),
+(45, 'Telcos Face December Deadline to Remove Wires', 'The Iloilo City government has set a December 16, 2024, deadline for telecommunication companies to remove their wires from poles along Calle Real. This survey aims to gather opinions on this initiative and its potential impact on the community.', 32, 'pending', '', '2024-12-17 07:29:15', '2025-01-16', NULL, 0, 5),
+(46, 'GFriend New Song', 'The new song of gfriend after 5 years of hiatus is out. What do people think about their new song?', 26, 'pending', '', '2025-01-07 23:43:27', NULL, NULL, 0, 2),
+(47, 'mweheh', '/............', 26, 'pending', 'people will be confuse on this survey', '2025-01-08 02:01:18', NULL, NULL, 0, 0),
+(48, 'Rainy Season', 'A lot of filipinos especially in squatters area will be affected and suffer ', 40, 'pending', '', '2025-01-08 11:03:45', '2025-02-07', NULL, 0, 0),
+(49, 'LA fire', 'very big fire', 26, 'pending', '', '2025-01-14 17:08:16', NULL, NULL, 0, 0),
+(50, 'Hubog sa Jaro ', 'dakpan', 26, 'pending', '', '2025-01-14 17:10:10', NULL, NULL, 0, 0),
+(51, 'Football turn into WWE', 'waswas To truncate the survey description text if it\'s too long, you can adjust the Typography component\'s style for survey.description by utilizing line-clamp (CSS -webkit-line-clamp) to limit the number of lines displayed. Here\'s how you can update the relevant part:', 26, 'activated', '', '2025-01-14 17:12:23', '2025-02-13', NULL, 0, 9),
+(52, 'CPU Bardagulan', 'too much issues', 26, 'activated', '', '2025-01-14 17:16:56', '2025-02-13', NULL, 0, 45),
+(53, 'Re defense', 'last nagd', 26, 'activated', '', '2025-01-14 17:21:47', '2025-02-13', NULL, 0, 56),
+(54, 'Last survey', 'navigate na', 26, 'activated', '', '2025-01-14 17:23:46', '2025-02-13', NULL, 0, 6),
+(55, 'indi pagd', 'ay ambit', 26, 'activated', '', '2025-01-14 17:26:32', '2025-02-13', NULL, 0, 45),
+(56, 'Halfmoon', 'nothing', 26, 'pending', '', '2025-01-14 18:40:51', NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -204,7 +263,7 @@ CREATE TABLE `survey_categories` (
   `id` int(11) NOT NULL,
   `survey_id` int(11) NOT NULL,
   `category_name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `survey_categories`
@@ -221,7 +280,27 @@ INSERT INTO `survey_categories` (`id`, `survey_id`, `category_name`) VALUES
 (8, 45, 'News'),
 (9, 45, 'Iloilo City'),
 (10, 45, 'Telecommunications'),
-(11, 45, 'Telecommunications');
+(11, 45, 'Telecommunications'),
+(12, 46, 'music'),
+(13, 46, 'music'),
+(14, 47, 'Iloilo City'),
+(15, 48, 'News'),
+(16, 49, 'News'),
+(17, 49, 'Global'),
+(18, 49, 'Global'),
+(19, 50, 'News'),
+(20, 50, 'Iloilo City'),
+(21, 51, 'Sports'),
+(22, 51, 'News'),
+(23, 52, 'Academic'),
+(24, 52, 'Iloilo City'),
+(25, 52, 'School'),
+(26, 52, 'School'),
+(27, 53, 'Academic'),
+(28, 54, 'Food'),
+(29, 54, 'Art'),
+(30, 55, 'Food'),
+(31, 56, 'News');
 
 -- --------------------------------------------------------
 
@@ -236,7 +315,7 @@ CREATE TABLE `survey_interactions` (
   `interaction_type` enum('completed','rated') NOT NULL,
   `rating` int(11) DEFAULT NULL,
   `interaction_date` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `survey_interactions`
@@ -253,7 +332,11 @@ INSERT INTO `survey_interactions` (`id`, `user_id`, `survey_id`, `interaction_ty
 (8, 28, 45, 'rated', 2, '2024-12-17 08:45:22'),
 (9, 13, 44, 'rated', 4, '2025-01-06 15:45:58'),
 (10, 32, 44, 'rated', 5, '2025-01-06 16:22:03'),
-(11, 32, 44, 'rated', 5, '2025-01-06 16:23:01');
+(11, 32, 44, 'rated', 5, '2025-01-06 16:23:01'),
+(12, 26, 45, 'rated', 5, '2025-01-08 10:08:41'),
+(13, 40, 45, 'rated', 4, '2025-01-08 10:33:27'),
+(14, 40, 41, 'completed', 0, '2025-01-08 10:52:10'),
+(15, 40, 40, 'rated', 5, '2025-01-08 10:54:37');
 
 -- --------------------------------------------------------
 
@@ -269,118 +352,132 @@ CREATE TABLE `survey_responses` (
   `answer` text NOT NULL,
   `sentiment_score` decimal(5,2) NOT NULL DEFAULT 0.00,
   `option_score` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `survey_responses`
 --
 
 INSERT INTO `survey_responses` (`id`, `survey_id`, `question_id`, `question_type`, `answer`, `sentiment_score`, `option_score`) VALUES
-(11, 34, 40, 'paragraph', 'here', '0.00', 0),
-(12, 34, 41, 'multiple_choice', 'here', '0.00', 0),
-(14, 34, 40, 'paragraph', 'somewhere out there', '0.00', 0),
-(15, 34, 41, 'multiple_choice', 'here', '0.00', 0),
-(17, 34, 40, 'paragraph', 'der', '0.00', 0),
-(18, 34, 41, 'multiple_choice', 'there', '0.00', 0),
-(20, 34, 40, 'paragraph', 'over here', '0.00', 0),
-(21, 34, 41, 'multiple_choice', 'here', '0.00', 1),
-(23, 34, 40, 'paragraph', 'in the walls', '0.00', 0),
-(24, 34, 41, 'multiple_choice', 'here', '0.00', 1),
-(26, 36, 46, 'multiple_choice', '3', '0.00', 1),
-(27, 36, 47, 'multiple_choice', '1', '0.00', 1),
-(28, 35, 43, 'paragraph', 'Here at SM', '0.00', 0),
-(29, 35, 44, 'multiple_choice', 'why?', '0.00', 1),
-(31, 35, 43, 'paragraph', 'Here', '0.00', 0),
-(32, 35, 44, 'multiple_choice', 'what?', '0.00', 1),
-(34, 39, 51, 'paragraph', 'sample answer 1', '0.00', 0),
-(35, 39, 52, 'paragraph', 'sample answer 2', '0.00', 0),
-(36, 40, 53, 'paragraph', 'anything', '0.00', 0),
-(37, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(41, 40, 53, 'paragraph', 'Decaf', '0.00', 0),
-(42, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(43, 40, 55, 'feedback', '', '3.00', 0),
-(44, 40, 56, 'feedback', '', '-1.00', 0),
-(45, 40, 57, 'feedback', '', '1.00', 0),
-(46, 40, 53, 'paragraph', 'anything', '0.00', 0),
-(47, 40, 54, 'multiple_choice', 'no', '0.00', 1),
-(48, 40, 55, 'feedback', '', '1.00', 0),
-(49, 40, 56, 'feedback', '', '1.00', 0),
-(50, 40, 57, 'feedback', '', '-1.00', 0),
-(51, 41, 58, 'feedback', '', '0.00', 0),
-(52, 41, 59, 'feedback', '', '-2.00', 0),
-(53, 41, 60, 'multiple_choice', 'Yes', '0.00', 1),
-(54, 40, 53, 'paragraph', 'Mocha Coffe', '0.00', 0),
-(55, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(56, 40, 55, 'feedback', 'Yes it was tasty!', '1.00', 0),
-(57, 40, 56, 'feedback', 'Yes it was good', '4.00', 0),
-(58, 40, 57, 'feedback', 'Maybe in the near future', '0.00', 0),
-(59, 42, 61, 'paragraph', 'The match between MC United and FC Barcelona was a thrilling encounter that showcased both teams\' strengths and weaknesses. MC United displayed impressive defensive organization, particularly from their center-backs, who effectively neutralized Barcelona’s attacking threats. Meanwhile, Barcelona\'s midfield creativity shone through, with their playmaker orchestrating key passes that opened up MC United\'s defense.\n\nA standout moment was MC United’s early goal, which set the tone for an intense match. The equalizer from Barcelona later in the first half demonstrated their resilience and attacking prowess, highlighting their ability to bounce back under pressure.\n\nOverall, this match significantly impacted both teams\' seasons. For MC United, it instilled confidence and solidified their defensive strategy, while for Barcelona, it emphasized the need for more clinical finishing and depth in their squad. Memorable player performances included the MC United goalkeeper, who made several crucial saves, and Barcelona’s winger, whose dribbling and pace consistently troubled the defense. This match will be a defining moment for both teams as they look to build momentum moving forward.', '0.00', 0),
-(60, 42, 62, 'multiple_choice', 'MC United', '0.00', 1),
-(61, 42, 63, 'checkbox', '43', '0.00', 0),
-(62, 42, 63, 'checkbox', '44', '0.00', 0),
-(63, 41, 58, 'feedback', 'His action were right and just', '0.00', 0),
-(64, 41, 59, 'feedback', 'Yes it was correct', '1.00', 0),
-(65, 41, 60, 'multiple_choice', 'Yes', '0.00', 1),
-(66, 41, 58, 'feedback', 'yes', '1.00', 0),
-(67, 41, 59, 'feedback', 'yes', '1.00', 0),
-(68, 41, 60, 'multiple_choice', 'No', '0.00', 1),
-(69, 41, 58, 'feedback', 'No bad', '-4.00', 0),
-(70, 41, 59, 'feedback', 'Not right', '0.00', 0),
-(71, 41, 60, 'multiple_choice', 'No', '0.00', 1),
-(72, 40, 53, 'paragraph', 'Black', '0.00', 0),
-(73, 40, 54, 'multiple_choice', 'no', '0.00', 1),
-(74, 40, 55, 'feedback', 'yes i am satisfied but its very bitter', '1.00', 0),
-(75, 40, 56, 'feedback', 'no because its too far and in a dark alley', '-1.00', 0),
-(76, 40, 57, 'feedback', 'sure', '0.00', 0),
-(77, 43, 64, 'feedback', 'I dont trust her anymore', '-1.00', 0),
-(78, 43, 64, 'feedback', 'she lost all her merits because of the recent problem', '-5.00', 0),
-(79, 43, 64, 'feedback', 'No one trust her anymore so I dont think this is relevant anymore', '0.00', 0),
-(80, 41, 58, 'feedback', 'I think its a bold move against the owners of these kind of services specially since they are part of a big company', '5.00', 0),
-(81, 41, 59, 'feedback', 'yes he is doing his best to improve the city and for its people', '6.00', 0),
-(82, 41, 60, 'multiple_choice', 'Yes', '0.00', 1),
-(83, 40, 53, 'paragraph', 'anything', '0.00', 0),
-(84, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(85, 40, 55, 'feedback', 'yes', '1.00', 0),
-(86, 40, 56, 'feedback', 'probably', '0.00', 0),
-(87, 40, 57, 'feedback', 'yes sure why not', '1.00', 0),
-(88, 42, 61, 'paragraph', 'A memorable moment to anticipate would be how both teams\' midfielders battle for dominance, as City often relies on their fluid passing and possession, while Barcelona is known for their potent, direct offensive play. This match could not only impact the outcome of their group stages but also serve as a psychological boost for the winner heading into the latter part of the season. The result of this encounter might provide valuable insights into how these two top European clubs are shaping up for the knockout rounds.', '0.00', 0),
-(89, 42, 62, 'multiple_choice', 'FC barcelona', '0.00', 1),
-(90, 42, 63, 'checkbox', 'Great teamwork and collaboration between players', '0.00', 0),
-(91, 42, 61, 'paragraph', 'testing testing', '0.00', 0),
-(92, 42, 62, 'multiple_choice', 'FC barcelona', '0.00', 1),
-(93, 42, 63, 'checkbox', 'Outstanding individual performances', '0.00', 0),
-(94, 42, 61, 'paragraph', 'test', '0.00', 0),
-(95, 42, 62, 'multiple_choice', 'FC barcelona', '0.00', 1),
-(96, 42, 63, 'checkbox', 'Outstanding individual performances', '0.00', 0),
-(97, 40, 53, 'paragraph', 'any', '0.00', 0),
-(98, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(99, 40, 55, 'feedback', 'Maybe', '0.00', 0),
-(100, 40, 56, 'feedback', 'yeah sure', '1.00', 0),
-(101, 40, 57, 'feedback', 'no', '-1.00', 0),
-(102, 41, 58, 'feedback', 'yes', '1.00', 0),
-(103, 41, 59, 'feedback', 'yes', '1.00', 0),
-(104, 41, 60, 'multiple_choice', 'Yes', '0.00', 1),
-(105, 43, 64, 'feedback', 'I dont know', '0.00', 0),
-(106, 40, 53, 'paragraph', 'Latte', '0.00', 0),
-(107, 40, 54, 'multiple_choice', 'yes', '0.00', 1),
-(108, 40, 55, 'feedback', 'Yes', '1.00', 0),
-(109, 40, 56, 'feedback', 'Yes', '1.00', 0),
-(110, 40, 57, 'feedback', 'No', '-1.00', 0),
-(111, 41, 58, 'feedback', 'His doings were correct and just', '0.00', 0),
-(112, 41, 59, 'feedback', 'Yes', '1.00', 0),
-(113, 41, 60, 'multiple_choice', 'No', '0.00', 1),
-(114, 45, 68, 'multiple_choice', 'Yes', '0.00', 1),
-(115, 45, 69, 'paragraph', 'It is important because of the damages that it can cause', '0.00', 0),
-(116, 45, 70, 'feedback', 'If designed well, such an initiative could be a step toward better service and equity. A collaborative approach that combines penalties with positive incentives might strike the right balance.', '3.00', 0),
-(117, 45, 68, 'multiple_choice', 'Yes', '0.00', 1),
-(118, 45, 69, 'paragraph', 'Hahahahahahah', '0.00', 0),
-(119, 45, 70, 'feedback', 'Slightly good and might be bad but not too sure', '0.00', 0),
-(120, 44, 65, 'paragraph', 'Structure problem', '0.00', 0),
-(121, 44, 66, 'multiple_choice', 'No', '0.00', 1),
-(122, 44, 67, 'feedback', 'The problem is that it causes traffic and the people are getting frustrated on waiting time just to pass', '-4.00', 0),
-(123, 44, 65, 'paragraph', 'Politics maybe?', '0.00', 0),
-(124, 44, 66, 'multiple_choice', 'Yes', '0.00', 1),
-(125, 44, 67, 'feedback', 'It is still on construction for years and its causing problems to the local inhabitants', '-2.00', 0);
+(11, 34, 40, 'paragraph', 'here', 0.00, 0),
+(12, 34, 41, 'multiple_choice', 'here', 0.00, 0),
+(14, 34, 40, 'paragraph', 'somewhere out there', 0.00, 0),
+(15, 34, 41, 'multiple_choice', 'here', 0.00, 0),
+(17, 34, 40, 'paragraph', 'der', 0.00, 0),
+(18, 34, 41, 'multiple_choice', 'there', 0.00, 0),
+(20, 34, 40, 'paragraph', 'over here', 0.00, 0),
+(21, 34, 41, 'multiple_choice', 'here', 0.00, 1),
+(23, 34, 40, 'paragraph', 'in the walls', 0.00, 0),
+(24, 34, 41, 'multiple_choice', 'here', 0.00, 1),
+(26, 36, 46, 'multiple_choice', '3', 0.00, 1),
+(27, 36, 47, 'multiple_choice', '1', 0.00, 1),
+(28, 35, 43, 'paragraph', 'Here at SM', 0.00, 0),
+(29, 35, 44, 'multiple_choice', 'why?', 0.00, 1),
+(31, 35, 43, 'paragraph', 'Here', 0.00, 0),
+(32, 35, 44, 'multiple_choice', 'what?', 0.00, 1),
+(34, 39, 51, 'paragraph', 'sample answer 1', 0.00, 0),
+(35, 39, 52, 'paragraph', 'sample answer 2', 0.00, 0),
+(36, 40, 53, 'paragraph', 'anything', 0.00, 0),
+(37, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(41, 40, 53, 'paragraph', 'Decaf', 0.00, 0),
+(42, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(43, 40, 55, 'feedback', '', 3.00, 0),
+(44, 40, 56, 'feedback', '', -1.00, 0),
+(45, 40, 57, 'feedback', '', 1.00, 0),
+(46, 40, 53, 'paragraph', 'anything', 0.00, 0),
+(47, 40, 54, 'multiple_choice', 'no', 0.00, 1),
+(48, 40, 55, 'feedback', '', 1.00, 0),
+(49, 40, 56, 'feedback', '', 1.00, 0),
+(50, 40, 57, 'feedback', '', -1.00, 0),
+(51, 41, 58, 'feedback', '', 0.00, 0),
+(52, 41, 59, 'feedback', '', -2.00, 0),
+(53, 41, 60, 'multiple_choice', 'Yes', 0.00, 1),
+(54, 40, 53, 'paragraph', 'Mocha Coffe', 0.00, 0),
+(55, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(56, 40, 55, 'feedback', 'Yes it was tasty!', 1.00, 0),
+(57, 40, 56, 'feedback', 'Yes it was good', 4.00, 0),
+(58, 40, 57, 'feedback', 'Maybe in the near future', 0.00, 0),
+(59, 42, 61, 'paragraph', 'The match between MC United and FC Barcelona was a thrilling encounter that showcased both teams\' strengths and weaknesses. MC United displayed impressive defensive organization, particularly from their center-backs, who effectively neutralized Barcelona’s attacking threats. Meanwhile, Barcelona\'s midfield creativity shone through, with their playmaker orchestrating key passes that opened up MC United\'s defense.\n\nA standout moment was MC United’s early goal, which set the tone for an intense match. The equalizer from Barcelona later in the first half demonstrated their resilience and attacking prowess, highlighting their ability to bounce back under pressure.\n\nOverall, this match significantly impacted both teams\' seasons. For MC United, it instilled confidence and solidified their defensive strategy, while for Barcelona, it emphasized the need for more clinical finishing and depth in their squad. Memorable player performances included the MC United goalkeeper, who made several crucial saves, and Barcelona’s winger, whose dribbling and pace consistently troubled the defense. This match will be a defining moment for both teams as they look to build momentum moving forward.', 0.00, 0),
+(60, 42, 62, 'multiple_choice', 'MC United', 0.00, 1),
+(61, 42, 63, 'checkbox', '43', 0.00, 0),
+(62, 42, 63, 'checkbox', '44', 0.00, 0),
+(63, 41, 58, 'feedback', 'His action were right and just', 0.00, 0),
+(64, 41, 59, 'feedback', 'Yes it was correct', 1.00, 0),
+(65, 41, 60, 'multiple_choice', 'Yes', 0.00, 1),
+(66, 41, 58, 'feedback', 'yes', 1.00, 0),
+(67, 41, 59, 'feedback', 'yes', 1.00, 0),
+(68, 41, 60, 'multiple_choice', 'No', 0.00, 1),
+(69, 41, 58, 'feedback', 'No bad', -4.00, 0),
+(70, 41, 59, 'feedback', 'Not right', 0.00, 0),
+(71, 41, 60, 'multiple_choice', 'No', 0.00, 1),
+(72, 40, 53, 'paragraph', 'Black', 0.00, 0),
+(73, 40, 54, 'multiple_choice', 'no', 0.00, 1),
+(74, 40, 55, 'feedback', 'yes i am satisfied but its very bitter', 1.00, 0),
+(75, 40, 56, 'feedback', 'no because its too far and in a dark alley', -1.00, 0),
+(76, 40, 57, 'feedback', 'sure', 0.00, 0),
+(77, 43, 64, 'feedback', 'I dont trust her anymore', -1.00, 0),
+(78, 43, 64, 'feedback', 'she lost all her merits because of the recent problem', -5.00, 0),
+(79, 43, 64, 'feedback', 'No one trust her anymore so I dont think this is relevant anymore', 0.00, 0),
+(80, 41, 58, 'feedback', 'I think its a bold move against the owners of these kind of services specially since they are part of a big company', 5.00, 0),
+(81, 41, 59, 'feedback', 'yes he is doing his best to improve the city and for its people', 6.00, 0),
+(82, 41, 60, 'multiple_choice', 'Yes', 0.00, 1),
+(83, 40, 53, 'paragraph', 'anything', 0.00, 0),
+(84, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(85, 40, 55, 'feedback', 'yes', 1.00, 0),
+(86, 40, 56, 'feedback', 'probably', 0.00, 0),
+(87, 40, 57, 'feedback', 'yes sure why not', 1.00, 0),
+(88, 42, 61, 'paragraph', 'A memorable moment to anticipate would be how both teams\' midfielders battle for dominance, as City often relies on their fluid passing and possession, while Barcelona is known for their potent, direct offensive play. This match could not only impact the outcome of their group stages but also serve as a psychological boost for the winner heading into the latter part of the season. The result of this encounter might provide valuable insights into how these two top European clubs are shaping up for the knockout rounds.', 0.00, 0),
+(89, 42, 62, 'multiple_choice', 'FC barcelona', 0.00, 1),
+(90, 42, 63, 'checkbox', 'Great teamwork and collaboration between players', 0.00, 0),
+(91, 42, 61, 'paragraph', 'testing testing', 0.00, 0),
+(92, 42, 62, 'multiple_choice', 'FC barcelona', 0.00, 1),
+(93, 42, 63, 'checkbox', 'Outstanding individual performances', 0.00, 0),
+(94, 42, 61, 'paragraph', 'test', 0.00, 0),
+(95, 42, 62, 'multiple_choice', 'FC barcelona', 0.00, 1),
+(96, 42, 63, 'checkbox', 'Outstanding individual performances', 0.00, 0),
+(97, 40, 53, 'paragraph', 'any', 0.00, 0),
+(98, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(99, 40, 55, 'feedback', 'Maybe', 0.00, 0),
+(100, 40, 56, 'feedback', 'yeah sure', 1.00, 0),
+(101, 40, 57, 'feedback', 'no', -1.00, 0),
+(102, 41, 58, 'feedback', 'yes', 1.00, 0),
+(103, 41, 59, 'feedback', 'yes', 1.00, 0),
+(104, 41, 60, 'multiple_choice', 'Yes', 0.00, 1),
+(105, 43, 64, 'feedback', 'I dont know', 0.00, 0),
+(106, 40, 53, 'paragraph', 'Latte', 0.00, 0),
+(107, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(108, 40, 55, 'feedback', 'Yes', 1.00, 0),
+(109, 40, 56, 'feedback', 'Yes', 1.00, 0),
+(110, 40, 57, 'feedback', 'No', -1.00, 0),
+(111, 41, 58, 'feedback', 'His doings were correct and just', 0.00, 0),
+(112, 41, 59, 'feedback', 'Yes', 1.00, 0),
+(113, 41, 60, 'multiple_choice', 'No', 0.00, 1),
+(114, 45, 68, 'multiple_choice', 'Yes', 0.00, 1),
+(115, 45, 69, 'paragraph', 'It is important because of the damages that it can cause', 0.00, 0),
+(116, 45, 70, 'feedback', 'If designed well, such an initiative could be a step toward better service and equity. A collaborative approach that combines penalties with positive incentives might strike the right balance.', 3.00, 0),
+(117, 45, 68, 'multiple_choice', 'Yes', 0.00, 1),
+(118, 45, 69, 'paragraph', 'Hahahahahahah', 0.00, 0),
+(119, 45, 70, 'feedback', 'Slightly good and might be bad but not too sure', 0.00, 0),
+(120, 44, 65, 'paragraph', 'Structure problem', 0.00, 0),
+(121, 44, 66, 'multiple_choice', 'No', 0.00, 1),
+(122, 44, 67, 'feedback', 'The problem is that it causes traffic and the people are getting frustrated on waiting time just to pass', -4.00, 0),
+(123, 44, 65, 'paragraph', 'Politics maybe?', 0.00, 0),
+(124, 44, 66, 'multiple_choice', 'Yes', 0.00, 1),
+(125, 44, 67, 'feedback', 'It is still on construction for years and its causing problems to the local inhabitants', -2.00, 0),
+(126, 45, 68, 'multiple_choice', 'Yes', 0.00, 1),
+(127, 45, 69, 'paragraph', 'fgdfg', 0.00, 0),
+(128, 45, 70, 'feedback', 'wazzu', 0.00, 0),
+(129, 45, 68, 'multiple_choice', 'Yes', 0.00, 1),
+(130, 45, 69, 'paragraph', 'idk', 0.00, 0),
+(131, 45, 70, 'feedback', 'please support but dont tolerate', 3.00, 0),
+(132, 41, 58, 'feedback', 'sdfsdfsf', 0.00, 0),
+(133, 41, 59, 'feedback', 'maybe', 0.00, 0),
+(134, 41, 60, 'multiple_choice', 'Yes', 0.00, 1),
+(135, 40, 53, 'paragraph', 'all', 0.00, 0),
+(136, 40, 54, 'multiple_choice', 'yes', 0.00, 1),
+(137, 40, 55, 'feedback', 'no', -1.00, 0),
+(138, 40, 56, 'feedback', 'maybe', 0.00, 0),
+(139, 40, 57, 'feedback', 'not at all', 0.00, 0);
 
 -- --------------------------------------------------------
 
@@ -393,7 +490,7 @@ CREATE TABLE `survey_similarities` (
   `survey_id_1` int(11) DEFAULT NULL,
   `survey_id_2` int(11) DEFAULT NULL,
   `similarity_score` float DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `survey_similarities`
@@ -405,7 +502,10 @@ INSERT INTO `survey_similarities` (`id`, `survey_id_1`, `survey_id_2`, `similari
 (3, 40, 41, 1),
 (4, 42, 44, 1),
 (5, 40, 44, 1),
-(6, 41, 44, 1);
+(6, 41, 44, 1),
+(7, 41, 45, 1),
+(8, 43, 45, 1),
+(9, 40, 45, 1);
 
 -- --------------------------------------------------------
 
@@ -428,7 +528,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `reward_points` int(11) NOT NULL,
   `is_verified` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -450,7 +550,7 @@ INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birth
 (23, 'DavidRox', 'David', 'Ross', 'Male', '2010-02-17', 'davidRoss19@gmail.com', '', '', NULL, NULL, '$2y$10$UQ1wPt80EtpYScmVpgALcezP8Ym.U7POeIOl2MEa6qvOSzzm2V82m', 0, 0),
 (24, 'Ruben27', 'Ruben', 'Beguas', 'Male', '2000-03-21', 'rubenbeguas27@gmail.com', '', '', '745471', NULL, '$2y$10$CNnZPMlsgUs8XGLZi3SYW.JQjTTMlRXSmDWqT2Cub4UH/p2dNQzki', 0, 0),
 (25, 'Rod16', 'Rod', 'Mag-aso', 'Female', '0000-00-00', 'rodEliMagaso@gmail.com', '', '', '924021', NULL, '$2y$10$wZg50dLSGles5tdE0bPweOORVF74JdkNbt5y.qNZQZ.IdqXXmJccK', 0, 0),
-(26, 'Nath1', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nath1@gmail.com', '', '', '137681', NULL, '$2y$10$vadBz/1Lgz3Km1cVSm3FJuba1OWtZLOU6CJbRWMi36Fuu.Ooz0gNC', 0, 1),
+(26, 'Nath1', 'nathaniel', 'Aquino', 'Male', '2000-10-29', 'nath1@gmail.com', 'final defense ulit ssss hays', '', '137681', NULL, '$2y$10$vadBz/1Lgz3Km1cVSm3FJuba1OWtZLOU6CJbRWMi36Fuu.Ooz0gNC', 939, 1),
 (27, 'Nath2', 'nathaniel', 'Aquino', 'Female', '2001-10-29', 'nath2@gmail.com', '', '', '309079', NULL, '$2y$10$o1fYyo6iyq1zUGR2o5MxXOfWeQyDAdBmPHawtwGSvcYnoyyTx0h4G', 0, 1),
 (28, 'Nath3', 'Nathan', 'Absalon', 'Male', '0000-00-00', 'nath3@gmail.com', '', '', '254206', NULL, '$2y$10$MYtcoLLFsHCUPjbLuH3CMelMtfpf3kCWjuiiRwgO/3mVZj00K/0fi', 0, 1),
 (29, 'Nath4', 'Nat', 'Aquino', 'Male', '2222-02-22', 'nath4@gmail.com', '', '', '282147', NULL, '$2y$10$PqIkxs.E/COv.mSTbE17Q.hNDTy9lsEc4cos9tJbzFmfYX4x2IU4W', 0, 1),
@@ -461,7 +561,11 @@ INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `gender`, `birth
 (34, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '', '145928', NULL, '$2y$10$w13VNlooAFxv7gc5fmhpYuxB1PoxvyeR2Btgs7TSNssy6hNxRcZiC', 0, 0),
 (35, 'Stevenc', 'Steb', 'Asalon', 'Male', '2024-12-11', 'stevenc@gmail.com', '', '', '690982', NULL, '$2y$10$j7kez4uR19/METz4cC9iLupYzvm3J0k3MLnnhN19.OzGmIuY6lyFW', 0, 0),
 (36, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '', '927442', NULL, '$2y$10$NRdjQcWYgeF/Akd0/QcSo.IWqjDMCn42ZA8NsxMe70FgcplQ26PCm', 0, 0),
-(37, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '', '122298', NULL, '$2y$10$19fm1PsKdAYm5cdD8/CIHevfR83xQnrC8.11SrLe2mAL8k3OZFu1u', 0, 0);
+(37, 'Steve', 'steh', 'ben', 'Male', '2000-02-09', 'stehben@gmail.com', '', '', '122298', NULL, '$2y$10$19fm1PsKdAYm5cdD8/CIHevfR83xQnrC8.11SrLe2mAL8k3OZFu1u', 0, 0),
+(38, 'jerzeil', 'Jerzeil Pete', 'Lira', '', '1995-02-02', 'jerzeilpete.lira-16@cpu.e', '', '', '139211', NULL, '$2y$10$kZNOc4TpqTAhQcm82vtMMu36N1br9Gjb43whJy.M0OI0nUB19hesC', 0, 1),
+(39, 'jerzeil33', 'Jerzeil Pete', 'Lira', 'Male', '1996-02-13', 'jerzeilpete.lira-16@cpu.e', '', '', '900911', NULL, '$2y$10$cMtQ4SiG/zy7JzUa51Ssje3XSMiJrxkYIbCe0xJEZ1ocS0LKvT612', 0, 1),
+(40, 'ki', 'ki', 'ta', 'Female', '5336-02-12', 'jerzeilpete.lira-16@cpu.e', '', '', '697043', NULL, '$2y$10$/BxCyAi1eJc.z3caGCOaR.I1Yzjw6mAY5PEDuspeldS0TliGNBlhu', 0, 1),
+(41, 'victor', 'Victor', 'Magtangol', 'Female', '1995-06-01', 'jerzeilpete.lira-16@cpu.e', '', '', '712495', NULL, '$2y$10$Jsiw0x/n6iyDCap70qj2tOKLr48gATRkn0.EtqEnw8fJllGtTnje2', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -473,7 +577,7 @@ CREATE TABLE `user_preferences` (
   `user_id` int(11) NOT NULL,
   `category` varchar(255) NOT NULL,
   `preference_strength` int(11) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user_preferences`
@@ -482,14 +586,20 @@ CREATE TABLE `user_preferences` (
 INSERT INTO `user_preferences` (`user_id`, `category`, `preference_strength`) VALUES
 (23, 'Academic', 1),
 (23, 'Art', 1),
-(23, 'Books', 1),
+(26, 'Animals', 1),
+(26, 'Books', 1),
+(26, 'Business', 1),
+(26, 'Cars', 1),
+(26, 'Iloilo City', 5),
+(26, 'News', 5),
+(26, 'Politics', 1),
+(26, 'Telecommunications', 10),
+(26, 'War', 1),
 (31, 'Academic', 1),
 (31, 'Art', 1),
 (31, 'Books', 1),
-(31, 'Business', 1),
 (31, 'Food', 1),
 (31, 'News', 1),
-(31, 'Politics', 1),
 (31, 'Sports', 1),
 (32, 'Art', 1),
 (32, 'Food', 1),
@@ -497,7 +607,18 @@ INSERT INTO `user_preferences` (`user_id`, `category`, `preference_strength`) VA
 (32, 'News', 1),
 (33, 'Academic', 1),
 (33, 'Business', 1),
-(33, 'Food', 1);
+(33, 'Food', 1),
+(38, 'Food', 1),
+(38, 'News', 1),
+(38, 'Sports', 1),
+(39, 'Business', 1),
+(40, 'Iloilo City', 4),
+(40, 'News', 5),
+(40, 'Telecommunications', 8),
+(41, 'Academic', 1),
+(41, 'Art', 1),
+(41, 'Business', 1),
+(41, 'Sports', 1);
 
 -- --------------------------------------------------------
 
@@ -514,7 +635,7 @@ CREATE TABLE `user_rewards` (
   `voucher_code` varchar(100) DEFAULT NULL,
   `description` varchar(255) NOT NULL,
   `expiry_date` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user_rewards`
@@ -523,7 +644,8 @@ CREATE TABLE `user_rewards` (
 INSERT INTO `user_rewards` (`id`, `user_id`, `reward_id`, `redemption_date`, `status`, `voucher_code`, `description`, `expiry_date`) VALUES
 (1, 13, 1, '2025-01-07 10:45:08', 'redeemed', '866BFEFBE061', '', '0000-00-00 00:00:00'),
 (2, 13, 1, '2025-01-07 12:04:50', 'redeemed', '3D601A4243A8', '', '2025-01-07 12:04:50'),
-(3, 13, 1, '2025-01-07 19:11:12', 'redeemed', '691ABE00981F', '', '2025-02-06 19:11:12');
+(3, 13, 1, '2025-01-07 19:11:12', 'redeemed', '691ABE00981F', '', '2025-02-06 19:11:12'),
+(4, 26, 1, '2025-01-07 21:00:27', 'redeemed', '957C72B11521', '', '2025-02-06 21:00:27');
 
 --
 -- Indexes for dumped tables
@@ -534,6 +656,13 @@ INSERT INTO `user_rewards` (`id`, `user_id`, `reward_id`, `redemption_date`, `st
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `notification`
+--
+ALTER TABLE `notification`
+  ADD PRIMARY KEY (`notif_id`),
+  ADD KEY `user_notif` (`user_id`);
 
 --
 -- Indexes for table `options`
@@ -568,7 +697,8 @@ ALTER TABLE `rewards`
 -- Indexes for table `surveys`
 --
 ALTER TABLE `surveys`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_user` (`user_id`);
 
 --
 -- Indexes for table `survey_categories`
@@ -625,25 +755,31 @@ ALTER TABLE `user_rewards`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `notification`
+--
+ALTER TABLE `notification`
+  MODIFY `notif_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `options`
 --
 ALTER TABLE `options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `redemptions`
 --
 ALTER TABLE `redemptions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `rewards`
@@ -655,47 +791,53 @@ ALTER TABLE `rewards`
 -- AUTO_INCREMENT for table `surveys`
 --
 ALTER TABLE `surveys`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `survey_categories`
 --
 ALTER TABLE `survey_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `survey_interactions`
 --
 ALTER TABLE `survey_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `survey_responses`
 --
 ALTER TABLE `survey_responses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
 
 --
 -- AUTO_INCREMENT for table `survey_similarities`
 --
 ALTER TABLE `survey_similarities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `user_rewards`
 --
 ALTER TABLE `user_rewards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `notification`
+--
+ALTER TABLE `notification`
+  ADD CONSTRAINT `user_notif` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `options`

@@ -7,6 +7,10 @@ import {
   Button,
   CardActions,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
@@ -15,15 +19,14 @@ import axios from "axios";
 
 const HomePage = () => {
   const [surveys, setSurveys] = useState([]);
-  const [passcode, setPasscode] = useState(""); // To store the entered passcode
-  const [lockedSurveyId, setLockedSurveyId] = useState(null); // Store the survey ID of the locked survey
-  const [energy, setEnergy] = useState(100); // Track user energy
+  const [dialogOpen, setDialogOpen] = useState(false); // Track dialog state
+  const [selectedSurvey, setSelectedSurvey] = useState(null); // Track selected survey
+  const [energy, setEnergy] = useState(100);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSurveysAndEnergy = async () => {
       try {
-        // Fetch surveys
         const surveyResponse = await axios.get(
           "http://localhost/survey-app/get-recommendations.php",
           { withCredentials: true }
@@ -32,14 +35,11 @@ const HomePage = () => {
           setSurveys(surveyResponse.data);
         }
 
-        // Fetch user energy
         const energyResponse = await axios.get(
           "http://localhost/survey-app/get-user-energy.php",
           { withCredentials: true }
         );
         setEnergy(energyResponse.data.energy);
-
-
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -48,58 +48,19 @@ const HomePage = () => {
     fetchSurveysAndEnergy();
   }, []);
 
-  // Function to refresh energy dynamically
-  const refreshEnergy = async () => {
-    try {
-      const energyResponse = await axios.get(
-        "http://localhost/survey-app/get-user-energy.php",
-        { withCredentials: true }
-      );
-      setEnergy(energyResponse.data.energy);
-    } catch (error) {
-      console.error("Error refreshing energy:", error);
-    }
+  const handleOpenDialog = (survey) => {
+    setSelectedSurvey(survey); // Set the selected survey for the dialog
+    setDialogOpen(true);
   };
 
-  const handleSurveyClick = (surveyId, isLocked) => {
-    if (isLocked === 1) {
-      setLockedSurveyId(surveyId);
-    } else {
-      // Navigate to survey and refresh energy after completion
-      navigate(`/take-survey/${surveyId}`);
-      refreshEnergy();
-    }
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedSurvey(null); // Clear selected survey on close
   };
 
-  const handlePasscodeSubmit = async () => {
-    if (passcode.trim() === "") {
-      alert("Please enter the passcode.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost/survey-app/check-passcode.php",
-        {
-          survey_id: lockedSurveyId,
-          passcode: passcode,
-        }
-      );
-
-      if (response.data.status === "success") {
-        navigate(`/take-survey/${lockedSurveyId}`);
-        setLockedSurveyId(null);
-        refreshEnergy(); // Refresh energy after unlocking the survey
-      } else {
-        alert("Incorrect passcode.");
-      }
-    } catch (error) {
-      console.error("Error verifying passcode:", error);
-    }
-  };
-
-  const handleCancel = () => {
-    setLockedSurveyId(null); // Close the passcode popup if the user cancels
+  const handleAnswerSurvey = (surveyId) => {
+    navigate(`/take-survey/${surveyId}`);
+    setDialogOpen(false); // Close dialog when navigating
   };
 
   return (
@@ -132,40 +93,15 @@ const HomePage = () => {
                     justifyContent: "space-between",
                     borderRadius: 16,
                     boxShadow: 12,
-                    height: "320px", // Reduced height
-                    maxWidth: 380, // Reduced max width
+                    height: "320px",
+                    maxWidth: 380,
                     margin: "0 auto",
-                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                    backgroundColor: "#ffffff",
-                    "&:hover": {
-                      transform: energy === 0 ? "none" : "scale(1.05)", // Disable hover if energy is 0
-                      boxShadow:
-                        energy === 0
-                          ? "none"
-                          : "0 12px 30px rgba(0, 0, 0, 0.15)",
-                    },
-                    opacity: energy === 0 ? 0.6 : 1, // Dim card if energy is 0
                   }}
                 >
-                  <CardContent
-                    sx={{
-                      flexGrow: 1,
-                      padding: "24px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                  <CardContent>
                     <Typography
                       variant="h5"
-                      component="div"
-                      sx={{
-                        fontSize: "22px",
-                        fontWeight: "600",
-                        color: "#1976d2",
-                        textAlign: "center",
-                        marginBottom: "8px",
-                      }}
+                      sx={{ fontWeight: "bold", textAlign: "center" }}
                     >
                       {survey.title}
                     </Typography>
@@ -173,57 +109,37 @@ const HomePage = () => {
                       variant="body2"
                       color="text.secondary"
                       sx={{
-                        marginTop: 1,
-                        fontSize: "15px",
+                        marginTop: 2,
                         textAlign: "center",
-                        marginBottom: "12px",
-                        flexGrow: 1, // Allow text to take up space
-                        overflow: "hidden", // Prevent overflow in the content
-                        textOverflow: "ellipsis", // Add ellipsis for long text
-                        whiteSpace: "nowrap", // Prevent wrapping of text
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
                       }}
                     >
                       {survey.description}
                     </Typography>
                     <Typography
                       variant="body2"
-                      color="text.primary"
-                      sx={{
-                        marginTop: 2,
-                        fontWeight: "bold",
-                        textAlign: "center",
-                        fontSize: "16px",
-                      }}
+                      sx={{ marginTop: 2, textAlign: "center" }}
                     >
                       Points: {survey.survey_pts}
                     </Typography>
                   </CardContent>
-                  <CardActions sx={{ justifyContent: "center", padding: 2 }}>
+                  <CardActions sx={{ justifyContent: "center" }}>
                     <Button
-                      size="small"
-                      color="primary"
-                      disabled={energy === 0} // Disable button if energy is 0 or survey is locked
-                      onClick={() =>
-                        handleSurveyClick(survey.id, survey.is_locked)
-                      }
+                      size="medium"
+                      onClick={() => handleOpenDialog(survey)}
                       sx={{
-                        fontWeight: "bold",
-                        borderRadius: "24px",
-                        padding: "8px 16px",
-                        backgroundColor: "#1976d2",
+                        backgroundColor: "#4caf50",
                         color: "#fff",
                         "&:hover": {
-                          backgroundColor: "#1565c0",
+                          backgroundColor: "#43a047",
                         },
-                        "&:disabled": {
-                          backgroundColor: "#9e9e9e",
-                          color: "#ffffff",
-                        },
+                        margin: 5,
                       }}
                     >
-                      {survey.is_locked === 1
-                        ? "Enter passcode to open survey"
-                        : "Answer survey"}
+                      Open Survey
                     </Button>
                   </CardActions>
                 </Card>
@@ -233,78 +149,52 @@ const HomePage = () => {
         </Box>
       </Box>
 
-      {lockedSurveyId && (
-        <Box
-          sx={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "16px",
-            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-            width: "300px",
-            textAlign: "center",
-            zIndex: 1000,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{ marginBottom: 2, fontWeight: "600", color: "#1976d2" }}
-          >
-            Enter Passcode
-          </Typography>
-          <input
-            type="text"
-            value={passcode}
-            onChange={(e) => setPasscode(e.target.value)}
-            placeholder="Enter passcode"
-            style={{
-              marginTop: "10px",
-              padding: "12px",
-              width: "100%",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "16px",
-            }}
-          />
-          <Box sx={{ marginTop: "20px" }}>
-            <Button
-              variant="contained"
-              sx={{
-                marginRight: "10px",
-                fontWeight: "bold",
-                borderRadius: "12px",
-                backgroundColor: "#1976d2",
-                "&:hover": {
-                  backgroundColor: "#1565c0",
-                },
-              }}
-              onClick={handlePasscodeSubmit}
-            >
-              Submit
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              sx={{
-                fontWeight: "bold",
-                borderRadius: "12px",
-                color: "#d32f2f",
-                borderColor: "#d32f2f",
-                "&:hover": {
-                  backgroundColor: "#f44336",
-                  color: "#fff",
-                },
-              }}
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-          </Box>
-        </Box>
-      )}
+      {/* Dialog for Survey */}
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+        {selectedSurvey && (
+          <>
+            <DialogTitle>{selectedSurvey.title}</DialogTitle>
+            <DialogContent>
+              <Typography variant="body1" gutterBottom>
+                {selectedSurvey.description}
+              </Typography>
+            </DialogContent>
+
+            <DialogActions>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  width: "22vw",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: "left" }}
+                >
+                  Points: {selectedSurvey.survey_pts}
+                </Typography>
+              </Box>
+
+              <Button
+                onClick={handleCloseDialog}
+                variant="outlined"
+                color="error"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => handleAnswerSurvey(selectedSurvey.id)}
+                variant="contained"
+                color="primary"
+              >
+                Answer Survey
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     </Stack>
   );
 };

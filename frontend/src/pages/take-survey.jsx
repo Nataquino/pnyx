@@ -175,7 +175,7 @@ const TakeSurvey = () => {
             justifyContent="center"
             sx={{
                 backgroundColor: "skyblue",
-                minheight: "100vh",
+                minHeight: "100vh",
                 overflowY: "auto",
                 py: 2,
             }}
