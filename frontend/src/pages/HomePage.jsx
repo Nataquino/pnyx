@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Chip,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,18 @@ const HomePage = () => {
   const [selectedSurvey, setSelectedSurvey] = useState(null); // Track selected survey
   const [energy, setEnergy] = useState(100);
   const navigate = useNavigate();
+
+  const getChipColor = (index) => {
+    const colors = [
+      "#4caf50", // Green
+      "#ff9800", // Orange
+      "#2196f3", // Blue
+      "#f44336", // Red
+      "#9c27b0", // Purple
+      "#ffeb3b", // Yellow
+    ];
+    return colors[index % colors.length]; // Cycle through colors
+  };
 
   useEffect(() => {
     const fetchSurveysAndEnergy = async () => {
@@ -101,7 +114,7 @@ const HomePage = () => {
                   <CardContent>
                     <Typography
                       variant="h5"
-                      sx={{ fontWeight: "bold", textAlign: "center" }}
+                      sx={{ fontWeight: "bold", textAlign: "center", marginTop: 3 }}
                     >
                       {survey.title}
                     </Typography>
@@ -118,12 +131,6 @@ const HomePage = () => {
                       }}
                     >
                       {survey.description}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ marginTop: 2, textAlign: "center" }}
-                    >
-                      Points: {survey.survey_pts}
                     </Typography>
                   </CardContent>
                   <CardActions sx={{ justifyContent: "center" }}>
@@ -148,7 +155,6 @@ const HomePage = () => {
           </Grid>
         </Box>
       </Box>
-
       {/* Dialog for Survey */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         {selectedSurvey && (
@@ -161,6 +167,27 @@ const HomePage = () => {
               <Typography variant="body1" gutterBottom>
                 {selectedSurvey.description}
               </Typography>
+              {/* Display Survey Categories with Chips */}
+              <Box sx={{ marginTop: 2, textAlign: "center" }}>
+                {selectedSurvey.categories &&
+                  selectedSurvey.categories.split(",").map((category, index) => (
+                    <Chip
+                      key={index}
+                      label={category.trim()}
+                      sx={{
+                        margin: 0.5,
+                        backgroundColor: getChipColor(index),
+                        color: "#fff",
+                        fontWeight: "bold",
+                        borderRadius: "16px", // Round shape for better design
+                        "&:hover": {
+                          backgroundColor: "#000",
+                          color: "#fff",
+                        },
+                      }}
+                    />
+                  ))}
+              </Box>
             </DialogContent>
 
             <DialogActions>
