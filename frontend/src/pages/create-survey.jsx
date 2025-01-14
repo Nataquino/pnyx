@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
 import NavBarCreate from "../components/NavBarCreate";
 
@@ -33,6 +34,7 @@ const MenuProps = {
 };
 
 const SurveyPage = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -60,19 +62,21 @@ const SurveyPage = () => {
   const addQuestion = () => setQuestions([...questions, { text: "", type: "", options: [] }]);
   const removeQuestion = (index) => setQuestions(questions.filter((_, i) => i !== index));
   const updateQuestion = (index, field, value) => {
-    const updatedQuestions = questions.map((q, i) => i === index ? { ...q, [field]: value } : q);
+    const updatedQuestions = questions.map((q, i) =>
+      i === index ? { ...q, [field]: value } : q
+    );
     setQuestions(updatedQuestions);
   };
   const updateOption = (qIndex, oIndex, value) => {
-    const updatedQuestions = questions.map((q, i) => 
+    const updatedQuestions = questions.map((q, i) =>
       i === qIndex
-        ? { ...q, options: q.options.map((opt, j) => j === oIndex ? value : opt) }
+        ? { ...q, options: q.options.map((opt, j) => (j === oIndex ? value : opt)) }
         : q
     );
     setQuestions(updatedQuestions);
   };
   const addOption = (index) => {
-    const updatedQuestions = questions.map((q, i) => 
+    const updatedQuestions = questions.map((q, i) =>
       i === index ? { ...q, options: [...q.options, ""] } : q
     );
     setQuestions(updatedQuestions);
@@ -91,7 +95,12 @@ const SurveyPage = () => {
     // Validate each question
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
-      if (!question.text || !question.type || (["multiple_choice", "checkbox"].includes(question.type) && question.options.some((option) => !option))) {
+      if (
+        !question.text ||
+        !question.type ||
+        (["multiple_choice", "checkbox"].includes(question.type) &&
+          question.options.some((option) => !option))
+      ) {
         alert(`Please complete all fields for question ${i + 1}.`);
         return;
       }
@@ -109,6 +118,7 @@ const SurveyPage = () => {
         alert("Survey saved successfully!");
         setFormData({ title: "", description: "", questions: [], categories: [], customCategory: "" });
         setQuestions([]);
+        navigate("/survey-list"); // Navigate to the survey list page
       } else {
         alert("Failed to save survey.");
       }

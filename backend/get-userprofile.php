@@ -77,88 +77,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt_preferences->close();
 }
 
-
-
-
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the new bio from the request body
+    // Get the action from the request body
     $inputData = json_decode(file_get_contents("php://input"), true);
-    $newBio = $conn->real_escape_string($inputData['bio']);
 
-    if (empty($newBio)) {
-        echo json_encode(["error" => "Bio cannot be empty"]);
-        exit;
+    // Add interest functionality
+    if (isset($inputData['action']) && $inputData['action'] === 'add_interest') {
+        $interest = $conn->real_escape_string($inputData['interest']); // Sanitize the interest string
+    
+        if (empty($interest)) {
+            echo json_encode(["error" => "Interest cannot be empty"]);
+            exit;
+        }
+    
+        // Check if the interest already exists
+        $sql_check_existing = "SELECT COUNT(*) FROM user_preferences WHERE user_id = ? AND category = ?";
+        $stmt_check = $conn->prepare($sql_check_existing);
+        $stmt_check->bind_param("is", $user_id, $interest);
+        $stmt_check->execute();
+        $stmt_check->bind_result($count);
+        $stmt_check->fetch();
+        $stmt_check->close();
+    
+        if ($count > 0) {
+            echo json_encode(["error" => "Interest already exists"]); // Specific response for existing interest
+            exit;
+        }
+    
+        // Insert the new interest into the user_preferences table
+        $sql_add_interest = "INSERT INTO user_preferences (user_id, category) VALUES (?, ?)";
+        $stmt_add_interest = $conn->prepare($sql_add_interest);
+    
+        if (!$stmt_add_interest) {
+            echo json_encode(["error" => "SQL preparation failed for insert query: " . $conn->error]);
+            exit;
+        }
+    
+        $stmt_add_interest->bind_param("is", $user_id, $interest);
+        if (!$stmt_add_interest->execute()) {
+            echo json_encode(["error" => "Error inserting interest: " . $stmt_add_interest->error]);
+            exit;
+        }
+    
+        if ($stmt_add_interest->affected_rows > 0) {
+            echo json_encode(["success" => true, "message" => "Interest added successfully"]);
+        } else {
+            echo json_encode(["success" => false, "error" => "Failed to add interest"]);
+        }
+    
+        $stmt_add_interest->close();
     }
+    
 
-    // Update the bio in the database
-    $sql_update = "UPDATE users SET bio = ? WHERE id = ?";
-    $stmt_update = $conn->prepare($sql_update);
+    // Update bio functionality
+    if (isset($inputData['bio'])) {
+        $newBio = $conn->real_escape_string($inputData['bio']);
 
-    if (!$stmt_update) {
-        echo json_encode(["error" => "SQL preparation failed for update query: " . $conn->error]);
-        exit;
-    }
-
-    $stmt_update->bind_param("si", $newBio, $user_id);
-    $stmt_update->execute();
-
-    if ($stmt_update->affected_rows > 0) {
-        echo json_encode(["success" => true]); // Successfully updated
-    } else {
-        echo json_encode(["success" => false, "error" => "Failed to update bio"]);
-    }
-
-    $stmt_update->close();
-}
-
-// just add it here
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if a file is uploaded
-    if (isset($_FILES['image'])) {
-        $error = $_FILES['image']['error'];
-
-        // If there's an upload error
-        if ($error !== UPLOAD_ERR_OK) {
-            echo json_encode(["error" => "File upload failed with error code: " . $error]);
+        if (empty($newBio)) {
+            echo json_encode(["error" => "Bio cannot be empty"]);
             exit;
         }
 
-        // Directory to store uploaded files
-        $uploadDir = 'uploads/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true); // Create the directory if it doesn't exist
+        // Update the bio in the database
+        $sql_update = "UPDATE users SET bio = ? WHERE id = ?";
+        $stmt_update = $conn->prepare($sql_update);
+
+        if (!$stmt_update) {
+            echo json_encode(["error" => "SQL preparation failed for update query: " . $conn->error]);
+            exit;
         }
 
-        // Get the file name and create a unique name to avoid conflicts
-        $fileName = basename($_FILES['image']['name']);
-        $targetFile = $uploadDir . uniqid() . "_" . $fileName;
+        $stmt_update->bind_param("si", $newBio, $user_id);
+        $stmt_update->execute();
 
-        // Move the uploaded file to the server directory
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-            // Update the user's avatar in the database
-            $sql_update_avatar = "UPDATE users SET avatar = ? WHERE id = ?";
-            $stmt_avatar = $conn->prepare($sql_update_avatar);
-            $stmt_avatar->bind_param("si", $targetFile, $user_id);
-            $stmt_avatar->execute();
-
-            if ($stmt_avatar->affected_rows > 0) {
-                echo json_encode(["success" => true, "avatar" => $targetFile]);
-            } else {
-                echo json_encode(["error" => "Failed to update avatar in database"]);
-            }
-
-            $stmt_avatar->close();
+        if ($stmt_update->affected_rows > 0) {
+            echo json_encode(["success" => true]); // Successfully updated
         } else {
-            echo json_encode(["error" => "Failed to move uploaded file"]);
+            echo json_encode(["success" => false, "error" => "Failed to update bio"]);
         }
-    } else {
-        echo json_encode(["error" => "No image uploaded"]);
+
+        $stmt_update->close();
     }
 }
-
 
 $conn->close();
 ?>

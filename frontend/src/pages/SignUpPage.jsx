@@ -30,6 +30,7 @@ const SignUpPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");  // Added for displaying errors
 
   const handleChange = (event) => {
     setGender(event.target.value);
@@ -63,6 +64,7 @@ const SignUpPage = () => {
 
     try {
       setLoading(true);
+      setErrorMessage("");  // Reset error message on new submit
 
       const response = await axios.post(url, fData, { withCredentials: true });
 
@@ -73,15 +75,15 @@ const SignUpPage = () => {
         alert(`Unexpected response: ${response.data.message || "Please try again."}`);
       }
     } catch (error) {
+      setLoading(false);  // Make sure to stop loading state
       if (error.response) {
-        alert(`Server error: ${error.response.data.message || "Failed to register."}`);
+        // Show detailed error message from backend
+        setErrorMessage(`Server error: ${error.response.data.message || "Failed to register."}`);
       } else if (error.request) {
-        alert("Network error: No response received from server.");
+        setErrorMessage("Network error: No response received from server.");
       } else {
-        alert(`Error: ${error.message}`);
+        setErrorMessage(`Error: ${error.message}`);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -245,6 +247,13 @@ const SignUpPage = () => {
             </Grid>
           </Grid>
         </form>
+
+        {/* Display error message */}
+        {errorMessage && (
+          <Typography sx={{ color: "red", marginTop: 2 }}>
+            {errorMessage}
+          </Typography>
+        )}
       </Container>
     </Stack>
   );

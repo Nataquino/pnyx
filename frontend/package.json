@@ -22,8 +22,11 @@
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
+    "react-slick": "^0.30.3",
     "recharts": "^2.12.7",
     "sentiment": "^5.0.2",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.2.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

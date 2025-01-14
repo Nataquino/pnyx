@@ -43,29 +43,38 @@ const ChipInterest = () => {
   const handleAddInterest = async () => {
     if (newInterest.trim() !== "") {
       const capitalizedInterest = capitalizeInterest(newInterest);
-      setInterests([...interests, capitalizedInterest]); // Update state with new interest
-      setNewInterest(""); // Clear input
-      setIsAdding(false); // Exit adding mode
   
       try {
-        // Send the new interest (category) and action to the backend
         const response = await axios.post(
-          "http://localhost/survey-app/get-userprofile.php", // Same endpoint as for getting user data
-          { 
-            action: "add_interest", 
-            interest: capitalizedInterest 
+          "http://localhost/survey-app/get-userprofile.php",
+          {
+            action: "add_interest",
+            interest: capitalizedInterest,
           },
           { withCredentials: true }
         );
   
         if (response.data.success) {
-          console.log("Interest saved successfully");
+          alert("Interest added successfully!");
+          // Re-fetch interests after successful addition
+          const userDataResponse = await axios.get(
+            "http://localhost/survey-app/get-userprofile.php",
+            { withCredentials: true }
+          );
+          const { preferences } = userDataResponse.data;
+          setInterests(preferences || []);
+        } else if (response.data.error === "Interest already exists") {
+          alert("This interest already exists. Please add a new one.");
         } else {
-          console.error("Error saving interest:", response.data.error);
+          alert("Failed to save interest. Please try again.");
         }
       } catch (err) {
         console.error("Error saving interest to the database:", err);
+        alert("An error occurred while saving the interest. Please try again.");
       }
+  
+      setNewInterest(""); // Clear input
+      setIsAdding(false); // Exit adding mode
     }
   };
   

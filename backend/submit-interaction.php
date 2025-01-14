@@ -49,56 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->close();
 
-    // Step 2: Deduct 20 energy from the user
-    $updateEnergyStmt = $conn->prepare("UPDATE users SET energy = energy - 20 WHERE id = ?");
-    if (!$updateEnergyStmt) {
-        http_response_code(500);
-        echo json_encode(["message" => "Prepare failed: " . $conn->error]);
-        exit();
-    }
-    $updateEnergyStmt->bind_param("i", $userId);
-    if (!$updateEnergyStmt->execute()) {
-        http_response_code(500);
-        echo json_encode(["message" => "Error deducting energy: " . $updateEnergyStmt->error]);
-        exit();
-    }
-    $updateEnergyStmt->close();
-
-    // Step 3: Add reward points based on the survey's survey_pts
-    $getSurveyPtsStmt = $conn->prepare("SELECT survey_pts FROM surveys WHERE id = ?");
-    if (!$getSurveyPtsStmt) {
-        http_response_code(500);
-        echo json_encode(["message" => "Prepare failed: " . $conn->error]);
-        exit();
-    }
-    $getSurveyPtsStmt->bind_param("i", $surveyId);
-    $getSurveyPtsStmt->execute();
-    $surveyPtsResult = $getSurveyPtsStmt->get_result();
-
-    if ($surveyPtsRow = $surveyPtsResult->fetch_assoc()) {
-        $surveyPts = $surveyPtsRow['survey_pts'];
-
-        $updateRewardStmt = $conn->prepare("UPDATE users SET reward_points = reward_points + ? WHERE id = ?");
-        if (!$updateRewardStmt) {
-            http_response_code(500);
-            echo json_encode(["message" => "Prepare failed: " . $conn->error]);
-            exit();
-        }
-        $updateRewardStmt->bind_param("ii", $surveyPts, $userId);
-        if (!$updateRewardStmt->execute()) {
-            http_response_code(500);
-            echo json_encode(["message" => "Error adding reward points: " . $updateRewardStmt->error]);
-            exit();
-        }
-        $updateRewardStmt->close();
-    } else {
-        http_response_code(400);
-        echo json_encode(["message" => "Survey not found."]);
-        exit();
-    }
-    $getSurveyPtsStmt->close();
-
-    // Step 4: Get categories associated with the current survey
+    // Step 2: Get categories associated with the current survey
     $sql = "SELECT category_name FROM survey_category WHERE survey_id = ?";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
@@ -115,9 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $categories[] = $row['category_name'];
     }
 
-    // Step 5: Update the user's preference_strength for each category only if rating is greater than 2
+    // Step 3: Update the user's preference_strength for each category only if rating is greater than 2
     if ($rating > 2) {
         foreach ($categories as $category) {
+            // Increase the preference strength by 1 for the category
             $updateStmt = $conn->prepare("INSERT INTO user_preferences (user_id, category, preference_strength) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE preference_strength = preference_strength + 1");
 
             if (!$updateStmt) {
@@ -138,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    echo json_encode(["message" => "Interaction recorded, energy deducted, reward points added, and preferences updated successfully."]);
+    echo json_encode(["message" => "Interaction recorded and preferences updated successfully."]);
 
 } else {
     http_response_code(405);

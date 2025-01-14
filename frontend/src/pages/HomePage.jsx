@@ -38,6 +38,8 @@ const HomePage = () => {
           { withCredentials: true }
         );
         setEnergy(energyResponse.data.energy);
+
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -120,7 +122,7 @@ const HomePage = () => {
             Energy: {energy}
           </Typography>
 
-          <Grid container spacing={4} justifyContent="center">
+          <Grid container spacing={4} justifyContent="flex-start">
             {surveys.map((survey) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={survey.id}>
                 <Card
@@ -128,42 +130,70 @@ const HomePage = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    borderRadius: 12,
-                    boxShadow: 8,
-                    height: "380px",
-                    maxWidth: 420,
+                    borderRadius: 16,
+                    boxShadow: 12,
+                    height: "320px", // Reduced height
+                    maxWidth: 380, // Reduced max width
                     margin: "0 auto",
                     transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    backgroundColor: "#ffffff",
                     "&:hover": {
-                      transform:
-                        energy === 0 ? "none" : "scale(1.05)", // Disable hover if energy is 0
+                      transform: energy === 0 ? "none" : "scale(1.05)", // Disable hover if energy is 0
                       boxShadow:
                         energy === 0
                           ? "none"
-                          : "0 12px 30px rgba(0, 0, 0, 0.2)",
+                          : "0 12px 30px rgba(0, 0, 0, 0.15)",
                     },
-                    opacity: energy === 0 ? 0.5 : 1, // Dim card if energy is 0
+                    opacity: energy === 0 ? 0.6 : 1, // Dim card if energy is 0
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, padding: "20px" }}>
+                  <CardContent
+                    sx={{
+                      flexGrow: 1,
+                      padding: "24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Typography
                       variant="h5"
                       component="div"
-                      sx={{ fontSize: "20px", fontWeight: "bold" }}
+                      sx={{
+                        fontSize: "22px",
+                        fontWeight: "600",
+                        color: "#1976d2",
+                        textAlign: "center",
+                        marginBottom: "8px",
+                      }}
                     >
                       {survey.title}
                     </Typography>
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ marginTop: 1, fontSize: "15px" }}
+                      sx={{
+                        marginTop: 1,
+                        fontSize: "15px",
+                        textAlign: "center",
+                        marginBottom: "12px",
+                        flexGrow: 1, // Allow text to take up space
+                        overflow: "hidden", // Prevent overflow in the content
+                        textOverflow: "ellipsis", // Add ellipsis for long text
+                        whiteSpace: "nowrap", // Prevent wrapping of text
+                      }}
                     >
                       {survey.description}
                     </Typography>
                     <Typography
                       variant="body2"
                       color="text.primary"
-                      sx={{ marginTop: 2, fontWeight: "bold" }}
+                      sx={{
+                        marginTop: 2,
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        fontSize: "16px",
+                      }}
                     >
                       Points: {survey.survey_pts}
                     </Typography>
@@ -178,7 +208,17 @@ const HomePage = () => {
                       }
                       sx={{
                         fontWeight: "bold",
-                        borderRadius: "20px",
+                        borderRadius: "24px",
+                        padding: "8px 16px",
+                        backgroundColor: "#1976d2",
+                        color: "#fff",
+                        "&:hover": {
+                          backgroundColor: "#1565c0",
+                        },
+                        "&:disabled": {
+                          backgroundColor: "#9e9e9e",
+                          color: "#ffffff",
+                        },
                       }}
                     >
                       {survey.is_locked === 1
@@ -202,8 +242,8 @@ const HomePage = () => {
             transform: "translate(-50%, -50%)",
             backgroundColor: "white",
             padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
+            borderRadius: "16px",
+            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
             width: "300px",
             textAlign: "center",
             zIndex: 1000,
@@ -211,7 +251,7 @@ const HomePage = () => {
         >
           <Typography
             variant="h6"
-            sx={{ marginBottom: 2, fontWeight: "bold" }}
+            sx={{ marginBottom: 2, fontWeight: "600", color: "#1976d2" }}
           >
             Enter Passcode
           </Typography>
@@ -232,7 +272,15 @@ const HomePage = () => {
           <Box sx={{ marginTop: "20px" }}>
             <Button
               variant="contained"
-              sx={{ marginRight: "10px", fontWeight: "bold", borderRadius: "8px" }}
+              sx={{
+                marginRight: "10px",
+                fontWeight: "bold",
+                borderRadius: "12px",
+                backgroundColor: "#1976d2",
+                "&:hover": {
+                  backgroundColor: "#1565c0",
+                },
+              }}
               onClick={handlePasscodeSubmit}
             >
               Submit
@@ -240,7 +288,16 @@ const HomePage = () => {
             <Button
               variant="outlined"
               color="error"
-              sx={{ fontWeight: "bold", borderRadius: "8px" }}
+              sx={{
+                fontWeight: "bold",
+                borderRadius: "12px",
+                color: "#d32f2f",
+                borderColor: "#d32f2f",
+                "&:hover": {
+                  backgroundColor: "#f44336",
+                  color: "#fff",
+                },
+              }}
               onClick={handleCancel}
             >
               Cancel

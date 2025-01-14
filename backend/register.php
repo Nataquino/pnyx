@@ -42,10 +42,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Content
         $mail->isHTML(true);
         $mail->Subject = 'Your OTP for Email Verification';
-        $mail->AltBody = "Hi $userFirstName, \nYour OTP for verifying your account is: $otp";
+        $mail->Body = "Hi $userFirstName,<br><br>Your OTP for verifying your account is: <strong>$otp</strong><br><br>Thank you,<br>Pnyx Surveys";
 
         // Attempt to send the email
-        $mail->send();
+        if (!$mail->send()) {
+            throw new Exception('Message body empty');
+        }
 
         // If email is sent successfully, insert the user into the database
         $sqlRegister = "INSERT INTO users (username, firstname, lastname, gender, birthdate, email, password, otp, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
@@ -75,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // If the OTP email fails to send, return an error without inserting the user
         error_log("Mailer Error: " . $mail->ErrorInfo);
         http_response_code(500);
-        echo json_encode(['message' => 'Registration failed, OTP email could not be sent.']);
+        echo json_encode(['message' => 'Registration failed, OTP email could not be sent: ' . $mail->ErrorInfo]);
     }
 }
 ?>

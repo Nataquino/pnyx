@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Container, TextField, Typography, Stack, Box } from '@mui/material';
+import { Button, Container, TextField, Typography, Stack, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const OtpVerificationPage = () => {
     const [otp, setOtp] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const getCookieValue = (name) => {
@@ -14,6 +15,11 @@ const OtpVerificationPage = () => {
     };
 
     const handleVerifyOtp = async () => {
+        if (!otp || otp.length !== 6) {
+            alert('Please enter a valid OTP with 6 digits.');
+            return;
+        }
+
         const userId = getCookieValue('user_id');
         if (!userId) {
             alert('User ID not found. Please log in or register.');
@@ -21,6 +27,7 @@ const OtpVerificationPage = () => {
         }
 
         try {
+            setLoading(true);
             const response = await axios.post('http://localhost/survey-app/verify-email.php',
                 { userId, otp },
                 { withCredentials: true }
@@ -31,6 +38,8 @@ const OtpVerificationPage = () => {
             }
         } catch (error) {
             alert('OTP verification failed: ' + error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -70,15 +79,16 @@ const OtpVerificationPage = () => {
                 <Typography variant="body1" sx={{ color: "text.secondary", marginBottom: 3, textAlign: "center" }}>
                     A One-Time Password (OTP) has been sent to your email. Please enter it below to verify your email.
                 </Typography>
-                
+
                 <TextField
                     label="Enter OTP"
                     fullWidth
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     sx={{ marginBottom: 3 }}
+                    inputProps={{ maxLength: 6 }}
                 />
-                
+
                 <Button
                     variant="contained"
                     fullWidth
@@ -92,8 +102,9 @@ const OtpVerificationPage = () => {
                             backgroundColor: "#0277BD"
                         }
                     }}
+                    disabled={loading}
                 >
-                    Verify OTP
+                    {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Verify OTP'}
                 </Button>
             </Container>
         </Stack>

@@ -3,19 +3,25 @@ import {
   Box,
   Typography,
   Button,
-  Card,
-  CardContent,
-  CardActions,
-  Grid,
+  Stack,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TablePagination,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   TextField,
-  Stack,
-  Container,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import AdminMain from "../components/AdminMain";
 
@@ -23,16 +29,13 @@ const Admin = () => {
   const [surveys, setSurveys] = useState([]);
   const [survey, setSurvey] = useState(null);
   const [openDeclineDialog, setOpenDeclineDialog] = useState(false);
-  const [selectedSurvey, setSelectedSurvey] = useState(null);
+  const [openPointsDialog, setOpenPointsDialog] = useState(false);
   const [comment, setComment] = useState("");
-  const [openSurveyDialog, setOpenSurveyDialog] = useState(false);
-  const [openPointsDialog, setOpenPointsDialog] = useState(false); // State for points dialog
-  const [points, setPoints] = useState(0); // State for points entered
+  const [points, setPoints] = useState();
 
-  const handleAssignPoints = (survey) => {
-    setSelectedSurvey(survey); // Store selected survey for later use
-    setOpenPointsDialog(true); // Open the dialog
-  };
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const fetchSurveys = async () => {
     try {
@@ -53,46 +56,28 @@ const Admin = () => {
 
   const handleApprove = async (survey) => {
     try {
-      const response = await axios.post(
-        "http://localhost/survey-app/survey-pending.php",
-        {
-          id: survey.id,
-          action: "approve",
-        }
-      );
+      await axios.post("http://localhost/survey-app/survey-pending.php", {
+        id: survey.id,
+        action: "approve",
+      });
       fetchSurveys();
     } catch (error) {
       console.error("Error approving survey:", error);
     }
   };
 
-  const handleDecline = (survey) => {
-    setSelectedSurvey(survey);
+  const handleDecline = async (survey) => {
+    setSurvey(survey);
     setOpenDeclineDialog(true);
-  };
-
-  const handleView = async (survey) => {
-    try {
-      const response = await axios.get(
-        `http://localhost/survey-app/take-survey.php?id=${survey.id}`
-      );
-      setSurvey(response.data);
-      setOpenSurveyDialog(true);
-    } catch (error) {
-      console.error("Error fetching survey:", error);
-    }
   };
 
   const handleDeclineConfirm = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost/survey-app/survey-pending.php",
-        {
-          id: selectedSurvey.id,
-          action: "decline",
-          comment: comment,
-        }
-      );
+      await axios.post("http://localhost/survey-app/survey-pending.php", {
+        id: survey.id,
+        action: "decline",
+        comment,
+      });
       setOpenDeclineDialog(false);
       setComment("");
       fetchSurveys();
@@ -101,257 +86,128 @@ const Admin = () => {
     }
   };
 
-  const handleCloseSurveyDialog = () => {
-    setOpenSurveyDialog(false);
-    setSurvey(null);
+  const handleAssignPoints = (survey) => {
+    setSurvey(survey);
+    setOpenPointsDialog(true);
   };
 
   const handleAssignPointsConfirm = async () => {
     try {
-      // Make the API call to assign points (using get-pending.php for the POST request)
-      const response = await axios.post(
-        "http://localhost/survey-app/get-pending.php",
-        {
-          surveyId: selectedSurvey.id,
-          points: points,
-        }
-      );
-      console.log(
-        `Assigned ${points} points to survey: ${selectedSurvey.title}`
-      );
-      setOpenPointsDialog(false); // Close the dialog after submitting
-      setPoints(0); // Reset points input
-      fetchSurveys(); // Refresh surveys after assigning points
+      await axios.post("http://localhost/survey-app/get-pending.php", {
+        surveyId: survey.id,
+        points,
+      });
+      setOpenPointsDialog(false);
+      setPoints(0);
+      fetchSurveys();
     } catch (error) {
       console.error("Error assigning points:", error);
     }
+  };
+
+  const handleView = async (survey) => {
+    try {
+      const response = await axios.get(
+        `http://localhost/survey-app/take-survey.php?id=${survey.id}`
+      );
+      setSurvey(response.data);
+    } catch (error) {
+      console.error("Error fetching survey:", error);
+    }
+  };
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleCloseSurveyDialog = () => {
+    setSurvey(null);
   };
 
   return (
     <Stack sx={{ height: "100vh", backgroundColor: "skyblue" }}>
       <AdminMain />
       <Container
-  sx={{
-    marginTop: { xs: 12, md: -28 },
-    marginLeft: { md: 33 },
-    paddingLeft: { xs: 2, sm: 3, md: 5 },
-    paddingRight: { xs: 2, sm: 3, md: 5 },
-    paddingBottom: 4,
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    flexDirection: "column",
-    flexWrap: "wrap",
-    maxHeight: "80vh",
-    width: "100%", // Adjust to fit smaller screens
-    height: "100vh",
-    overflowY: "auto",
-    border: "5px solid rgba(0, 0, 0, 0.1)", // Very light border
-  }}
->
-  {surveys.length === 0 ? (
-    // If no surveys are pending, display a message
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-        width: "100%",
-        textAlign: "center",
-        backgroundColor: "white",
-        borderRadius: 2,
-        boxShadow: 3,
-        padding: { xs: 2, sm: 3 }, // Adjust padding for smaller screens
-      }}
-    >
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: "bold",
-          color: "gray",
-          fontSize: { xs: "1.2rem", sm: "1.5rem", md: "2rem" }, // Adjust font size
-        }}
+        sx={{ marginTop: { xs: 12, md: -30 }, marginLeft: { md: 33 } }}
       >
-        No pending surveys
-      </Typography>
-    </Box>
-  ) : (
-    // Render surveys if they exist
-    <Grid container spacing={3} justifyContent="flex-start">
-      {surveys.map((survey) => (
-        <Grid item xs={12} sm={9} md={4.5} key={survey.id}>
-          <Card
-            sx={{
-              marginTop: 1,
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              borderRadius: 3,
-              boxShadow: 5,
-              overflow: "hidden",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "scale(1.05)",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                background: "linear-gradient(135deg, #00bcd4, #3f51b5)",
-                color: "white",
-                padding: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
-              }}
-            >
-              <Typography
-                variant="h5"
-                component="div"
-                sx={{
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  marginBottom: 1,
-                  fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" }, // Responsive title font size
-                }}
-              >
-                {survey.title}
-              </Typography>
-              <Typography variant="body2" sx={{ fontStyle: "italic", fontSize: { xs: "0.875rem", sm: "1rem" } }}>
-                {survey.description}
-              </Typography>
-            </Box>
-            <CardContent sx={{ flexGrow: 1, padding: { xs: 2, sm: 3 } }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ marginBottom: 2, fontSize: { xs: "0.875rem", sm: "1rem" } }}
-              >
-                View and manage the survey.
-              </Typography>
-            </CardContent>
-            <CardActions
-              sx={{
-                padding: { xs: 1.5, sm: 2 },
-                justifyContent: "space-between",
-                backgroundColor: "#f9f9f9",
-                borderTop: "1px solid #ddd",
-                flexWrap: "wrap",
-              }}
-            >
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => handleView(survey)}
-                sx={{
-                  borderRadius: 20,
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                  paddingX: 2,
-                  marginBottom: 1,
-                }}
-              >
-                View
-              </Button>
-              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                <Button
-                  variant="contained"
-                  color="success"
-                  size="small"
-                  onClick={() => handleApprove(survey)}
-                  sx={{
-                    borderRadius: 20,
-                    fontWeight: "bold",
-                    textTransform: "capitalize",
-                    paddingX: 2,
-                    marginBottom: 1,
-                  }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="small"
-                  onClick={() => handleDecline(survey)}
-                  sx={{
-                    borderRadius: 20,
-                    fontWeight: "bold",
-                    textTransform: "capitalize",
-                    paddingX: 2,
-                    marginBottom: 1,
-                  }}
-                >
-                  Decline
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                  onClick={() => handleAssignPoints(survey)}
-                  sx={{
-                    borderRadius: 20,
-                    fontWeight: "bold",
-                    textTransform: "capitalize",
-                    paddingX: 2,
-                    marginBottom: 1,
-                  }}
-                >
-                  Assign Points
-                </Button>
-              </Box>
-            </CardActions>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
-  )}
-</Container>
+        <TableContainer
+          component={Paper}
+          sx={{
+            maxHeight: "80vh",
+            boxShadow: 5,
+            borderRadius: 3,
+            overflowY: "auto",
+          }}
+        >
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{  fontSize: "20px" , fontFamily: "fantasy" }}>TITLE</TableCell>
+                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>DESCRIPTION</TableCell>
+                <TableCell ></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {surveys
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((survey) => (
+                  <TableRow key={survey.id} hover>
+                    <TableCell sx={{ fontWeight: "bold", color: "#48494B"}}>{survey.title}</TableCell>
+                    <TableCell>{survey.description}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleView(survey)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          component="div"
+          count={surveys.length}
+          page={page}
+          onPageChange={handlePageChange}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          rowsPerPageOptions={[5, 10, 15]}
+        />
+      </Container>
 
-
-      {/* Decline Survey Dialog */}
-      <Dialog
-        open={openDeclineDialog}
-        onClose={() => setOpenDeclineDialog(false)}
-      >
-        <DialogTitle>Decline Survey</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Provide a reason for declining the survey:
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Comment"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDeclineDialog(false)}>Cancel</Button>
-          <Button onClick={handleDeclineConfirm}>Submit</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Survey Details Dialog */}
+      {/* View Survey Dialog */}
       {survey && (
         <Dialog
-          open={openSurveyDialog}
+          open={Boolean(survey)}
           onClose={handleCloseSurveyDialog}
           maxWidth="md"
           fullWidth
         >
           <DialogTitle
-            sx={{ fontWeight: "bold", fontSize: "1.5rem", textAlign: "center" }}
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1.5rem",
+              textAlign: "center",
+              marginTop: 3,
+            }}
           >
             {survey.title}
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseSurveyDialog}
+              sx={{ position: "absolute", right: 8, top: 8 }}
+            >
+              X
+            </IconButton>
           </DialogTitle>
 
           <DialogContent sx={{ padding: 3 }}>
@@ -434,40 +290,82 @@ const Admin = () => {
               </table>
             </Box>
           </DialogContent>
-          <DialogActions sx={{ justifyContent: "center", paddingBottom: 2 }}>
+          <DialogActions>
             <Button
               variant="contained"
-              onClick={handleCloseSurveyDialog}
-              color="primary"
-              sx={{ fontWeight: "bold" }}
+              color="error"
+              onClick={() => handleDecline(survey)}
             >
-              Close
+              Decline
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => handleAssignPoints(survey)}
+            >
+              Assign Points
             </Button>
           </DialogActions>
         </Dialog>
       )}
 
-      {/* Assign Points Dialog */}
-      <Dialog open={openPointsDialog} onClose={() => setOpenPointsDialog(false)}>
-        <DialogTitle>Assign Points</DialogTitle>
+      {/* Decline Dialog */}
+      <Dialog
+        open={openDeclineDialog}
+        onClose={() => setOpenDeclineDialog(false)}
+      >
+        <DialogTitle>Decline Survey</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter points to assign to this survey:
+            Provide a reason for declining the survey:
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
-            label="Points"
+            label="Comment"
+            type="text"
+            fullWidth
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeclineDialog(false)}>Cancel</Button>
+          <Button onClick={handleDeclineConfirm}>Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Assign Points Dialog */}
+      <Dialog
+        open={openPointsDialog}
+        onClose={() => setOpenPointsDialog(false)}
+      >
+        <DialogTitle>Assign Points</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Enter points for this survey:</DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
             type="number"
             fullWidth
-            variant="standard"
             value={points}
-            onChange={(e) => setPoints(e.target.value)}
+            onChange={(e) => {
+              const value = Math.max(0, parseInt(e.target.value, 10));
+              setPoints(value || 0);
+            }}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenPointsDialog(false)}>Cancel</Button>
-          <Button onClick={handleAssignPointsConfirm}>Assign</Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              handleAssignPointsConfirm(); // Assign points
+              handleApprove(survey); // Approve survey
+            }}
+          >
+            Assign Points & Approve
+          </Button>
         </DialogActions>
       </Dialog>
     </Stack>
