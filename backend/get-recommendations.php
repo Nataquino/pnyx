@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 include 'connection.php';
-include 'survey_similarities.php';
+include 'survey_similarities.php'; // Ensure this file has a function to calculate similarity scores
 
 // Get user_id from cookie
 if (isset($_COOKIE['user_id'])) {
@@ -38,20 +38,27 @@ $stmt_preferences->close();
 
 // Ensure user preferences are available
 if (empty($user_preferences)) {
-    echo json_encode(["error" => "No preferences found for the user"]);
+    echo json_encode([]);
     exit;
 }
 
-// Fetch surveys matching user preferences
+// Fetch surveys matching user preferences, including their categories
 $placeholders = implode(',', array_fill(0, count($user_preferences), '?'));
 $sql_surveys = "
-    SELECT s.id, s.title, s.description, sc.category_name, s.is_locked, s.survey_pts
+    SELECT 
+        s.id, 
+        s.title, 
+        s.description, 
+        s.is_locked, 
+        s.survey_pts, 
+        GROUP_CONCAT(sc.category_name SEPARATOR ', ') AS categories
     FROM surveys s
-    LEFT JOIN survey_categories sc ON s.id = sc.survey_id
-    WHERE sc.category_name IN ($placeholders) 
-      AND s.status = 'activated' 
-      AND s.user_id != ? 
-      AND s.id NOT IN (SELECT survey_id FROM survey_interactions WHERE user_id = ?)";
+    INNER JOIN survey_categories sc ON s.id = sc.survey_id
+    WHERE sc.category_name IN ($placeholders)
+      AND s.status = 'activated'
+      AND s.user_id != ?
+      AND s.id NOT IN (SELECT survey_id FROM survey_interactions WHERE user_id = ?)
+    GROUP BY s.id";
 $stmt_surveys = $conn->prepare($sql_surveys);
 
 // Combine user preferences and bind them to the query
@@ -63,11 +70,31 @@ $result_surveys = $stmt_surveys->get_result();
 
 $filtered_surveys = [];
 while ($row = $result_surveys->fetch_assoc()) {
+    $row['similarity_score'] = calculate_similarity_score($row, $user_preferences); // Add similarity score
     $filtered_surveys[] = $row;
 }
 $stmt_surveys->close();
 
-// Output the filtered surveys
+// Sort surveys by similarity score in descending order
+usort($filtered_surveys, function ($a, $b) {
+    return $b['similarity_score'] <=> $a['similarity_score'];
+});
+
+// Output the filtered surveys or an empty array
 echo json_encode($filtered_surveys);
 $conn->close();
+
+/**
+ * Calculate the similarity score between a survey and user preferences.
+ * 
+ * @param array $survey The survey data.
+ * @param array $preferences The user's preferences.
+ * @return float The similarity score.
+ */
+function calculate_similarity_score($survey, $preferences) {
+    $survey_categories = explode(', ', $survey['categories']);
+    $common_categories = array_intersect($survey_categories, $preferences);
+    $score = count($common_categories) / max(count($survey_categories), count($preferences));
+    return round($score, 2);
+}
 ?>
