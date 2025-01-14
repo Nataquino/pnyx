@@ -21,7 +21,7 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+
 import axios from "axios";
 import AdminMain from "../components/AdminMain";
 
@@ -58,9 +58,9 @@ const Admin = () => {
     try {
       await axios.post("http://localhost/survey-app/survey-pending.php", {
         id: survey.id,
-        action: "approve",
+        action: "approve", // Action to approve the survey
       });
-      fetchSurveys();
+      fetchSurveys(); // Refresh the surveys list
     } catch (error) {
       console.error("Error approving survey:", error);
     }
@@ -86,6 +86,8 @@ const Admin = () => {
     }
   };
 
+
+
   const handleAssignPoints = (survey) => {
     setSurvey(survey);
     setOpenPointsDialog(true);
@@ -93,17 +95,26 @@ const Admin = () => {
 
   const handleAssignPointsConfirm = async () => {
     try {
+      // Assign points first
       await axios.post("http://localhost/survey-app/get-pending.php", {
         surveyId: survey.id,
         points,
       });
+  
+      // Approve the survey and insert notification in the backend
+      await axios.post("http://localhost/survey-app/survey-pending.php", {
+        id: survey.id,
+        action: "approve", // Approve the survey
+      });
+  
       setOpenPointsDialog(false);
       setPoints(0);
-      fetchSurveys();
+      fetchSurveys(); // Refresh the surveys after action
     } catch (error) {
-      console.error("Error assigning points:", error);
+      console.error("Error assigning points and approving survey:", error);
     }
   };
+  
 
   const handleView = async (survey) => {
     try {
@@ -148,9 +159,13 @@ const Admin = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{  fontSize: "20px" , fontFamily: "fantasy" }}>TITLE</TableCell>
-                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>DESCRIPTION</TableCell>
-                <TableCell ></TableCell>
+                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>
+                  TITLE
+                </TableCell>
+                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>
+                  DESCRIPTION
+                </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -158,7 +173,9 @@ const Admin = () => {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((survey) => (
                   <TableRow key={survey.id} hover>
-                    <TableCell sx={{ fontWeight: "bold", color: "#48494B"}}>{survey.title}</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", color: "#48494B" }}>
+                      {survey.title}
+                    </TableCell>
                     <TableCell>{survey.description}</TableCell>
                     <TableCell>
                       <Button
@@ -357,16 +374,18 @@ const Admin = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenPointsDialog(false)}>Cancel</Button>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => {
-              handleAssignPointsConfirm(); // Assign points
-              handleApprove(survey); // Approve survey
-            }}
-          >
-            Assign Points & Approve
-          </Button>
+<Button
+  variant="contained"
+  color="success"
+  onClick={() => {
+    handleAssignPointsConfirm(); // Assign points
+    handleApprove(survey); // Approve survey
+    setOpenPointsDialog(false); // Close Assign Points dialog
+    setSurvey(null); // Close View Survey dialog
+  }}
+>
+  Assign Points & Approve
+</Button>
         </DialogActions>
       </Dialog>
     </Stack>
