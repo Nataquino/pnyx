@@ -153,7 +153,10 @@ const HomePage = () => {
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
         {selectedSurvey && (
           <>
-            <DialogTitle>{selectedSurvey.title}</DialogTitle>
+            <DialogTitle sx={{ fontWeight: "bold", textAlign: "center" }}>
+              {selectedSurvey.title}
+            </DialogTitle>
+            <Box sx={{ height: 2 }}></Box>
             <DialogContent>
               <Typography variant="body1" gutterBottom>
                 {selectedSurvey.description}
