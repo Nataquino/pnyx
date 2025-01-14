@@ -54,6 +54,47 @@ const Admin = () => {
     fetchSurveys();
   }, []);
 
+
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost/survey-app/get-notifications.php"
+      );
+      if (response.data.status === "success") {
+        setNotifications(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  const handleCreateNotification = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost/survey-app/get-notifications.php",
+        newNotification
+      );
+      if (response.data.status === "success") {
+        fetchNotifications(); // Refresh notifications
+        setNewNotification({
+          user_id: "",
+          notif_message: "",
+          notif_status: "unread",
+          survey_id: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error creating notification:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSurveys();
+    fetchNotifications();
+  }, []);
+
+
   const handleApprove = async (survey) => {
     try {
       await axios.post("http://localhost/survey-app/survey-pending.php", {
@@ -148,9 +189,13 @@ const Admin = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{  fontSize: "20px" , fontFamily: "fantasy" }}>TITLE</TableCell>
-                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>DESCRIPTION</TableCell>
-                <TableCell ></TableCell>
+                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>
+                  TITLE
+                </TableCell>
+                <TableCell sx={{ fontSize: "20px", fontFamily: "fantasy" }}>
+                  DESCRIPTION
+                </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -158,7 +203,9 @@ const Admin = () => {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((survey) => (
                   <TableRow key={survey.id} hover>
-                    <TableCell sx={{ fontWeight: "bold", color: "#48494B"}}>{survey.title}</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", color: "#48494B" }}>
+                      {survey.title}
+                    </TableCell>
                     <TableCell>{survey.description}</TableCell>
                     <TableCell>
                       <Button
@@ -363,6 +410,8 @@ const Admin = () => {
             onClick={() => {
               handleAssignPointsConfirm(); // Assign points
               handleApprove(survey); // Approve survey
+              setOpenPointsDialog(false); // Close Assign Points dialog
+              setSurvey(null); // Close View Survey dialog
             }}
           >
             Assign Points & Approve
