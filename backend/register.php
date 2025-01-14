@@ -59,9 +59,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $userId = $conn->insert_id;
 
             // Set cookies for user_id, username, and email
-            setcookie("user_id", $userId, time() + (86400 * 30), "/", "localhost", true, false);  // Expires in 30 days
-            setcookie("username", $userName, time() + (86400 * 30), "/", "localhost", true, false); // Expires in 30 days
-            setcookie("email", $userEmail, time() + (86400 * 30), "/", "localhost", true, false); // Expires in 30 days
+            setcookie("user_id", $userId, time() + (86400 * 30), "/");  // Expires in 30 days
+            setcookie("username", $userName, time() + (86400 * 30), "/"); // Expires in 30 days
+            setcookie("email", $userEmail, time() + (86400 * 30), "/"); // Expires in 30 days
 
             http_response_code(200);
             echo json_encode(['message' => 'Registration successful. Please check your email for the OTP.']);

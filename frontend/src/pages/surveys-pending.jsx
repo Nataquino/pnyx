@@ -108,25 +108,14 @@ const Admin = () => {
         action: "approve", // Approve the survey
       });
   
-<<<<<<< HEAD
-      setOpenPointsDialog(false);
-      setPoints(0);
-      fetchSurveys(); // Refresh the surveys after action
-=======
       setOpenPointsDialog(false); // Close the points dialog
       setPoints(0); // Reset points value
       setSurvey(null); // Close the survey view dialog
       fetchSurveys(); // Refresh the surveys list
->>>>>>> 02c8531fd4804d131a2c4c81ab6bd15333d4d87d
     } catch (error) {
       console.error("Error assigning points and approving survey:", error);
     }
   };
-<<<<<<< HEAD
-  
-
-=======
->>>>>>> 02c8531fd4804d131a2c4c81ab6bd15333d4d87d
   const handleView = async (survey) => {
     try {
       const response = await axios.get(
@@ -385,20 +374,6 @@ const Admin = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenPointsDialog(false)}>Cancel</Button>
-<<<<<<< HEAD
-<Button
-  variant="contained"
-  color="success"
-  onClick={() => {
-    handleAssignPointsConfirm(); // Assign points
-    handleApprove(survey); // Approve survey
-    setOpenPointsDialog(false); // Close Assign Points dialog
-    setSurvey(null); // Close View Survey dialog
-  }}
->
-  Assign Points & Approve
-</Button>
-=======
           <Button
             variant="contained"
             color="success"
@@ -411,7 +386,6 @@ const Admin = () => {
           >
             Assign Points & Approve
           </Button>
->>>>>>> 02c8531fd4804d131a2c4c81ab6bd15333d4d87d
         </DialogActions>
       </Dialog>
     </Stack>

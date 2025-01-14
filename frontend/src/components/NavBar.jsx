@@ -12,6 +12,11 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
@@ -19,11 +24,12 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PollIcon from "@mui/icons-material/Poll";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
+// Helper function to get cookie value
 const getCookieValue = (name) => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
-    return parts.pop().split(';').shift();
+    return parts.pop().split(";").shift();
   }
 };
 
@@ -32,23 +38,25 @@ const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [notifAnchorEl, setNotifAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedNotif, setSelectedNotif] = useState(null);
 
   const open = Boolean(anchorEl);
   const notifOpen = Boolean(notifAnchorEl);
 
-  const handleClick = (event) => {
+  const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleNotifClick = (event) => {
+  const handleNotifMenuClick = (event) => {
     setNotifAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleNotifClose = () => {
+  const handleNotifMenuClose = () => {
     setNotifAnchorEl(null);
   };
 
@@ -62,18 +70,38 @@ const NavBar = () => {
     navigate("/");
   };
 
+  const handleNotifClick = (notif) => {
+    setSelectedNotif(notif);
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+  // Fetch notifications when the component mounts
   useEffect(() => {
-    // Fetch notifications from backend
-    fetch("http://localhost/get-notifications.php")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          setNotifications(data.data);
-        } else {
-          console.error("Error fetching notifications:", data.message);
-        }
+    const userId = getCookieValue("user_id");
+
+    if (userId) {
+      fetch(`http://localhost/survey-app/get-notifications.php?user_id=${userId}`, {
+        credentials: "include", // Ensure cookies are sent
       })
-      .catch((error) => console.error("Fetch error:", error));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setNotifications(data);
+          } else {
+            console.error("Error fetching notifications:", data.error || "Invalid data format");
+          }
+        })
+        .catch((error) => console.error("Fetch error:", error));
+    }
   }, []);
 
   return (
@@ -113,7 +141,7 @@ const NavBar = () => {
           </Tooltip>
 
           <Tooltip title="Notifications" arrow>
-            <IconButton color="inherit" onClick={handleNotifClick}>
+            <IconButton color="inherit" onClick={handleNotifMenuClick}>
               <NotificationsIcon sx={{ fontSize: "35px" }} />
             </IconButton>
           </Tooltip>
@@ -121,18 +149,22 @@ const NavBar = () => {
           <Menu
             anchorEl={notifAnchorEl}
             open={notifOpen}
-            onClose={handleNotifClose}
+            onClose={handleNotifMenuClose}
             transformOrigin={{
               vertical: "top",
             }}
           >
             <List>
               {notifications.length > 0 ? (
-                notifications.map((notif) => (
-                  <ListItem key={notif.notif_id}>
+                notifications.map((notif, index) => (
+                  <ListItem
+                    key={index}
+                    button
+                    onClick={() => handleNotifClick(notif)}
+                  >
                     <ListItemText
-                      primary={notif.notif_description}
-                      secondary={`Date: ${notif.notif_date} | Status: ${notif.notif_status}`}
+                      primary={notif.notif_message}
+                      secondary={`Date: ${notif.notif_date}`}
                     />
                   </ListItem>
                 ))
@@ -145,7 +177,7 @@ const NavBar = () => {
           </Menu>
 
           <Tooltip title="Account" arrow>
-            <IconButton color="inherit" onClick={handleClick}>
+            <IconButton color="inherit" onClick={handleMenuClick}>
               <AccountCircleIcon sx={{ fontSize: "35px" }} />
             </IconButton>
           </Tooltip>
@@ -153,7 +185,7 @@ const NavBar = () => {
           <Menu
             anchorEl={anchorEl}
             open={open}
-            onClose={handleClose}
+            onClose={handleMenuClose}
             transformOrigin={{
               vertical: "top",
             }}
@@ -164,6 +196,28 @@ const NavBar = () => {
           </Menu>
         </Container>
       </Toolbar>
+
+      {/* Notification Dialog */}
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Notification Details</DialogTitle>
+        <DialogContent>
+          {selectedNotif ? (
+            <>
+              <Typography variant="h6">{selectedNotif.notif_message}</Typography>
+              <Typography variant="body2" color="textSecondary">
+                Date: {selectedNotif.notif_date}
+              </Typography>
+            </>
+          ) : (
+            <Typography>No details available</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 };

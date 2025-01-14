@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogActions,
   Chip,
+  TextField,
 } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
@@ -20,25 +21,22 @@ import axios from "axios";
 
 const HomePage = () => {
   const [surveys, setSurveys] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false); // Track dialog state
-  const [selectedSurvey, setSelectedSurvey] = useState(null); // Track selected survey
-  const [energy, setEnergy] = useState(100);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedSurvey, setSelectedSurvey] = useState(null);
+  const [passcode, setPasscode] = useState("");
+  const [passcodeError, setPasscodeError] = useState("");
+  const [surveyLimit, setSurveyLimit] = useState(5); // Limit to 5 surveys per day
+  const [answeredSurveys, setAnsweredSurveys] = useState(0); // Count of answered surveys
+  const [nextAvailableDate, setNextAvailableDate] = useState(null); // Next available date to answer surveys
   const navigate = useNavigate();
 
   const getChipColor = (index) => {
-    const colors = [
-      "#4caf50", // Green
-      "#ff9800", // Orange
-      "#2196f3", // Blue
-      "#f44336", // Red
-      "#9c27b0", // Purple
-      "#ffeb3b", // Yellow
-    ];
-    return colors[index % colors.length]; // Cycle through colors
+    const colors = ["#4caf50", "#ff9800", "#2196f3", "#f44336", "#9c27b0", "#ffeb3b"];
+    return colors[index % colors.length];
   };
 
   useEffect(() => {
-    const fetchSurveysAndEnergy = async () => {
+    const fetchSurveysAndLimit = async () => {
       try {
         const surveyResponse = await axios.get(
           "http://localhost/survey-app/get-recommendations.php",
@@ -48,32 +46,59 @@ const HomePage = () => {
           setSurveys(surveyResponse.data);
         }
 
-        const energyResponse = await axios.get(
-          "http://localhost/survey-app/get-user-energy.php",
+        const limitResponse = await axios.get(
+          "http://localhost/survey-app/get-user-limit.php",
           { withCredentials: true }
         );
-        setEnergy(energyResponse.data.energy);
+        if (limitResponse.data) {
+          setAnsweredSurveys(limitResponse.data.survey_count);
+          setSurveyLimit(limitResponse.data.survey_limit);
+          setNextAvailableDate(limitResponse.data.next_available_date);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchSurveysAndEnergy();
+    fetchSurveysAndLimit();
   }, []);
 
   const handleOpenDialog = (survey) => {
-    setSelectedSurvey(survey); // Set the selected survey for the dialog
+    setSelectedSurvey(survey);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setSelectedSurvey(null); // Clear selected survey on close
+    setSelectedSurvey(null);
+    setPasscode("");
+    setPasscodeError("");
   };
 
   const handleAnswerSurvey = (surveyId) => {
     navigate(`/take-survey/${surveyId}`);
-    setDialogOpen(false); // Close dialog when navigating
+    handleCloseDialog();
+  };
+
+  const handleEnterPasscode = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost/survey-app/check-passcode.php",
+        {
+          survey_id: selectedSurvey.id,
+          passcode,
+        },
+        { withCredentials: true }
+      );
+      if (response.data.status === "success") { // Updated from `success`
+        handleAnswerSurvey(selectedSurvey.id);
+      } else {
+        setPasscodeError(response.data.message || "Invalid passcode. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error checking passcode:", error);
+      setPasscodeError("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -93,8 +118,14 @@ const HomePage = () => {
             align="center"
             sx={{ marginBottom: 2 }}
           >
-            Energy: {energy}
+            Available Surveys to Answer: {surveyLimit} (You have answered {answeredSurveys} today)
           </Typography>
+
+          {nextAvailableDate && (
+            <Typography variant="body1" color="text.primary" align="center" sx={{ marginBottom: 2 }}>
+              You can answer more surveys on: {nextAvailableDate}
+            </Typography>
+          )}
 
           <Grid container spacing={4} justifyContent="flex-start">
             {surveys.map((survey) => (
@@ -114,7 +145,7 @@ const HomePage = () => {
                   <CardContent>
                     <Typography
                       variant="h5"
-                      sx={{ fontWeight: "bold", textAlign: "center", marginTop: 2 }}
+                      sx={{ fontWeight: "bold", textAlign: "center", marginTop: 3 }}
                     >
                       {survey.title}
                     </Typography>
@@ -138,15 +169,16 @@ const HomePage = () => {
                       size="medium"
                       onClick={() => handleOpenDialog(survey)}
                       sx={{
-                        backgroundColor: "#4caf50",
+                        backgroundColor: survey.is_locked || surveyLimit <= 0 ? "#ff9800" : "#4caf50",
                         color: "#fff",
                         "&:hover": {
-                          backgroundColor: "#43a047",
+                          backgroundColor: survey.is_locked || surveyLimit <= 0 ? "#fb8c00" : "#43a047",
                         },
                         margin: 5,
+                        pointerEvents: surveyLimit <= 0 ? 'none' : 'auto',
                       }}
                     >
-                      Open Survey
+                      {survey.is_locked ? "Enter Passcode" : "Open Survey"}
                     </Button>
                   </CardActions>
                 </Card>
@@ -167,7 +199,6 @@ const HomePage = () => {
               <Typography variant="body1" gutterBottom>
                 {selectedSurvey.description}
               </Typography>
-              {/* Display Survey Categories with Chips */}
               <Box sx={{ marginTop: 2, textAlign: "center" }}>
                 {selectedSurvey.categories &&
                   selectedSurvey.categories.split(",").map((category, index) => (
@@ -179,7 +210,7 @@ const HomePage = () => {
                         backgroundColor: getChipColor(index),
                         color: "#fff",
                         fontWeight: "bold",
-                        borderRadius: "16px", // Round shape for better design
+                        borderRadius: "16px",
                         "&:hover": {
                           backgroundColor: "#000",
                           color: "#fff",
@@ -188,8 +219,6 @@ const HomePage = () => {
                     />
                   ))}
               </Box>
-<<<<<<< HEAD
-
               {selectedSurvey.is_locked && (
                 <Box sx={{ marginTop: 2 }}>
                   <TextField
@@ -205,46 +234,23 @@ const HomePage = () => {
             </DialogContent>
 
             <DialogActions>
-            <Typography
-=======
-            </DialogContent>
-
-            <DialogActions>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  width: "22vw",
-                }}
-              >
-                <Typography
->>>>>>> 02c8531fd4804d131a2c4c81ab6bd15333d4d87d
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textAlign: "left" }}
-                >
-                  Points: {selectedSurvey.survey_pts}
-                </Typography>
-<<<<<<< HEAD
               <Button onClick={handleCloseDialog} variant="outlined" color="error">
-=======
-              </Box>
-
-              <Button
-                onClick={handleCloseDialog}
-                variant="outlined"
-                color="error"
-              >
->>>>>>> 02c8531fd4804d131a2c4c81ab6bd15333d4d87d
                 Close
               </Button>
-              <Button
-                onClick={() => handleAnswerSurvey(selectedSurvey.id)}
-                variant="contained"
-                color="primary"
-              >
-                Answer Survey
-              </Button>
+              {selectedSurvey.is_locked ? (
+                <Button onClick={handleEnterPasscode} variant="contained" color="primary">
+                  Submit Passcode
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => handleAnswerSurvey(selectedSurvey.id)}
+                  variant="contained"
+                  color="primary"
+                  disabled={surveyLimit <= 0}
+                >
+                  Answer Survey
+                </Button>
+              )}
             </DialogActions>
           </>
         )}
