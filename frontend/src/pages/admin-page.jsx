@@ -57,7 +57,7 @@ const Admin = () => {
         }}
       >
         {/* Dashboard Title */}
-        <Box sx={{ textAlign: "center", marginBottom: 3}}>
+        <Box sx={{ textAlign: "center", marginBottom: 3, marginTop: -10}}>
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             Admin Dashboard
           </Typography>

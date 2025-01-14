@@ -139,6 +139,7 @@ const Admin = () => {
           component={Paper}
           sx={{
             maxHeight: "80vh",
+            minHeight: "70vh",
             boxShadow: 5,
             borderRadius: 3,
             overflowY: "auto",

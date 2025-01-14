@@ -121,10 +121,10 @@ const RewardsAdmin = () => {
   };
 
   return (
-    <Stack>
+    <Stack sx={{          backgroundColor: "skyblue",}}>
       <AdminMain />
 
-      <Box sx={{ p: 3, maxWidth: 600, mx: "auto", marginTop: {xs: 12, md: -30} }}>
+      <Box sx={{ backgroundColor: "white", p: 3, maxWidth: 600, mx: "auto", marginTop: {xs: 12, md: -30} }}>
         <Typography variant="h4" gutterBottom>
           {editingReward ? "Edit Reward" : "Add Reward"}
         </Typography>

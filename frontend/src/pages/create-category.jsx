@@ -80,9 +80,9 @@ const AdminCategories = () => {
   };
 
   return (
-    <Stack sx={{ backgroundColor: "#f0f4f8", minHeight: "100vh" }}>
+    <Stack sx={{ backgroundColor: "skyblue", minHeight: "100vh" }}>
       <AdminMain />
-      <Box sx={{ padding: { xs: 2, sm: 4 }, marginTop: { xs: 20 , sm: -15 } }}>
+      <Box sx={{ padding: { xs: 2, sm: 4 }, marginTop: { xs: 20 , sm: -20 } }}>
         <Stack
           spacing={4}
           sx={{
