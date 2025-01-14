@@ -21,7 +21,7 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+
 import axios from "axios";
 import AdminMain from "../components/AdminMain";
 
@@ -54,14 +54,13 @@ const Admin = () => {
     fetchSurveys();
   }, []);
 
-
   const handleApprove = async (survey) => {
     try {
       await axios.post("http://localhost/survey-app/survey-pending.php", {
         id: survey.id,
-        action: "approve",
+        action: "approve", // Action to approve the survey
       });
-      fetchSurveys();
+      fetchSurveys(); // Refresh the surveys list
     } catch (error) {
       console.error("Error approving survey:", error);
     }
@@ -79,9 +78,10 @@ const Admin = () => {
         action: "decline",
         comment,
       });
-      setOpenDeclineDialog(false);
-      setComment("");
-      fetchSurveys();
+      setOpenDeclineDialog(false); // Close the decline dialog
+      setComment(""); // Clear comment field
+      setSurvey(null); // Close the survey view dialog
+      fetchSurveys(); // Refresh the surveys list
     } catch (error) {
       console.error("Error declining survey:", error);
     }
@@ -94,18 +94,26 @@ const Admin = () => {
 
   const handleAssignPointsConfirm = async () => {
     try {
+      // Assign points first
       await axios.post("http://localhost/survey-app/get-pending.php", {
         surveyId: survey.id,
         points,
       });
-      setOpenPointsDialog(false);
-      setPoints(0);
-      fetchSurveys();
+  
+      // Approve the survey and insert notification in the backend
+      await axios.post("http://localhost/survey-app/survey-pending.php", {
+        id: survey.id,
+        action: "approve", // Approve the survey
+      });
+  
+      setOpenPointsDialog(false); // Close the points dialog
+      setPoints(0); // Reset points value
+      setSurvey(null); // Close the survey view dialog
+      fetchSurveys(); // Refresh the surveys list
     } catch (error) {
-      console.error("Error assigning points:", error);
+      console.error("Error assigning points and approving survey:", error);
     }
   };
-
   const handleView = async (survey) => {
     try {
       const response = await axios.get(
