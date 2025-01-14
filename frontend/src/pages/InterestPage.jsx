@@ -1,17 +1,9 @@
-import {
-  Stack,
-  Box,
-  Typography,
-  Stepper,
-  Step,
-  StepLabel,
-  Container,
-  Button,
-} from "@mui/material";
+import { Stack, Box, Typography, Stepper, Step, StepLabel, Container, Button } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Import checkmark icon
 
 const InterestPage = () => {
   const steps = ["Create an account", "Interest", "Finish"];
@@ -59,13 +51,14 @@ const InterestPage = () => {
         height: "100vh",
         justifyContent: "center",
         alignItems: "center",
+        paddingTop: "2rem",
       }}
     >
       <Box sx={{ width: "100%", position: "absolute", top: "20px" }}>
-        <Stepper activeStep={1} alternativeLabel>
+        <Stepper activeStep={1} alternativeLabel sx={{ marginBottom: "2rem" }}>
           {steps.map((label) => (
             <Step key={label}>
-              <StepLabel>{label}</StepLabel>
+              <StepLabel sx={{ fontWeight: "600", fontSize: "1rem" }}>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -74,29 +67,37 @@ const InterestPage = () => {
       <Container
         sx={{
           backgroundColor: "#FFF",
-          width: "70vw", // Increased width
-          maxWidth: "800px",
+          width: "80vw", // Responsive width
+          maxWidth: "900px", // Larger width for desktop
           padding: "3rem",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.15)", // Slightly stronger shadow
-          borderRadius: "15px", // Increased border radius
+          boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.1)",
+          borderRadius: "15px",
           marginTop: "60px",
         }}
       >
-        <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 600 }}>
+        <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 600, color: "#1976d2" }}>
           Choose Your Interests
         </Typography>
-        <Typography variant="body1" sx={{ marginBottom: 3, color: "text.secondary", textAlign: "center" }}>
+        <Typography
+          variant="body1"
+          sx={{
+            marginBottom: 3,
+            color: "text.secondary",
+            textAlign: "center",
+            fontStyle: "italic",
+          }}
+        >
           {selectedInterests.length > 0 ? selectedInterests.join(", ") : "No interests selected"}
         </Typography>
 
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", // Slightly bigger buttons
-            gap: "2rem", // Increased gap for a more spacious look
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", // Responsive grid
+            gap: "2rem", // Larger gap for a more spacious look
             width: "100%",
             marginTop: 4,
           }}
@@ -105,21 +106,41 @@ const InterestPage = () => {
             (interest) => (
               <Button
                 key={interest}
-                variant="contained"
+                variant="outlined"
                 onClick={() => toggleInterest(interest)}
                 sx={{
-                  height: "120px", // Larger circle size
+                  height: "120px", // Larger button size
                   width: "120px",
                   borderRadius: "50%",
-                  backgroundColor: selectedInterests.includes(interest) ? "#66BB6A" : "#29B6F6", // Lighter, modern colors
-                  color: "#FFF", // White text
+                  border: selectedInterests.includes(interest) ? "none" : "2px solid black", // Border on unselected state
+                  backgroundColor: selectedInterests.includes(interest) ? "#9ACD32" : "#87CEEB", // Yellow-green on select, skyblue on unselect
+                  color: selectedInterests.includes(interest) ? "#FFF" : "#000", // Text color on selection
                   fontSize: "16px",
                   fontWeight: "bold",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Soft shadow for depth
-                  transition: "transform 0.3s", // Smooth transition
+                  boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative", // Necessary for background positioning
+                  transition: "transform 0.3s, background-color 0.3s, opacity 0.3s", // Added opacity transition
+                  opacity: selectedInterests.includes(interest) ? 0.50 : 1, // Reduced opacity for the button when selected
                   "&:hover": {
-                    backgroundColor: selectedInterests.includes(interest) ? "#4CAF50" : "#039BE5",
-                    transform: "scale(1.1)", // Hover effect for enlargement
+                    transform: "scale(1.1)", // Smooth scaling on hover
+                    backgroundColor: selectedInterests.includes(interest)
+                      ? "#7FAF2F" // Darker green on hover
+                      : "#87CEEB", // Skyblue on hover
+                  },
+                  // Checkmark in background when selected
+                  "&:after": {
+                    content: selectedInterests.includes(interest) ? '"✓"' : '""', // Checkmark symbol
+                    position: "absolute",
+                    fontSize: selectedInterests.includes(interest) ? "90px" : "40px", // Larger checkmark when selected
+                    color: "green", // Checkmark color (yellow)
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)", // Centering the checkmark
+                    fontWeight: "bold", // Make checkmark bold
+                    opacity: 1, // Keep checkmark opacity normal
                   },
                 }}
               >
